@@ -3,7 +3,6 @@
 import {useEffect, useState} from "react";
 import {getSupabase} from "../utils/supabase";
 import Link from "next/link";
-import {getSession} from "@auth0/nextjs-auth0";
 import {Session} from "@supabase/supabase-js";
 import {CV} from "./types";
 
