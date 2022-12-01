@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^1.9.2",
     "@supabase/functions-js": "^2.0.0",
     "@supabase/supabase-js": "^2.1.0",
     "@types/node": "18.11.9",
