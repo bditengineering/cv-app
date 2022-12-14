@@ -1,60 +1,64 @@
-'use client';
+"use client";
 
-import {getSupabase} from "../utils/supabase";
-import {SyntheticEvent, useState} from "react";
-import {useRouter} from "next/navigation";
+import { getSupabase } from "../utils/supabase";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 export default function SignInForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [hasServerError, setHasServerError] = useState<boolean>(false);
+  const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
 
-  async function signUpWithEmail(e: SyntheticEvent) {
-    e.preventDefault();
+  const validationSchema = Yup.object({
+    email: Yup.string().required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  });
 
-    setMessage('');
+  async function signIn(values: { email: string; password: string }) {
+
+    const email = values.email;
+    const password = values.password;
+
     const { data, error } = await getSupabase().auth.signInWithPassword({
       email, //: 'example@email.com',
       password, //: 'example-password',
-    })
+    });
     if (error) {
-      setMessage(error.message)
+      setHasServerError(true);
+      setServerErrorMessage(error.message);
     } else {
-      await router.push('/');
+      clearErrorState();
+      await router.push("/");
     }
   }
 
-  function renderMessage() {
-    if (!message) return null;
-
-    return (
-      <div>
-        Result: {message}
-      </div>
-    )
-  }
+  const clearErrorState = () => {
+    setHasServerError(false);
+    setServerErrorMessage("");
+  };
 
   return (
-    <form onSubmit={signUpWithEmail}>
-      <div>
-        <label>
-          Email
-          <input type={"email"} onChange={({ target: {value }}) => {
-            setEmail(value);
-          }} value={email}/>
-        </label>
-      </div>
-      <div>
-        <label>
-          Password
-          <input type={"password"} onChange={({ target: {value }}) => {
-            setPassword(value);
-          }} value={password}/>
-        </label>
-      </div>
-      <button>Sign In</button>
-      {renderMessage()}
-    </form>
-  )
+    <Formik
+      initialValues={{ email: "", password: "" }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        signIn(values);
+      }}
+    >
+      <Form>
+        <label htmlFor="email">Email Address</label>
+        <Field name="email" type="email" />
+        <ErrorMessage name="email" />
+
+        <label htmlFor="email">Password</label>
+        <Field name="password" type="password" />
+        <ErrorMessage name="password" />
+
+        <button type="submit">Submit</button>
+        {hasServerError && <p>Error: {serverErrorMessage}</p>}
+      </Form>
+    </Formik>
+  );
 }
