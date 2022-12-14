@@ -8,7 +8,6 @@ import * as Yup from "yup";
 
 export default function SignInForm() {
   const router = useRouter();
-  const [hasServerError, setHasServerError] = useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
 
   const validationSchema = Yup.object({
@@ -17,7 +16,6 @@ export default function SignInForm() {
   });
 
   async function signIn(values: { email: string; password: string }) {
-
     const email = values.email;
     const password = values.password;
 
@@ -26,7 +24,6 @@ export default function SignInForm() {
       password, //: 'example-password',
     });
     if (error) {
-      setHasServerError(true);
       setServerErrorMessage(error.message);
     } else {
       clearErrorState();
@@ -35,7 +32,6 @@ export default function SignInForm() {
   }
 
   const clearErrorState = () => {
-    setHasServerError(false);
     setServerErrorMessage("");
   };
 
@@ -57,7 +53,7 @@ export default function SignInForm() {
         <ErrorMessage name="password" />
 
         <button type="submit">Submit</button>
-        {hasServerError && <p>Error: {serverErrorMessage}</p>}
+        {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
       </Form>
     </Formik>
   );
