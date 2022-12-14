@@ -11,7 +11,7 @@ export default function SignInForm() {
   const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
 
   const validationSchema = Yup.object({
-    email: Yup.string().required("Email is required"),
+    email: Yup.string().required("Email is required").email("Invalid email"),
     password: Yup.string().required("Password is required"),
   });
 
@@ -44,11 +44,11 @@ export default function SignInForm() {
       }}
     >
       <Form>
-        <label htmlFor="email">Email Address</label>
+        <label htmlFor="email">Email</label>
         <Field name="email" type="email" />
         <ErrorMessage name="email" />
 
-        <label htmlFor="email">Password</label>
+        <label htmlFor="password">Password</label>
         <Field name="password" type="password" />
         <ErrorMessage name="password" />
 
