@@ -1,26 +1,34 @@
-'use client';
+"use client";
 
-import {getSupabase} from "../utils/supabase";
-import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import {CV} from "./types";
+import { getSupabase } from "../utils/supabase";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { CV } from "./types";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
-const attributes = ['first_name', 'last_name'];
+const attributes = ["first_name", "last_name"];
 
 interface Props {
-  id?: string
+  id?: string;
 }
 
-export default function AddNewCvForm({ id } : Props) {
+export default function AddNewCvForm({ id }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<Partial<CV>>({
-    first_name: '',
-    last_name: '',
+    first_name: "",
+    last_name: "",
   });
-  const [message, setMessage] = useState('');
+  const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
+
+  const validationSchema = Yup.object({
+    first_name: Yup.string().required("First name is required"),
+    last_name: Yup.string().required("Last name is required"),
+  });
 
   async function fetchCv() {
-    const { data } = await getSupabase().from('cv').select('*').eq('id', id);
+    const { data } = await getSupabase().from("cv").select("*").eq("id", id);
+
     if (data && data.length === 1) {
       const formData = attributes.reduce((acc, attr) => {
         acc[attr as keyof CV] = data[0][attr];
@@ -31,67 +39,56 @@ export default function AddNewCvForm({ id } : Props) {
     }
   }
 
-  async function upsert() {
+  async function upsert(values: any) {
     if (id) {
-      return getSupabase().from('cv').update(form).eq('id', id);
+      return getSupabase().from("cv").update(values).eq("id", id);
     }
 
-    const {data: {session}} = await getSupabase().auth.getSession();
-    return getSupabase().from('cv').insert({
-      ...form,
-      created_by: session?.user.id
-    });
+    const {
+      data: { session },
+    } = await getSupabase().auth.getSession();
+    return getSupabase()
+      .from("cv")
+      .insert({
+        ...values,
+        created_by: session?.user.id,
+      });
   }
 
-  async function handleSubmit(e: SyntheticEvent) {
-    e.preventDefault();
-    setMessage('');
-
-    const {data, error} = await upsert();
+  async function handleSubmit(values: any) {
+    const { data, error } = await upsert(values);
     if (error) {
-      setMessage(error.message)
+      setServerErrorMessage(error.message);
     } else {
-      await router.push('/');
+      await router.push("/");
     }
-  }
-
-  function renderMessage() {
-    if (!message) return null;
-
-    return (
-      <div>
-        Result: {message}
-      </div>
-    )
-  }
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const { target: { name, value }} = e;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value
-    }));
   }
 
   useEffect(() => {
     fetchCv();
-  }, [])
+  }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          First Name
-          <input name="first_name" type="text" onChange={handleChange} value={form.first_name}/>
-        </label>
-      </div>
-      <div>
-        <label>
-          Last Name
-          <input name="last_name" type="text" onChange={handleChange} value={form.last_name}/>
-        </label>
-      </div>
-      <button>{id ? 'Save' : 'Add'}</button>
-      {renderMessage()}
-    </form>
-  )
+    <Formik
+      initialValues={{ first_name: form.first_name, last_name: form.last_name }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        handleSubmit(values);
+      }}
+      enableReinitialize
+    >
+      <Form>
+        <label htmlFor="first_name">First Name</label>
+        <Field name="first_name" type="text" />
+        <ErrorMessage name="first_name" />
+
+        <label htmlFor="last_name">Last Name</label>
+        <Field name="last_name" type="text" />
+        <ErrorMessage name="last_name" />
+
+        <button type="submit">Submit</button>
+        {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
+      </Form>
+    </Formik>
+  );
 }
