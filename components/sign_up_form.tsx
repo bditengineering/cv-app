@@ -1,69 +1,67 @@
-'use client';
+"use client";
 
-import {getSupabase} from "../utils/supabase";
-import {SyntheticEvent, useState} from "react";
-import {useRouter} from "next/navigation";
+import { getSupabase } from "../utils/supabase";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 export default function SignUpForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rePassword, setRePassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
 
-  async function signUpWithEmail(e: SyntheticEvent) {
-    e.preventDefault();
+  const validationSchema = Yup.object({
+    email: Yup.string().required("Email is required").email("Invalid email"),
+    password: Yup.string().required("Password is required").min(6, 'Password should be at least 6 characters'),
+    repeatPassword: Yup.string()
+      .required("Repeat password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
+  });
 
-    setMessage('');
+  async function signUp(values: { email: string; password: string }) {
+    const email = values.email;
+    const password = values.password;
+
     const { data, error } = await getSupabase().auth.signUp({
       email, //: 'example@email.com',
       password, //: 'example-password',
-    })
+    });
     if (error) {
-      setMessage(error.message)
+      setServerErrorMessage(error.message);
     } else {
-      await router.push('/');
+      clearErrorState();
+      await router.push("/");
     }
   }
 
-  function renderMessage() {
-    if (!message) return null;
-
-    return (
-      <div>
-        Result: {message}
-      </div>
-    )
-  }
+  const clearErrorState = () => {
+    setServerErrorMessage("");
+  };
 
   return (
-    <form onSubmit={signUpWithEmail}>
-      <div>
-        <label>
-          Email
-          <input type={"email"} onChange={({ target: {value }}) => {
-            setEmail(value);
-          }} value={email}/>
-        </label>
-      </div>
-      <div>
-        <label>
-          Password
-          <input type={"password"} onChange={({ target: {value }}) => {
-            setPassword(value);
-          }} value={password}/>
-        </label>
-      </div>
-      <div>
-        <label>
-          Repeat Password
-          <input type={"password"} onChange={({ target: {value }}) => {
-            setRePassword(value);
-          }} value={rePassword}/>
-        </label>
-      </div>
-      <button>Sign Up</button>
-      {renderMessage()}
-    </form>
-  )
+    <Formik
+      initialValues={{ email: "", password: "", repeatPassword: "" }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        signUp(values);
+      }}
+    >
+      <Form>
+        <label htmlFor="email">Email Address</label>
+        <Field name="email" type="email" />
+        <ErrorMessage name="email" />
+
+        <label htmlFor="password">Password</label>
+        <Field name="password" type="password" />
+        <ErrorMessage name="password" />
+
+        <label htmlFor="repeatPassword">Repeat password</label>
+        <Field name="repeatPassword" type="password" />
+        <ErrorMessage name="repeatPassword" />
+
+        <button type="submit">Submit</button>
+        {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
+      </Form>
+    </Formik>
+  );
 }
