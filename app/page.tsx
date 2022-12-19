@@ -7,6 +7,9 @@ import createClient from "../utils/supabase_server";
 export default async function Home() {
   const supabase = createClient();
   const { data } = await supabase.from("cv").select("*");
+  const {
+    data: { session: supabaseSession },
+  } = await supabase.auth.getSession();
 
   return (
     <div className={styles.container}>
@@ -16,7 +19,7 @@ export default async function Home() {
           <Link href={"/signin"}>Sign In</Link> |{" "}
           <Link href={"/signup"}>Sign Up</Link> | <SignOut />
         </div>
-        <CVList cvs={data} />
+        <CVList cvs={data} session={supabaseSession} />
       </main>
     </div>
   );

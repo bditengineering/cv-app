@@ -1,32 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import supabase from "../utils/supabase_browser";
 import Link from "next/link";
 import { Session } from "@supabase/supabase-js";
 import { CV } from "./types";
 
 interface CVListProps {
   cvs: CV[] | null;
+  session: Session | null;
 }
 
-export default function CVList({ cvs }: CVListProps) {
-  const [session, setSession] = useState<null | Session>(null);
-
-  async function getSession() {
-    const {
-      data: { session: supabaseSession },
-      error,
-    } = await supabase.auth.getSession();
-    if (!supabaseSession || error) return null;
-
-    setSession(supabaseSession);
-  }
-
-  useEffect(() => {
-    getSession();
-  }, []);
-
+export default function CVList({ cvs, session }: CVListProps) {
   function renderAddNew() {
     if (!session) return null;
 
