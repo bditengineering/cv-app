@@ -5,11 +5,9 @@ export default function NewCv() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Add New CV
-        </h1>
+        <h1 className="mb-6 text-center text-5xl font-bold">Add New CV</h1>
         <AddNewCvForm />
       </main>
     </div>
-  )
+  );
 }
