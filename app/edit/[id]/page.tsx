@@ -3,19 +3,17 @@ import styles from "../../Home.module.css";
 
 interface Props {
   params: {
-    id: string
-  }
+    id: string;
+  };
 }
 
-export default function EditCv({ params: { id }}: Props) {
+export default function EditCv({ params: { id } }: Props) {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Edit CV {}
-        </h1>
-        <AddNewCvForm id={id}/>
+        <h1 className="mb-6 text-center text-5xl font-bold">Edit CV</h1>
+        <AddNewCvForm id={id} />
       </main>
     </div>
-  )
+  );
 }
