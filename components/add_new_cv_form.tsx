@@ -1,6 +1,6 @@
 "use client";
 
-import { getSupabase } from "../utils/supabase";
+import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
@@ -27,7 +27,7 @@ export default function AddNewCvForm({ id }: Props) {
   });
 
   async function fetchCv() {
-    const { data } = await getSupabase().from("cv").select("*").eq("id", id);
+    const { data } = await supabase.from("cv").select("*").eq("id", id);
 
     if (data && data.length === 1) {
       const formData = attributes.reduce((acc, attr) => {
@@ -41,18 +41,16 @@ export default function AddNewCvForm({ id }: Props) {
 
   async function upsert(values: any) {
     if (id) {
-      return getSupabase().from("cv").update(values).eq("id", id);
+      return supabase.from("cv").update(values).eq("id", id);
     }
 
     const {
       data: { session },
-    } = await getSupabase().auth.getSession();
-    return getSupabase()
-      .from("cv")
-      .insert({
-        ...values,
-        created_by: session?.user.id,
-      });
+    } = await supabase.auth.getSession();
+    return supabase.from("cv").insert({
+      ...values,
+      created_by: session?.user.id,
+    });
   }
 
   async function handleSubmit(values: any) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { getSupabase } from "../utils/supabase";
+import supabase from "../utils/supabase_browser";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Field, Form, ErrorMessage } from "formik";
@@ -12,7 +12,9 @@ export default function SignUpForm() {
 
   const validationSchema = Yup.object({
     email: Yup.string().required("Email is required").email("Invalid email"),
-    password: Yup.string().required("Password is required").min(6, 'Password should be at least 6 characters'),
+    password: Yup.string()
+      .required("Password is required")
+      .min(6, "Password should be at least 6 characters"),
     repeatPassword: Yup.string()
       .required("Repeat password is required")
       .oneOf([Yup.ref("password"), null], "Passwords must match"),
@@ -22,7 +24,7 @@ export default function SignUpForm() {
     const email = values.email;
     const password = values.password;
 
-    const { data, error } = await getSupabase().auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email, //: 'example@email.com',
       password, //: 'example-password',
     });
