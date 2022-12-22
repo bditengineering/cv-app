@@ -44,16 +44,50 @@ export default function SignInForm() {
       }}
     >
       <Form>
-        <label htmlFor="email">Email</label>
-        <Field name="email" type="email" />
-        <ErrorMessage name="email" />
+        <div className="mb-1 flex flex-row justify-start space-x-2">
+          <div className="h-9 w-3 bg-purple-700"></div>
+          <div className="text-center text-3xl font-bold">
+            <h1>Login</h1>
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <Field
+            className="my-2 w-72 rounded-md border-gray-400 p-2 dark:text-black"
+            name="email"
+            type="email"
+            placeholder="Email"
+          />
+          <ErrorMessage
+            className="text-sm text-purple-400"
+            name="email"
+            component="span"
+          />
+          <Field
+            className="my-2 w-72 rounded-md border-gray-400 p-2 dark:text-black"
+            name="password"
+            type="password"
+            placeholder="Password"
+          />
+          <ErrorMessage
+            className="text-sm text-purple-400"
+            name="password"
+            component="span"
+          />
+        </div>
 
-        <label htmlFor="password">Password</label>
-        <Field name="password" type="password" />
-        <ErrorMessage name="password" />
-
-        <button type="submit">Submit</button>
-        {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
+        <div className="my-2 flex justify-center">
+          <button
+            className="w-72 rounded-md border bg-purple-700 p-2 font-bold text-white"
+            type="submit"
+          >
+            Log In
+          </button>
+        </div>
+        {serverErrorMessage && (
+          <span className="my-2 flex justify-center text-purple-400">
+            *{serverErrorMessage}
+          </span>
+        )}
       </Form>
     </Formik>
   );

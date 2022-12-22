@@ -76,16 +76,45 @@ export default function AddNewCvForm({ id }: Props) {
       enableReinitialize
     >
       <Form>
-        <label htmlFor="first_name">First Name</label>
-        <Field name="first_name" type="text" />
-        <ErrorMessage name="first_name" />
+        <div className="flex flex-col">
+          <label htmlFor="first_name">First Name</label>
+          <Field
+            className="my-2 w-72 rounded-md border-gray-400 p-2 dark:text-black"
+            name="first_name"
+            type="text"
+          />
+          <ErrorMessage
+            name="first_name"
+            className="text-sm text-purple-400"
+            component="span"
+          />
 
-        <label htmlFor="last_name">Last Name</label>
-        <Field name="last_name" type="text" />
-        <ErrorMessage name="last_name" />
+          <label htmlFor="last_name">Last Name</label>
+          <Field
+            name="last_name"
+            type="text"
+            className="my-2 w-72 rounded-md border-gray-400 p-2 dark:text-black"
+          />
+          <ErrorMessage
+            name="last_name"
+            className="text-sm text-purple-400"
+            component="span"
+          />
+        </div>
 
-        <button type="submit">Submit</button>
-        {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
+        <div className="my-2 flex justify-center">
+          <button
+            type="submit"
+            className="w-72 rounded-md border bg-purple-700 p-2 font-bold text-white"
+          >
+            Submit
+          </button>
+        </div>
+        {serverErrorMessage && (
+          <span className="my-2 flex justify-center text-purple-400">
+            *{serverErrorMessage}
+          </span>
+        )}
       </Form>
     </Formik>
   );
