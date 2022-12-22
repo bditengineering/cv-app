@@ -1,3 +1,5 @@
+// based on https://github.com/supabase/auth-helpers/tree/main/examples/nextjs-server-components
+
 import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
