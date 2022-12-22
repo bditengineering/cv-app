@@ -1,6 +1,6 @@
 "use client";
 
-import { getSupabase } from "../utils/supabase";
+import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
@@ -102,10 +102,7 @@ export default function AddNewCvForm({ id }: Props) {
   });
 
   async function fetchCv() {
-    const { data } = await getSupabase()
-      .from("cv")
-      .select("*, projects(*)")
-      .eq("id", id);
+    const { data } = await supabase.from("cv").select("*").eq("id", id);
 
     if (data && data.length === 1) {
       const formData = attributes.reduce((acc, attr) => {
@@ -122,14 +119,14 @@ export default function AddNewCvForm({ id }: Props) {
     delete CV.projects;
 
     if (id) {
-      return getSupabase().from("cv").update(CV).eq("id", id).select();
+      return supabase.from("cv").update(CV).eq("id", id).select();
     }
 
     const {
       data: { session },
-    } = await getSupabase().auth.getSession();
+    } = await supabase.auth.getSession();
 
-    return getSupabase()
+    return supabase
       .from("cv")
       .insert({
         ...CV,
@@ -140,11 +137,9 @@ export default function AddNewCvForm({ id }: Props) {
 
   async function upsertProjects(values: any, cvData: any) {
     if (values.id) {
-      return getSupabase().from("projects").update(values).eq("id", values.id);
+      return supabase.from("projects").update(values).eq("id", values.id);
     }
-    return getSupabase()
-      .from("projects")
-      .insert({ ...values, cv_id: cvData[0].id });
+    return supabase.from("projects").insert({ ...values, cv_id: cvData[0].id });
   }
 
   async function handleSubmit(values: any) {
@@ -282,7 +277,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             type="button"
@@ -331,7 +326,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             className="flex text-indigo-500"
@@ -380,7 +375,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             type="button"
@@ -429,7 +424,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             className="flex text-indigo-500"
@@ -478,7 +473,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             className="flex text-indigo-500"
@@ -605,7 +600,7 @@ export default function AddNewCvForm({ id }: Props) {
                                         ].technologies.map(
                                           (
                                             technology: any,
-                                            technologiesIndex: any
+                                            technologiesIndex: any,
                                           ) => (
                                             <div
                                               key={technologiesIndex}
@@ -620,14 +615,14 @@ export default function AddNewCvForm({ id }: Props) {
                                                 type="button"
                                                 onClick={() =>
                                                   arrayHelpers.remove(
-                                                    technologiesIndex
+                                                    technologiesIndex,
                                                   )
                                                 }
                                               >
                                                 <Icons.TrashCan />
                                               </button>
                                             </div>
-                                          )
+                                          ),
                                         )}
                                       <button
                                         className="flex text-indigo-500"
@@ -663,7 +658,7 @@ export default function AddNewCvForm({ id }: Props) {
                                         ].responsibilities.map(
                                           (
                                             responsibility: any,
-                                            responsibilitiesIndex: any
+                                            responsibilitiesIndex: any,
                                           ) => (
                                             <div
                                               key={responsibilitiesIndex}
@@ -678,14 +673,14 @@ export default function AddNewCvForm({ id }: Props) {
                                                 type="button"
                                                 onClick={() =>
                                                   arrayHelpers.remove(
-                                                    responsibilitiesIndex
+                                                    responsibilitiesIndex,
                                                   )
                                                 }
                                               >
                                                 <Icons.TrashCan />
                                               </button>
                                             </div>
-                                          )
+                                          ),
                                         )}
                                       <button
                                         className="flex text-indigo-500"
@@ -780,7 +775,7 @@ export default function AddNewCvForm({ id }: Props) {
                               </button>
                             </div>
                           </div>
-                        )
+                        ),
                       )}
                     <button
                       className="flex flex-wrap text-indigo-500"
@@ -938,7 +933,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             className="flex text-indigo-500"
@@ -987,7 +982,7 @@ export default function AddNewCvForm({ id }: Props) {
                                     <Icons.TrashCan />
                                   </button>
                                 </div>
-                              )
+                              ),
                             )}
                           <button
                             className="flex text-indigo-500"

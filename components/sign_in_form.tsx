@@ -1,6 +1,6 @@
 "use client";
 
-import { getSupabase } from "../utils/supabase";
+import supabase from "../utils/supabase_browser";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Field, Form, ErrorMessage } from "formik";
@@ -19,7 +19,7 @@ export default function SignInForm() {
     const email = values.email;
     const password = values.password;
 
-    const { data, error } = await getSupabase().auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email, //: 'example@email.com',
       password, //: 'example-password',
     });

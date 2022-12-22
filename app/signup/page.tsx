@@ -8,5 +8,5 @@ export default function SignUp() {
         <SignUpForm />
       </main>
     </div>
-  )
+  );
 }
