@@ -4,7 +4,7 @@ import { getSupabase } from "../utils/supabase";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
-import * as Icons from "../assets/icons";
+import * as Icons from "./Icons";
 import { Formik, Field, FieldArray, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
