@@ -8,5 +8,5 @@ export default function SignIn() {
         <SignInForm />
       </main>
     </div>
-  )
+  );
 }

@@ -19,7 +19,9 @@ a {
   box-sizing: border-box;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: solid 1px black;
   border-collapse: collapse;
 }
