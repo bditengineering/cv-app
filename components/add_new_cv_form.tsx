@@ -102,7 +102,10 @@ export default function AddNewCvForm({ id }: Props) {
   });
 
   async function fetchCv() {
-    const { data } = await supabase.from("cv").select("*").eq("id", id);
+    const { data } = await supabase
+      .from("cv")
+      .select("*, projects(*)")
+      .eq("id", id);
 
     if (data && data.length === 1) {
       const formData = attributes.reduce((acc, attr) => {
