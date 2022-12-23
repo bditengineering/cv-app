@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
 import * as Icons from "./Icons";
+import * as Options from "../constants/CvFormOptions";
 import { Formik, Field, FieldArray, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
@@ -55,45 +56,6 @@ export default function AddNewCvForm({ id }: Props) {
     devops: [],
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
-
-  const englishLevels = [
-    { value: "no proficiency", label: "No Proficiency" },
-    { value: "elementary proficiency", label: "Elementary Proficiency" },
-    {
-      value: "limited working proficiency",
-      label: "Limited Working Proficiency",
-    },
-    {
-      value: "professional working proficiency",
-      label: "Professional Working Proficiency",
-    },
-    {
-      value: "full professional proficiency",
-      label: "Full Professional Proficiency",
-    },
-    {
-      value: "native or bilingual proficiency",
-      label: "Native Or Bilingual Proficiency",
-    },
-  ];
-
-  const monthsOptions = [
-    { value: "january", label: "January" },
-    { value: "february", label: "February" },
-    { value: "march", label: "March" },
-    { value: "april", label: "April" },
-    { value: "may", label: "May" },
-    { value: "june", label: "June" },
-    { value: "july", label: "July" },
-    { value: "august", label: "August" },
-    { value: "september", label: "September" },
-    { value: "october", label: "October" },
-    { value: "november", label: "November" },
-    { value: "december", label: "December" },
-  ];
-
-  const year = new Date().getFullYear();
-  const yearsOptions = Array.from(new Array(50), (val, index) => year - index);
 
   //todo: handle other validations and add more styling
   const validationSchema = Yup.object({
@@ -710,7 +672,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   as="select"
                                   name={`projects[${projectsIndex}].from_month`}
                                 >
-                                  {monthsOptions.map((month) => (
+                                  {Options.monthsOptions.map((month) => (
                                     <option
                                       value={month.value}
                                       key={month.value}
@@ -723,7 +685,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   as="select"
                                   name={`projects[${projectsIndex}].from_year`}
                                 >
-                                  {yearsOptions.map((year) => (
+                                  {Options.yearsOptions.map((year) => (
                                     <option value={year} key={year}>
                                       {year}
                                     </option>
@@ -743,7 +705,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   as="select"
                                   name={`projects[${projectsIndex}].until_month`}
                                 >
-                                  {monthsOptions.map((month) => (
+                                  {Options.monthsOptions.map((month) => (
                                     <option
                                       value={month.value}
                                       key={month.value}
@@ -756,7 +718,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   as="select"
                                   name={`projects[${projectsIndex}].until_year`}
                                 >
-                                  {yearsOptions.map((year) => (
+                                  {Options.yearsOptions.map((year) => (
                                     <option value={year} key={year}>
                                       {year}
                                     </option>
@@ -836,7 +798,7 @@ export default function AddNewCvForm({ id }: Props) {
                   <div className="md:flex-grow">
                     <label>From</label>
                     <Field as="select" name="university_start">
-                      {yearsOptions.map((year) => (
+                      {Options.yearsOptions.map((year) => (
                         <option value={year} key={year}>
                           {year}
                         </option>
@@ -845,7 +807,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                     <label>Until</label>
                     <Field as="select" name="university_end">
-                      {yearsOptions.map((year) => (
+                      {Options.yearsOptions.map((year) => (
                         <option value={year} key={year}>
                           {year}
                         </option>
@@ -870,7 +832,7 @@ export default function AddNewCvForm({ id }: Props) {
                       name="english_spoken"
                       className="w-full rounded-md"
                     >
-                      {englishLevels.map((level) => (
+                      {Options.englishLevels.map((level) => (
                         <option value={level.value} key={level.value}>
                           {level.label}
                         </option>
@@ -890,7 +852,7 @@ export default function AddNewCvForm({ id }: Props) {
                       name="english_written"
                       className="w-full rounded-md"
                     >
-                      {englishLevels.map((level) => (
+                      {Options.englishLevels.map((level) => (
                         <option value={level.value} key={level.value}>
                           {level.label}
                         </option>
