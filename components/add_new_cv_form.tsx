@@ -671,6 +671,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 <Field
                                   as="select"
                                   name={`projects[${projectsIndex}].from_month`}
+                                  className="rounded-md w-1/2 mr-2"
                                 >
                                   {Options.monthsOptions.map((month) => (
                                     <option
@@ -684,6 +685,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 <Field
                                   as="select"
                                   name={`projects[${projectsIndex}].from_year`}
+                                  className="rounded-md w-1/3"
                                 >
                                   {Options.yearsOptions.map((year) => (
                                     <option value={year} key={year}>
@@ -704,6 +706,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 <Field
                                   as="select"
                                   name={`projects[${projectsIndex}].until_month`}
+                                  className="rounded-md w-1/2 mr-2"
                                 >
                                   {Options.monthsOptions.map((month) => (
                                     <option
@@ -717,6 +720,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 <Field
                                   as="select"
                                   name={`projects[${projectsIndex}].until_year`}
+                                  className="rounded-md w-1/3"
                                 >
                                   {Options.yearsOptions.map((year) => (
                                     <option value={year} key={year}>
@@ -797,7 +801,11 @@ export default function AddNewCvForm({ id }: Props) {
                   </div>
                   <div className="md:flex-grow">
                     <label>From</label>
-                    <Field as="select" name="university_start">
+                    <Field
+                      as="select"
+                      name="university_start"
+                      className="rounded-md ml-2 mr-6"
+                    >
                       {Options.yearsOptions.map((year) => (
                         <option value={year} key={year}>
                           {year}
@@ -806,7 +814,11 @@ export default function AddNewCvForm({ id }: Props) {
                     </Field>
 
                     <label>Until</label>
-                    <Field as="select" name="university_end">
+                    <Field
+                      as="select"
+                      name="university_end"
+                      className="rounded-md mx-2"
+                    >
                       {Options.yearsOptions.map((year) => (
                         <option value={year} key={year}>
                           {year}
