@@ -57,10 +57,16 @@ export default function AddNewCvForm({ id }: Props) {
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
 
-  //todo: handle other validations and add more styling
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
     last_name: Yup.string().required("Last name is required"),
+    english_spoken: Yup.string().required("Please select a level"),
+    english_written: Yup.string().required("Please select a level"),
+    projects: Yup.array().of(
+      Yup.object().shape({
+        name: Yup.string().required("Project name is required"),
+      }),
+    ),
   });
 
   async function fetchCv() {
@@ -153,45 +159,48 @@ export default function AddNewCvForm({ id }: Props) {
     >
       {(formProps) => (
         <Form>
-          <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 text-gray-600">
+          <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
             <div className="container mx-auto px-16 py-24">
-              <div className="-my-8 divide-y-2 divide-gray-100">
+              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Name
                     </span>
                   </div>
-                  <div className="md:flex-grow">
-                    <Field
-                      className="mr-2 w-auto rounded-md"
-                      name="first_name"
-                      type="text"
-                      placeholder="First Name"
-                    />
-                    <ErrorMessage
-                      className="text-red-600"
-                      name="first_name"
-                      component="span"
-                    />
-
-                    <Field
-                      className="w-auto rounded-md"
-                      name="last_name"
-                      type="text"
-                      placeholder="Last Name"
-                    />
-                    <ErrorMessage
-                      className="text-red-600"
-                      name="last_name"
-                      component="span"
-                    />
+                  <div className="md:flex-grow flex">
+                    <div className="w-1/2 inline-block pr-1">
+                      <Field
+                        className="rounded-md w-full"
+                        name="first_name"
+                        type="text"
+                        placeholder="First Name"
+                      />
+                      <ErrorMessage
+                        className="text-red-600 w-full"
+                        name="first_name"
+                        component="span"
+                      />
+                    </div>
+                    <div className="w-1/2 inline-block pl-1">
+                      <Field
+                        className="rounded-md w-full"
+                        name="last_name"
+                        type="text"
+                        placeholder="Last Name"
+                      />
+                      <ErrorMessage
+                        className="text-red-600 w-full"
+                        name="last_name"
+                        component="span"
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Summary of Qualification
                     </span>
                   </div>
@@ -206,12 +215,14 @@ export default function AddNewCvForm({ id }: Props) {
                 </div>
               </div>
 
-              <h2 className="my-10 text-2xl font-bold">Technical skills</h2>
+              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+                Technical skills
+              </h2>
 
-              <div className="-my-8 divide-y-2 divide-gray-100">
+              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Programming languages
                     </span>
                   </div>
@@ -230,7 +241,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`programming_languages.${languageIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -260,7 +271,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Libs & Frameworks
                     </span>
                   </div>
@@ -279,7 +290,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`libs_and_frameworks.${frameworkIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -309,7 +320,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Big Data
                     </span>
                   </div>
@@ -328,7 +339,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`big_data.${bigDataIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -358,7 +369,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Databases
                     </span>
                   </div>
@@ -377,7 +388,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`databases.${databaseIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -407,7 +418,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Dev Ops
                     </span>
                   </div>
@@ -426,7 +437,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`devops.${devopsIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -455,7 +466,9 @@ export default function AddNewCvForm({ id }: Props) {
                 </div>
               </div>
 
-              <h2 className="my-10 text-2xl font-bold">Projects</h2>
+              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+                Projects
+              </h2>
 
               <FieldArray
                 name="projects"
@@ -467,11 +480,11 @@ export default function AddNewCvForm({ id }: Props) {
                         (project: any, projectsIndex: any) => (
                           <div
                             key={projectsIndex}
-                            className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 rounded-md border border-gray-400 px-6"
+                            className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 dark:divide-gray-700 rounded-md border border-gray-400 dark:border-gray-700 px-6"
                           >
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Project Name
                                 </span>
                               </div>
@@ -481,12 +494,17 @@ export default function AddNewCvForm({ id }: Props) {
                                   name={`projects[${projectsIndex}].name`}
                                   type="text"
                                 />
+                                <ErrorMessage
+                                  className="text-red-600 w-full"
+                                  name={`projects[${projectsIndex}].name`}
+                                  component="span"
+                                />
                               </div>
                             </div>
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Project Description
                                 </span>
                               </div>
@@ -502,7 +520,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Field
                                 </span>
                               </div>
@@ -517,7 +535,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Size of the team
                                 </span>
                               </div>
@@ -532,7 +550,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Position
                                 </span>
                               </div>
@@ -547,7 +565,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Tools & Technologies
                                 </span>
                               </div>
@@ -572,7 +590,7 @@ export default function AddNewCvForm({ id }: Props) {
                                               className="mb-2 flex w-full"
                                             >
                                               <Field
-                                                className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                                className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                                 name={`projects[${projectsIndex}].technologies.${technologiesIndex}`}
                                               />
                                               <button
@@ -605,7 +623,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Responsibilities
                                 </span>
                               </div>
@@ -630,7 +648,7 @@ export default function AddNewCvForm({ id }: Props) {
                                               className="mb-2 flex w-full"
                                             >
                                               <Field
-                                                className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                                className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                                 name={`projects[${projectsIndex}].responsibilities.${responsibilitiesIndex}`}
                                               />
                                               <button
@@ -663,7 +681,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   From
                                 </span>
                               </div>
@@ -673,6 +691,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   name={`projects[${projectsIndex}].from_month`}
                                   className="rounded-md w-1/2 mr-2"
                                 >
+                                  <option />
                                   {Options.monthsOptions.map((month) => (
                                     <option
                                       value={month.value}
@@ -687,6 +706,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   name={`projects[${projectsIndex}].from_year`}
                                   className="rounded-md w-1/3"
                                 >
+                                  <option />
                                   {Options.yearsOptions.map((year) => (
                                     <option value={year} key={year}>
                                       {year}
@@ -698,7 +718,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                             <div className="flex flex-wrap py-8 md:flex-nowrap">
                               <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700">
+                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                                   Until
                                 </span>
                               </div>
@@ -708,6 +728,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   name={`projects[${projectsIndex}].until_month`}
                                   className="rounded-md w-1/2 mr-2"
                                 >
+                                  <option />
                                   {Options.monthsOptions.map((month) => (
                                     <option
                                       value={month.value}
@@ -722,6 +743,7 @@ export default function AddNewCvForm({ id }: Props) {
                                   name={`projects[${projectsIndex}].until_year`}
                                   className="rounded-md w-1/3"
                                 >
+                                  <option />
                                   {Options.yearsOptions.map((year) => (
                                     <option value={year} key={year}>
                                       {year}
@@ -758,12 +780,14 @@ export default function AddNewCvForm({ id }: Props) {
                 )}
               />
 
-              <h2 className="my-10 text-2xl font-bold">Education</h2>
+              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+                Education
+              </h2>
 
-              <div className="-my-8 divide-y-2 divide-gray-100">
+              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       University
                     </span>
                   </div>
@@ -779,7 +803,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Degree
                     </span>
                   </div>
@@ -795,17 +819,18 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Duration
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <label>From</label>
+                    <label className="dark:text-gray-400">From</label>
                     <Field
                       as="select"
                       name="university_start"
                       className="rounded-md ml-2 mr-6"
                     >
+                      <option />
                       {Options.yearsOptions.map((year) => (
                         <option value={year} key={year}>
                           {year}
@@ -813,12 +838,13 @@ export default function AddNewCvForm({ id }: Props) {
                       ))}
                     </Field>
 
-                    <label>Until</label>
+                    <label className="dark:text-gray-400">Until</label>
                     <Field
                       as="select"
                       name="university_end"
                       className="rounded-md mx-2"
                     >
+                      <option />
                       {Options.yearsOptions.map((year) => (
                         <option value={year} key={year}>
                           {year}
@@ -829,12 +855,14 @@ export default function AddNewCvForm({ id }: Props) {
                 </div>
               </div>
 
-              <h2 className="my-10 text-2xl font-bold">Level of English</h2>
+              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+                Level of English
+              </h2>
 
-              <div className="-my-8 divide-y-2 divide-gray-100">
+              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Spoken
                     </span>
                   </div>
@@ -844,17 +872,23 @@ export default function AddNewCvForm({ id }: Props) {
                       name="english_spoken"
                       className="w-full rounded-md"
                     >
+                      <option />
                       {Options.englishLevels.map((level) => (
                         <option value={level.value} key={level.value}>
                           {level.label}
                         </option>
                       ))}
                     </Field>
+                    <ErrorMessage
+                      className="text-red-600 w-full"
+                      name="english_spoken"
+                      component="span"
+                    />
                   </div>
                 </div>
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Written
                     </span>
                   </div>
@@ -864,22 +898,30 @@ export default function AddNewCvForm({ id }: Props) {
                       name="english_written"
                       className="w-full rounded-md"
                     >
+                      <option />
                       {Options.englishLevels.map((level) => (
                         <option value={level.value} key={level.value}>
                           {level.label}
                         </option>
                       ))}
                     </Field>
+                    <ErrorMessage
+                      className="text-red-600 w-full"
+                      name="english_written"
+                      component="span"
+                    />
                   </div>
                 </div>
               </div>
 
-              <h2 className="my-10 text-2xl font-bold">Additional</h2>
+              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+                Additional
+              </h2>
 
-              <div className="-my-8 divide-y-2 divide-gray-100">
+              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Certifications
                     </span>
                   </div>
@@ -898,7 +940,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`certifications.${certificationIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -928,7 +970,7 @@ export default function AddNewCvForm({ id }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
                       Personal Qualities
                     </span>
                   </div>
@@ -947,7 +989,7 @@ export default function AddNewCvForm({ id }: Props) {
                                 >
                                   <Field
                                     name={`personal_qualities.${personalIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1"
+                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
                                   />
                                   <button
                                     className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
@@ -977,7 +1019,7 @@ export default function AddNewCvForm({ id }: Props) {
               </div>
 
               <button
-                className="my-10 rounded-md bg-purple-700 p-5 text-white hover:bg-purple-800"
+                className="mt-20 rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600 w-full"
                 type="submit"
               >
                 Submit
