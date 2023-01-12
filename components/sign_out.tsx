@@ -12,7 +12,7 @@ export default function SignOut() {
   }
 
   return (
-    <a href="#" onClick={signOut}>
+    <a href="#" onClick={signOut} className="signOut">
       Sign Out
     </a>
   );

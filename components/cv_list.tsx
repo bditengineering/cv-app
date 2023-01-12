@@ -15,7 +15,7 @@ export default function CVList({ cvs, session }: CVListProps) {
 
     return (
       <Link
-        className="mt-5 rounded-md border bg-purple-700 px-4 py-2 text-white"
+        className="rounded-md border bg-purple-700 px-4 py-2 text-white block w-fit m-auto"
         prefetch={false}
         href={"/new"}
       >
@@ -26,7 +26,7 @@ export default function CVList({ cvs, session }: CVListProps) {
 
   return (
     <>
-      <table className="border-3 min-w-full table-auto border-collapse">
+      <table className="border-3 min-w-full table-auto border-collapse my-4">
         <thead className="justify-between">
           <tr className="bg-gray-800">
             <th className="px-16 py-2 text-gray-300">ID</th>
