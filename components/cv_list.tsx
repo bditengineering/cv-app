@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { Session } from "@supabase/supabase-js";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { CV } from "./types";
+import GeneratedPDF from "./generatedPDF";
 
 interface CVListProps {
   cvs: CV[] | null;
@@ -38,21 +40,31 @@ export default function CVList({ cvs, session }: CVListProps) {
         </thead>
         <tbody className="bg-gray-200">
           {cvs?.map((cv) => (
-            <tr key={cv.id}>
-              <td className="px-16 py-2 dark:text-black">{cv.id}</td>
-              <td className="px-16 py-2 dark:text-black">{cv.first_name}</td>
-              <td className="px-16 py-2 dark:text-black">{cv.last_name}</td>
-              <td className="px-16 py-2 dark:text-black">{cv.created_at}</td>
-              <td className="px-16 py-2 dark:text-black">
-                <Link
-                  className="rounded-md border bg-purple-700 px-4 py-2 text-white"
-                  prefetch={false}
-                  href={`/edit/${cv.id}`}
-                >
-                  Edit
-                </Link>
-              </td>
-            </tr>
+            <>
+              <tr key={cv.id}>
+                <td className="px-16 py-2 dark:text-black">{cv.id}</td>
+                <td className="px-16 py-2 dark:text-black">{cv.first_name}</td>
+                <td className="px-16 py-2 dark:text-black">{cv.last_name}</td>
+                <td className="px-16 py-2 dark:text-black">{cv.created_at}</td>
+                <td className="px-16 py-2 dark:text-black">
+                  <Link
+                    className="rounded-md border bg-purple-700 px-4 py-2 text-white"
+                    prefetch={false}
+                    href={`/edit/${cv.id}`}
+                  >
+                    Edit
+                  </Link>
+                </td>
+                <td>
+                  <PDFDownloadLink
+                    document={<GeneratedPDF cv={cv} />}
+                    fileName="generated_cv"
+                  >
+                    <button>Download PDF</button>
+                  </PDFDownloadLink>
+                </td>
+              </tr>
+            </>
           ))}
         </tbody>
       </table>
