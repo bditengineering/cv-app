@@ -10,6 +10,10 @@ export default async function Home() {
   const {
     data: { session: supabaseSession },
   } = await supabase.auth.getSession();
+  const { data: admin } = await supabase
+    .from("admins")
+    .select("*")
+    .eq("user_id", supabaseSession?.user.id);
 
   return (
     <div className={styles.container}>
@@ -19,7 +23,7 @@ export default async function Home() {
           <Link href={"/signin"}>Sign In</Link> |{" "}
           <Link href={"/signup"}>Sign Up</Link> | <SignOut />
         </div>
-        <CVList cvs={data} session={supabaseSession} />
+        <CVList cvs={data} session={supabaseSession} admin={admin} />
       </main>
     </div>
   );

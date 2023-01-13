@@ -1,15 +1,17 @@
 "use client";
 
+import supabase from "../utils/supabase_browser";
 import Link from "next/link";
 import { Session } from "@supabase/supabase-js";
-import { CV } from "./types";
+import { CV, admin } from "./types";
 
 interface CVListProps {
   cvs: CV[] | null;
   session: Session | null;
+  admin: admin[] | null;
 }
 
-export default function CVList({ cvs, session }: CVListProps) {
+export default function CVList({ cvs, session, admin }: CVListProps) {
   function renderAddNew() {
     if (!session) return null;
 
@@ -24,6 +26,10 @@ export default function CVList({ cvs, session }: CVListProps) {
     );
   }
 
+  async function deleteCV(cv_id: any) {
+    const { data, error } = await supabase.from("cv").delete().eq("id", cv_id);
+  }
+
   return (
     <>
       <table className="border-3 min-w-full table-auto border-collapse">
@@ -33,6 +39,7 @@ export default function CVList({ cvs, session }: CVListProps) {
             <th className="px-16 py-2 text-gray-300">First Name</th>
             <th className="px-16 py-2 text-gray-300">Last Name</th>
             <th className="px-16 py-2 text-gray-300">Created At</th>
+            <th className="px-16 py-2 text-gray-300"></th>
             <th className="px-16 py-2 text-gray-300"></th>
           </tr>
         </thead>
@@ -52,6 +59,16 @@ export default function CVList({ cvs, session }: CVListProps) {
                   Edit
                 </Link>
               </td>
+              {admin && admin?.length > 0 && (
+                <td className="px-16 py-2 dark:text-black">
+                  <button
+                    className="rounded-md border bg-purple-700 px-4 py-2 text-white"
+                    onClick={() => deleteCV(cv.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
