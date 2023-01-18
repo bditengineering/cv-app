@@ -1,5 +1,6 @@
 "use client";
 
+import { jsPDF } from "jspdf";
 import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -62,6 +63,78 @@ export default function AddNewCvForm({ id }: Props) {
     }
   }
 
+  const nameDiv = `
+  <div style="padding: 15; border: 1px solid black;">
+    <span style="color: orange; magin: 20px">Name: ${form.first_name}</span>
+    <span style="color: green;">Last name: ${form.last_name}</span>
+  </div>`;
+
+  const html = `
+  <html>
+    <head>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    </head>
+    <body>
+      <div style="padding: 15; border: 1px solid black;">
+        <span style="color: red; display: inline;">Name: ${form.first_name}</span>
+        <span style="color: blue;">Last name: ${form.last_name}</span>
+      </div>
+    </body>
+  </html>`;
+
+  const htmlNoScript = `
+  <html>
+    <body>
+      <div style="padding: 15; border: 1px solid black;">
+        <span style="color: red; display: inline;">Name: ${form.first_name}</span>
+        <span style="color: blue;">Last name: ${form.last_name}</span>
+      </div>
+    </body> 
+  </html>`;
+
+  const html2 = `
+  <html>
+    <head>
+      <style>
+        .personName { color: blue; }
+        .personLastName { color: red; }
+      </style>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    </head>
+    <body>
+      <div>
+        <span class="personName">Name: ${form.first_name}</span>
+        <span class="personLastName">Last name: ${form.last_name}</span>
+      </div>
+    </body> 
+  </html>`;
+
+  const htmlNoScript2 = `
+  <html>
+    <head>
+      <style>
+        .personName { color: blue; }
+        .personLastName { color: red; }
+      </style>
+    </head>
+    <body>
+      <div>
+        <span class="personName">Name: ${form.first_name}</span>
+        <span class="personLastName">Last name: ${form.last_name}</span>
+      </div>
+    </body> 
+  </html>`;
+
+  function generateSimplePDF() {
+    const doc = new jsPDF();
+    doc.html(html, {
+      async callback(doc) {
+        doc.output("dataurlnewwindow");
+        // doc.save("generatedCV.pdf");
+      },
+    });
+  }
+
   useEffect(() => {
     fetchCv();
   }, []);
@@ -110,6 +183,12 @@ export default function AddNewCvForm({ id }: Props) {
             Submit
           </button>
         </div>
+        <button
+          className="mt-20 rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600 w-full"
+          onClick={generateSimplePDF}
+        >
+          generate PDF
+        </button>
         {serverErrorMessage && (
           <span className="my-2 flex justify-center text-purple-400">
             *{serverErrorMessage}
