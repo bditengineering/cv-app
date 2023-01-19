@@ -93,15 +93,12 @@ export default function AddNewCvForm({ id }: Props) {
         data: { session },
       } = await supabase.auth.getSession();
 
-      updatedCv.created_by = session?.user.id
+      updatedCv.created_by = session?.user.id;
     }
 
     delete updatedCv.projects;
 
-    return supabase
-      .from("cv")
-      .upsert(updatedCv)
-      .select();
+    return supabase.from("cv").upsert(updatedCv).select();
   }
 
   async function upsertProjects(values: any, cvData: any) {
