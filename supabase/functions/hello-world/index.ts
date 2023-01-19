@@ -5,6 +5,7 @@
 import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
+import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
 
 console.log("Hello from Functions!");
 
@@ -39,7 +40,7 @@ serve(async function handler(req: Request) {
 
     doc.text(`${name}`, 10, 10);
 
-    doc.autoTable({
+    autoTable(doc, {
       theme: "grid",
       tableLineColor: [192, 192, 192],
       tableLineWidth: 1,
@@ -58,10 +59,10 @@ serve(async function handler(req: Request) {
         textColor: 0,
       },
       head: [["Summary of Qualification"]],
-      body: [[employee.summary]],
+      body: [[employee.summary || ""]],
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       theme: "grid",
       tableLineColor: [192, 192, 192],
       tableLineWidth: 1,
@@ -78,15 +79,6 @@ serve(async function handler(req: Request) {
       bodyStyles: {
         fillColor: [250, 250, 250],
         textColor: 0,
-      },
-      columnStyles: {
-        0: {
-          width: "30%",
-          fontStyle: "bold",
-        },
-        1: {
-          width: "70%",
-        },
       },
       head: [
         [
@@ -105,7 +97,7 @@ serve(async function handler(req: Request) {
       ],
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       theme: "grid",
       tableLineColor: [192, 192, 192],
       tableLineWidth: 1,
@@ -122,15 +114,6 @@ serve(async function handler(req: Request) {
       bodyStyles: {
         fillColor: [250, 250, 250],
         textColor: 0,
-      },
-      columnStyles: {
-        0: {
-          width: "30%",
-          fontStyle: "bold",
-        },
-        1: {
-          width: "70%",
-        },
       },
       head: [
         [
@@ -153,7 +136,7 @@ serve(async function handler(req: Request) {
       ],
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       theme: "grid",
       tableLineColor: [192, 192, 192],
       tableLineWidth: 1,
@@ -170,15 +153,6 @@ serve(async function handler(req: Request) {
       bodyStyles: {
         fillColor: [250, 250, 250],
         textColor: 0,
-      },
-      columnStyles: {
-        0: {
-          width: "30%",
-          fontStyle: "bold",
-        },
-        1: {
-          width: "70%",
-        },
       },
       head: [
         [
