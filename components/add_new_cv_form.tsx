@@ -69,11 +69,11 @@ export default function AddNewCvForm({ id }: Props) {
     ),
   });
 
-  async function fetchCv() {
+  async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
       .select("*, projects(*)")
-      .eq("id", id);
+      .eq("id", employeeId);
 
     if (data && data.length === 1) {
       const formData = attributes.reduce((acc, attr) => {
@@ -86,23 +86,21 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function upsert(values: any) {
-    const CV = { ...values };
-    delete CV.projects;
+    const updatedCv = { ...values };
 
-    if (id) {
-      return supabase.from("cv").update(CV).eq("id", id).select();
+    if (!id) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      updatedCv.created_by = session?.user.id
     }
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    delete updatedCv.projects;
 
     return supabase
       .from("cv")
-      .insert({
-        ...CV,
-        created_by: session?.user.id,
-      })
+      .upsert(updatedCv)
       .select();
   }
 
@@ -126,9 +124,9 @@ export default function AddNewCvForm({ id }: Props) {
 
   useEffect(() => {
     if (id) {
-      fetchCv();
+      fetchCv(id);
     }
-  }, []);
+  }, [id]);
 
   return (
     <Formik
