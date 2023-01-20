@@ -85,6 +85,13 @@ export default function AddNewCvForm({ id }: Props) {
     }
   }
 
+  async function uploadPdf() {
+    const result = await fetch("/api/upload_to_drive", {
+      method: "GET",
+    });
+    console.log(result);
+  }
+
   async function upsert(values: any) {
     const updatedCv = { ...values };
 
@@ -111,6 +118,8 @@ export default function AddNewCvForm({ id }: Props) {
   async function handleSubmit(values: any) {
     const { data, error } = await upsert(values);
     values.projects.forEach((project: any) => upsertProjects(project, data));
+
+    uploadPdf();
 
     if (error) {
       setServerErrorMessage(error.message);
