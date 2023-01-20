@@ -16,8 +16,7 @@ export default async function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>CV App</h1>
         <div>
-          <Link href={"/signin"}>Sign In</Link> |{" "}
-          <Link href={"/signup"}>Sign Up</Link> | <SignOut />
+          <SignOut />
         </div>
         <CVList cvs={data} session={supabaseSession} />
       </main>
