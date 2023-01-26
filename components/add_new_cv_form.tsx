@@ -7,9 +7,9 @@ import { CV } from "./types";
 import * as Options from "../constants/CvFormOptions";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import CvFieldArray from "./cv-form/cv_field_array";
-import Projects from "./cv-form/projects";
-import TechnicalSkill from "./cv-form/technical_skill";
+import CvFieldArray from "./cv_form/cv_field_array";
+import Projects from "./cv_form/projects";
+import TechnicalSkill from "./cv_form/technical_skill";
 
 const attributes = [
   "id",
@@ -92,22 +92,13 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function upsertProjects(values: any, cvData: any) {
-    if (values.id) {
-      return supabase.from("projects").update(values).eq("id", values.id);
-    }
-    return supabase.from("projects").insert({ ...values, cv_id: cvData[0].id });
+    values.cv_id = cvData[0].id;
+    return supabase.from("projects").upsert(values);
   }
 
   async function upsertSkills(values: any, cvData: any) {
-    if (values.id) {
-      return supabase
-        .from("technical_skills")
-        .update(values)
-        .eq("id", values.id);
-    }
-    return supabase
-      .from("technical_skills")
-      .insert({ ...values, cv_id: cvData[0].id });
+    values.cv_id = cvData[0].id;
+    return supabase.from("technical_skills").upsert(values);
   }
 
   async function handleSubmit(values: any) {
