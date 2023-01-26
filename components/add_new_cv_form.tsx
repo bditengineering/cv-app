@@ -9,6 +9,7 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import CvFieldArray from "./cv-form/cv_field_array";
 import Projects from "./cv-form/projects";
+import TechnicalSkill from "./cv-form/technical_skill";
 
 const attributes = [
   "id",
@@ -21,14 +22,10 @@ const attributes = [
   "university_start",
   "english_spoken",
   "english_written",
-  "programming_languages",
-  "libs_and_frameworks",
-  "big_data",
-  "databases",
-  "devops",
   "certifications",
   "personal_qualities",
   "projects",
+  "technical_skills",
 ];
 
 interface Props {
@@ -50,11 +47,7 @@ export default function AddNewCvForm({ id }: Props) {
     projects: [],
     certifications: [],
     personal_qualities: [],
-    programming_languages: [],
-    libs_and_frameworks: [],
-    big_data: [],
-    databases: [],
-    devops: [],
+    technical_skills: [],
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
 
@@ -68,7 +61,7 @@ export default function AddNewCvForm({ id }: Props) {
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, projects(*)")
+      .select("*, projects(*), technical_skills(*)")
       .eq("id", employeeId);
 
     if (data && data.length === 1) {
@@ -93,6 +86,7 @@ export default function AddNewCvForm({ id }: Props) {
     }
 
     delete updatedCv.projects;
+    delete updatedCv.technical_skills;
 
     return supabase.from("cv").upsert(updatedCv).select();
   }
@@ -104,9 +98,22 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("projects").insert({ ...values, cv_id: cvData[0].id });
   }
 
+  async function upsertSkills(values: any, cvData: any) {
+    if (values.id) {
+      return supabase
+        .from("technical_skills")
+        .update(values)
+        .eq("id", values.id);
+    }
+    return supabase
+      .from("technical_skills")
+      .insert({ ...values, cv_id: cvData[0].id });
+  }
+
   async function handleSubmit(values: any) {
     const { data, error } = await upsert(values);
     values.projects.forEach((project: any) => upsertProjects(project, data));
+    values.technical_skills.forEach((skill: any) => upsertSkills(skill, data));
 
     if (error) {
       setServerErrorMessage(error.message);
@@ -192,37 +199,7 @@ export default function AddNewCvForm({ id }: Props) {
                 Technical skills
               </h2>
 
-              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Programming Languages"}
-                  fieldArrayName={"programming_languages"}
-                />
-
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Libs & Frameworks"}
-                  fieldArrayName={"libs_and_frameworks"}
-                />
-
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Big Data"}
-                  fieldArrayName={"big_data"}
-                />
-
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Databases"}
-                  fieldArrayName={"databases"}
-                />
-
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Dev Ops"}
-                  fieldArrayName={"devops"}
-                />
-              </div>
+              <TechnicalSkill fProps={formProps} />
 
               <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
                 Projects

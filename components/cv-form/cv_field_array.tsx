@@ -8,8 +8,6 @@ interface Props {
 }
 
 export default function CvFieldArray({ fProps, title, fieldArrayName }: Props) {
-  console.log("cv field array.tsx, formProps =");
-  console.log(fProps);
   return (
     <div className="flex flex-wrap py-8 md:flex-nowrap">
       <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
