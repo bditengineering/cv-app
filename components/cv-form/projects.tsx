@@ -1,6 +1,7 @@
 import { Field, FieldArray } from "formik";
 import * as Icons from "../Icons";
 import * as Options from "../../constants/CvFormOptions";
+import NestedRow from "./nested_row";
 
 interface Props {
   fProps: any;
@@ -102,47 +103,11 @@ export default function Projects({ fProps }: Props) {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <FieldArray
-                      name={`projects[${projectsIndex}].technologies`}
-                      render={(arrayHelpers) => (
-                        <div>
-                          {fProps.values.projects[projectsIndex].technologies &&
-                            fProps.values.projects[projectsIndex].technologies
-                              .length > 0 &&
-                            fProps.values.projects[
-                              projectsIndex
-                            ].technologies.map(
-                              (technology: any, technologiesIndex: any) => (
-                                <div
-                                  key={technologiesIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                    name={`projects[${projectsIndex}].technologies.${technologiesIndex}`}
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(technologiesIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add</span>
-                          </button>
-                        </div>
-                      )}
+                    <NestedRow
+                      fProps={fProps}
+                      outerIndex={projectsIndex}
+                      outerArray="projects"
+                      innerArray="technologies"
                     />
                   </div>
                 </div>
@@ -154,51 +119,11 @@ export default function Projects({ fProps }: Props) {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <FieldArray
-                      name={`projects[${projectsIndex}].responsibilities`}
-                      render={(arrayHelpers) => (
-                        <div>
-                          {fProps.values.projects[projectsIndex]
-                            .responsibilities &&
-                            fProps.values.projects[projectsIndex]
-                              .responsibilities.length > 0 &&
-                            fProps.values.projects[
-                              projectsIndex
-                            ].responsibilities.map(
-                              (
-                                responsibility: any,
-                                responsibilitiesIndex: any,
-                              ) => (
-                                <div
-                                  key={responsibilitiesIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                    name={`projects[${projectsIndex}].responsibilities.${responsibilitiesIndex}`}
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(responsibilitiesIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add</span>
-                          </button>
-                        </div>
-                      )}
+                    <NestedRow
+                      fProps={fProps}
+                      outerIndex={projectsIndex}
+                      outerArray="projects"
+                      innerArray="responsibilities"
                     />
                   </div>
                 </div>
