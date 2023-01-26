@@ -4,10 +4,11 @@ import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
-import * as Icons from "./Icons";
 import * as Options from "../constants/CvFormOptions";
-import { Formik, Field, FieldArray, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import CvFieldArray from "./cv-form/cv_field_array";
+import Projects from "./cv-form/projects";
 
 const attributes = [
   "id",
@@ -62,11 +63,6 @@ export default function AddNewCvForm({ id }: Props) {
     last_name: Yup.string().required("Last name is required"),
     english_spoken: Yup.string().required("Please select a level"),
     english_written: Yup.string().required("Please select a level"),
-    projects: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string().required("Project name is required"),
-      }),
-    ),
   });
 
   async function fetchCv(employeeId: string) {
@@ -127,25 +123,7 @@ export default function AddNewCvForm({ id }: Props) {
 
   return (
     <Formik
-      initialValues={{
-        first_name: form.first_name,
-        last_name: form.last_name,
-        summary: form.summary,
-        university: form.university,
-        degree: form.degree,
-        university_end: form.university_end,
-        university_start: form.university_start,
-        english_spoken: form.english_spoken,
-        english_written: form.english_written,
-        projects: form.projects,
-        certifications: form.certifications,
-        personal_qualities: form.personal_qualities,
-        programming_languages: form.programming_languages,
-        libs_and_frameworks: form.libs_and_frameworks,
-        big_data: form.big_data,
-        databases: form.databases,
-        devops: form.devops,
-      }}
+      initialValues={{ ...form }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
         handleSubmit(values);
@@ -215,565 +193,42 @@ export default function AddNewCvForm({ id }: Props) {
               </h2>
 
               <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Programming languages
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="programming_languages"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.programming_languages &&
-                            formProps.values.programming_languages.length > 0 &&
-                            formProps.values.programming_languages.map(
-                              (language: any, languageIndex: any) => (
-                                <div
-                                  key={languageIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`programming_languages.${languageIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(languageIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                            className="flex text-indigo-500"
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add Skill</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Programming Languages"}
+                  fieldArrayName={"programming_languages"}
+                />
 
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Libs & Frameworks
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="libs_and_frameworks"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.libs_and_frameworks &&
-                            formProps.values.libs_and_frameworks.length > 0 &&
-                            formProps.values.libs_and_frameworks.map(
-                              (framework: any, frameworkIndex: any) => (
-                                <div
-                                  key={frameworkIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`libs_and_frameworks.${frameworkIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(frameworkIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add Skill</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Libs & Frameworks"}
+                  fieldArrayName={"libs_and_frameworks"}
+                />
 
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Big Data
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="big_data"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.big_data &&
-                            formProps.values.big_data.length > 0 &&
-                            formProps.values.big_data.map(
-                              (bigData: any, bigDataIndex: any) => (
-                                <div
-                                  key={bigDataIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`big_data.${bigDataIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(bigDataIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                            className="flex text-indigo-500"
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add Skill</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Big Data"}
+                  fieldArrayName={"big_data"}
+                />
 
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Databases
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="databases"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.databases &&
-                            formProps.values.databases.length > 0 &&
-                            formProps.values.databases.map(
-                              (database: any, databaseIndex: any) => (
-                                <div
-                                  key={databaseIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`databases.${databaseIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(databaseIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add Skill</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Databases"}
+                  fieldArrayName={"databases"}
+                />
 
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Dev Ops
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="devops"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.devops &&
-                            formProps.values.devops.length > 0 &&
-                            formProps.values.devops.map(
-                              (item: any, devopsIndex: any) => (
-                                <div
-                                  key={devopsIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`devops.${devopsIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(devopsIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add Skill</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Dev Ops"}
+                  fieldArrayName={"devops"}
+                />
               </div>
 
               <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
                 Projects
               </h2>
 
-              <FieldArray
-                name="projects"
-                render={(arrayHelpers) => (
-                  <div>
-                    {formProps.values.projects &&
-                      formProps.values.projects.length > 0 &&
-                      formProps.values.projects.map(
-                        (project: any, projectsIndex: any) => (
-                          <div
-                            key={projectsIndex}
-                            className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 dark:divide-gray-700 rounded-md border border-gray-400 dark:border-gray-700 px-6"
-                          >
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Project Name
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  className="w-full rounded-md"
-                                  name={`projects[${projectsIndex}].name`}
-                                  type="text"
-                                />
-                                <ErrorMessage
-                                  className="text-red-600 w-full"
-                                  name={`projects[${projectsIndex}].name`}
-                                  component="span"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Project Description
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  className="w-full rounded-md"
-                                  name={`projects[${projectsIndex}].description`}
-                                  type="text"
-                                  as="textarea"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Field
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  className="w-full rounded-md"
-                                  name={`projects[${projectsIndex}].field`}
-                                  type="text"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Size of the team
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  className="w-full rounded-md"
-                                  name={`projects[${projectsIndex}].team_size`}
-                                  type="text"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Position
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  className="w-full rounded-md"
-                                  name={`projects[${projectsIndex}].position`}
-                                  type="text"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Tools & Technologies
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <FieldArray
-                                  name={`projects[${projectsIndex}].technologies`}
-                                  render={(arrayHelpers) => (
-                                    <div>
-                                      {formProps.values.projects[projectsIndex]
-                                        .technologies &&
-                                        formProps.values.projects[projectsIndex]
-                                          .technologies.length > 0 &&
-                                        formProps.values.projects[
-                                          projectsIndex
-                                        ].technologies.map(
-                                          (
-                                            technology: any,
-                                            technologiesIndex: any,
-                                          ) => (
-                                            <div
-                                              key={technologiesIndex}
-                                              className="mb-2 flex w-full"
-                                            >
-                                              <Field
-                                                className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                                name={`projects[${projectsIndex}].technologies.${technologiesIndex}`}
-                                              />
-                                              <button
-                                                className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                                type="button"
-                                                onClick={() =>
-                                                  arrayHelpers.remove(
-                                                    technologiesIndex,
-                                                  )
-                                                }
-                                              >
-                                                <Icons.TrashCan />
-                                              </button>
-                                            </div>
-                                          ),
-                                        )}
-                                      <button
-                                        className="flex text-indigo-500"
-                                        type="button"
-                                        onClick={() => arrayHelpers.push("")}
-                                      >
-                                        <Icons.PlusCircle />
-                                        <span>Add</span>
-                                      </button>
-                                    </div>
-                                  )}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Responsibilities
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <FieldArray
-                                  name={`projects[${projectsIndex}].responsibilities`}
-                                  render={(arrayHelpers) => (
-                                    <div>
-                                      {formProps.values.projects[projectsIndex]
-                                        .responsibilities &&
-                                        formProps.values.projects[projectsIndex]
-                                          .responsibilities.length > 0 &&
-                                        formProps.values.projects[
-                                          projectsIndex
-                                        ].responsibilities.map(
-                                          (
-                                            responsibility: any,
-                                            responsibilitiesIndex: any,
-                                          ) => (
-                                            <div
-                                              key={responsibilitiesIndex}
-                                              className="mb-2 flex w-full"
-                                            >
-                                              <Field
-                                                className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                                name={`projects[${projectsIndex}].responsibilities.${responsibilitiesIndex}`}
-                                              />
-                                              <button
-                                                className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                                type="button"
-                                                onClick={() =>
-                                                  arrayHelpers.remove(
-                                                    responsibilitiesIndex,
-                                                  )
-                                                }
-                                              >
-                                                <Icons.TrashCan />
-                                              </button>
-                                            </div>
-                                          ),
-                                        )}
-                                      <button
-                                        className="flex text-indigo-500"
-                                        type="button"
-                                        onClick={() => arrayHelpers.push("")}
-                                      >
-                                        <Icons.PlusCircle />
-                                        <span>Add</span>
-                                      </button>
-                                    </div>
-                                  )}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  From
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  as="select"
-                                  name={`projects[${projectsIndex}].from_month`}
-                                  className="rounded-md w-1/2 mr-2"
-                                >
-                                  <option />
-                                  {Options.monthsOptions.map((month) => (
-                                    <option
-                                      value={month.value}
-                                      key={month.value}
-                                    >
-                                      {month.label}
-                                    </option>
-                                  ))}
-                                </Field>
-                                <Field
-                                  as="select"
-                                  name={`projects[${projectsIndex}].from_year`}
-                                  className="rounded-md w-1/3"
-                                >
-                                  <option />
-                                  {Options.yearsOptions.map((year) => (
-                                    <option value={year} key={year}>
-                                      {year}
-                                    </option>
-                                  ))}
-                                </Field>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                                <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                                  Until
-                                </span>
-                              </div>
-                              <div className="md:flex-grow">
-                                <Field
-                                  as="select"
-                                  name={`projects[${projectsIndex}].until_month`}
-                                  className="rounded-md w-1/2 mr-2"
-                                >
-                                  <option />
-                                  {Options.monthsOptions.map((month) => (
-                                    <option
-                                      value={month.value}
-                                      key={month.value}
-                                    >
-                                      {month.label}
-                                    </option>
-                                  ))}
-                                </Field>
-                                <Field
-                                  as="select"
-                                  name={`projects[${projectsIndex}].until_year`}
-                                  className="rounded-md w-1/3"
-                                >
-                                  <option />
-                                  {Options.yearsOptions.map((year) => (
-                                    <option value={year} key={year}>
-                                      {year}
-                                    </option>
-                                  ))}
-                                </Field>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap py-8 md:flex-nowrap">
-                              <button
-                                className="flex text-indigo-500"
-                                type="button"
-                                onClick={() =>
-                                  arrayHelpers.remove(projectsIndex)
-                                }
-                              >
-                                <Icons.TrashCan />
-                                Remove Project
-                              </button>
-                            </div>
-                          </div>
-                        ),
-                      )}
-                    <button
-                      className="flex flex-wrap text-indigo-500"
-                      type="button"
-                      onClick={() => arrayHelpers.push({})}
-                    >
-                      <Icons.PlusCircle />
-                      <span>Add Project</span>
-                    </button>
-                  </div>
-                )}
-              />
+              <Projects fProps={formProps} />
 
               <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
                 Education
@@ -914,103 +369,17 @@ export default function AddNewCvForm({ id }: Props) {
               </h2>
 
               <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Certifications
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="certifications"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.certifications &&
-                            formProps.values.certifications.length > 0 &&
-                            formProps.values.certifications.map(
-                              (certification: any, certificationIndex: any) => (
-                                <div
-                                  key={certificationIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`certifications.${certificationIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(certificationIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Certifications"}
+                  fieldArrayName={"certifications"}
+                />
 
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Personal Qualities
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name="personal_qualities"
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values.personal_qualities &&
-                            formProps.values.personal_qualities.length > 0 &&
-                            formProps.values.personal_qualities.map(
-                              (quality: any, personalIndex: any) => (
-                                <div
-                                  key={personalIndex}
-                                  className="mb-2 flex w-full"
-                                >
-                                  <Field
-                                    name={`personal_qualities.${personalIndex}`}
-                                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                  />
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                                    type="button"
-                                    onClick={() =>
-                                      arrayHelpers.remove(personalIndex)
-                                    }
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            className="flex text-indigo-500"
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
+                <CvFieldArray
+                  fProps={formProps}
+                  title={"Personal Qualities"}
+                  fieldArrayName={"personal_qualities"}
+                />
               </div>
 
               <button
