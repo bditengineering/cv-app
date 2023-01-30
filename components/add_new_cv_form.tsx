@@ -45,6 +45,7 @@ export default function AddNewCvForm({ id }: Props) {
     english_spoken: "",
     english_written: "",
     projects: [],
+    cvs_projects: [],
     certifications: [],
     personal_qualities: [],
     technical_skills: [],
@@ -61,8 +62,13 @@ export default function AddNewCvForm({ id }: Props) {
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, projects(*), technical_skills(*)")
+      .select("*, technical_skills(*)")
       .eq("id", employeeId);
+
+    const { data: projects } = await supabase
+      .from("cvs_projects")
+      .select(`*, projects (*)`)
+      .eq("cv_id", employeeId);
 
     if (data && data.length === 1) {
       const formData = attributes.reduce((acc, attr) => {
@@ -70,11 +76,11 @@ export default function AddNewCvForm({ id }: Props) {
         return acc;
       }, {} as Partial<CV>);
 
-      setForm(formData);
+      setForm({ ...formData, projects: projects });
     }
   }
 
-  async function upsert(values: any) {
+  async function upsertCvs(values: any) {
     const updatedCv = { ...values };
 
     if (!id) {
@@ -91,9 +97,50 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("cv").upsert(updatedCv).select();
   }
 
+  //todo: fix upsert projects and cvsProjects
   async function upsertProjects(values: any, cvData: any) {
-    values.cv_id = cvData[0].id;
-    return supabase.from("projects").upsert(values);
+    const cv_id = cvData[0].id;
+
+    console.log("upsertProjects, values= ");
+    console.log(values);
+
+    console.log("upsertProjects, cv_id= ");
+    console.log(cv_id);
+
+    const projectValues = {
+      id: values.projects.id,
+      name: values.projects.name,
+      description: values.projects.description,
+      field: values.projects.field,
+      team_size: values.projects.team_size,
+    };
+
+    console.log("upsertProjects, projectValues= ");
+    console.log(projectValues);
+
+    const { data: projects, error } = await supabase
+      .from("projects")
+      .upsert(projectValues)
+      .select();
+
+    const cvsProjectsValues = {
+      id: values.id,
+      position: values.position,
+      technologies: values.technologies,
+      responsibilities: values.responsibilities,
+      from_month: values.from_month,
+      from_year: values.from_year,
+      until_month: values.until_month,
+      until_year: values.until_year,
+      cv_id: cv_id,
+      // project_id: project_id,
+    };
+
+    projects?.forEach((item) => {
+      supabase
+        .from("cvs_projects")
+        .upsert({ ...cvsProjectsValues, project_id: item.project_id });
+    });
   }
 
   async function upsertSkills(values: any, cvData: any) {
@@ -102,9 +149,9 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function handleSubmit(values: any) {
-    const { data, error } = await upsert(values);
-    values.projects.forEach((project: any) => upsertProjects(project, data));
-    values.technical_skills.forEach((skill: any) => upsertSkills(skill, data));
+    const { data: cvs, error } = await upsertCvs(values);
+    values.projects.forEach((project: any) => upsertProjects(project, cvs));
+    values.technical_skills.forEach((skill: any) => upsertSkills(skill, cvs));
 
     if (error) {
       setServerErrorMessage(error.message);

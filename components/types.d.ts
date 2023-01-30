@@ -11,6 +11,7 @@ export interface CV {
   english_spoken: string;
   english_written: string;
   projects: Array;
+  cvs_projects: Array;
   certifications: Array;
   personal_qualities: Array;
   technical_skills: Array;

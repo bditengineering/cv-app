@@ -29,7 +29,7 @@ export default function Projects({ fProps }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       className="w-full rounded-md"
-                      name={`projects[${projectsIndex}].name`}
+                      name={`projects[${projectsIndex}].projects.name`}
                       type="text"
                     />
                   </div>
@@ -44,7 +44,7 @@ export default function Projects({ fProps }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       className="w-full rounded-md"
-                      name={`projects[${projectsIndex}].description`}
+                      name={`projects[${projectsIndex}].projects.description`}
                       type="text"
                       as="textarea"
                     />
@@ -60,7 +60,7 @@ export default function Projects({ fProps }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       className="w-full rounded-md"
-                      name={`projects[${projectsIndex}].field`}
+                      name={`projects[${projectsIndex}].projects.field`}
                       type="text"
                     />
                   </div>
@@ -75,7 +75,7 @@ export default function Projects({ fProps }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       className="w-full rounded-md"
-                      name={`projects[${projectsIndex}].team_size`}
+                      name={`projects[${projectsIndex}].projects.team_size`}
                       type="text"
                     />
                   </div>
