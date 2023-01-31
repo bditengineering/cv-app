@@ -97,15 +97,8 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("cv").upsert(updatedCv).select();
   }
 
-  //todo: fix upsert projects and cvsProjects
   async function upsertProjects(values: any, cvData: any) {
     const cv_id = cvData[0].id;
-
-    console.log("upsertProjects, values= ");
-    console.log(values);
-
-    console.log("upsertProjects, cv_id= ");
-    console.log(cv_id);
 
     const projectValues = {
       id: values.projects.id,
@@ -115,13 +108,9 @@ export default function AddNewCvForm({ id }: Props) {
       team_size: values.projects.team_size,
     };
 
-    console.log("upsertProjects, projectValues= ");
-    console.log(projectValues);
-
-    const { data: projects, error } = await supabase
+    const { data: projects } = await supabase
       .from("projects")
-      .upsert(projectValues)
-      .select();
+      .upsert(projectValues);
 
     const cvsProjectsValues = {
       id: values.id,
@@ -133,14 +122,12 @@ export default function AddNewCvForm({ id }: Props) {
       until_month: values.until_month,
       until_year: values.until_year,
       cv_id: cv_id,
-      // project_id: project_id,
+      project_id: projectValues.id,
     };
 
-    projects?.forEach((item) => {
-      supabase
-        .from("cvs_projects")
-        .upsert({ ...cvsProjectsValues, project_id: item.project_id });
-    });
+    const { data: cvsProjects } = await supabase
+      .from("cvs_projects")
+      .upsert(cvsProjectsValues);
   }
 
   async function upsertSkills(values: any, cvData: any) {
