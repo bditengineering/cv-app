@@ -19,5 +19,5 @@ export async function middleware(req: NextRequest) {
 
 // Middleware runs before every route declared in the matcher array.
 export const config = {
-  matcher: ["/*"],
+  matcher: ["/"],
 };

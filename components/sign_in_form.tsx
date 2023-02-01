@@ -47,7 +47,7 @@ export default function SignInForm() {
         <div className="mb-1 flex flex-row justify-start space-x-2">
           <div className="h-9 w-3 bg-purple-700"></div>
           <div className="text-center text-3xl font-bold">
-            <h1>Login</h1>
+            <h1>Sign in</h1>
           </div>
         </div>
         <div className="flex flex-col">
@@ -75,16 +75,16 @@ export default function SignInForm() {
           />
         </div>
 
-        <div className="my-2 flex justify-center">
+        <div className="my-2 flex justify-start">
           <button
             className="w-72 rounded-md border bg-purple-700 p-2 font-bold text-white"
             type="submit"
           >
-            Log In
+            Submit
           </button>
         </div>
         {serverErrorMessage && (
-          <span className="my-2 flex justify-center text-purple-400">
+          <span className="my-2 flex justify-start text-purple-400">
             *{serverErrorMessage}
           </span>
         )}
