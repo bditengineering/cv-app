@@ -1,6 +1,7 @@
 import styles from "./Home.module.css";
 import CVList from "../components/cv_list";
 import SignOut from "../components/sign_out";
+import SignIn from "../components/sign_in_form";
 import Link from "next/link";
 import createClient from "../utils/supabase_server";
 
@@ -23,7 +24,7 @@ export default async function Home() {
             </>
           ) : (
             <>
-              <Link href={"/signin"}>Sign In</Link> |{" "}
+              <SignIn />
               <Link href={"/signup"}>Sign Up</Link>
             </>
           )}
