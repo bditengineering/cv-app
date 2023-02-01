@@ -4,8 +4,6 @@ import "./globals.css";
 
 import createClient from "../utils/supabase_server";
 import SupabaseListener from "../components/supabase_listener";
-import SignIn from "../components/sign_in_form";
-import Link from "next/link";
 
 export default async function RootLayout({
   children,
@@ -27,20 +25,7 @@ export default async function RootLayout({
       <head />
       <body>
         <SupabaseListener accessToken={session?.access_token} />
-        {session?.access_token ? (
-          children
-        ) : (
-          <div className="flex justify-center">
-            <div className="pt-10">
-              <div>
-                <SignIn />
-              </div>
-              <div>
-                <Link href={"/signup"}>Sign Up</Link>
-              </div>
-            </div>
-          </div>
-        )}
+        {children}
       </body>
     </html>
   );
