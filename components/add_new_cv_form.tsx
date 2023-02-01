@@ -49,7 +49,7 @@ export default function AddNewCvForm({ id }: Props) {
     personal_qualities: [],
     technical_skills: [],
   });
-  const [serverErrorMessage, setServerErrorMessage] = useState<string>("");
+  const [serverErrorMessage, setServerErrorMessage] = useState<string>();
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
@@ -61,7 +61,7 @@ export default function AddNewCvForm({ id }: Props) {
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, projects(*), technical_skills(*)")
+      .select("*, technical_skills(*)")
       .eq("id", employeeId);
 
     if (data && data.length === 1) {
@@ -103,14 +103,16 @@ export default function AddNewCvForm({ id }: Props) {
 
   async function handleSubmit(values: any) {
     const { data, error } = await upsert(values);
-    values.projects.forEach((project: any) => upsertProjects(project, data));
-    values.technical_skills.forEach((skill: any) => upsertSkills(skill, data));
+    setServerErrorMessage(error ? error.message : "");
 
-    if (error) {
-      setServerErrorMessage(error.message);
-    } else {
-      await router.push("/");
-    }
+    values.projects?.forEach((project: any) => upsertProjects(project, data));
+    values.technical_skills?.forEach(async (skill: any) => {
+      const { data: skillsData, error: skillError } = await upsertSkills(
+        skill,
+        data,
+      );
+      setServerErrorMessage(skillError ? skillError.message : "");
+    });
   }
 
   useEffect(() => {
