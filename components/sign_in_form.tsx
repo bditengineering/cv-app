@@ -44,7 +44,7 @@ export default function SignInForm() {
       }}
     >
       <Form>
-        <div className="mb-1 flex flex-row justify-start space-x-2">
+        <div className="mb-1 mt-8 flex flex-row justify-start space-x-2">
           <div className="h-9 w-3 bg-purple-700"></div>
           <div className="text-center text-3xl font-bold">
             <h1>Sign in</h1>
