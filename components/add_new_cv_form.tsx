@@ -108,9 +108,11 @@ export default function AddNewCvForm({ id }: Props) {
       team_size: values.projects.team_size,
     };
 
-    const { data: projects } = await supabase
+    const { data: projects, error: projectError } = await supabase
       .from("projects")
       .upsert(projectValues);
+
+    setServerErrorMessage(projectError ? projectError.message : "");
 
     const cvsProjectsValues = {
       id: values.id,
@@ -125,9 +127,11 @@ export default function AddNewCvForm({ id }: Props) {
       project_id: projectValues.id,
     };
 
-    const { data: cvsProjects } = await supabase
+    const { data: cvsProjects, error: cvsProjectsError } = await supabase
       .from("cvs_projects")
       .upsert(cvsProjectsValues);
+
+    setServerErrorMessage(cvsProjectsError ? cvsProjectsError.message : "");
   }
 
   async function upsertSkills(values: any, cvData: any) {
