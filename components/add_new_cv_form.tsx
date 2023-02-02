@@ -45,7 +45,7 @@ export default function AddNewCvForm({ id }: Props) {
     english_spoken: "",
     english_written: "",
     projects: [],
-    cvs_projects: [],
+    // cvs_projects: [],
     certifications: [],
     personal_qualities: [],
     technical_skills: [],
