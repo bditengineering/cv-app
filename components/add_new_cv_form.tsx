@@ -91,11 +91,6 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("cv").upsert(updatedCv).select();
   }
 
-  async function upsertProjects(values: any, cvData: any) {
-    values.cv_id = cvData[0].id;
-    return supabase.from("projects").upsert(values);
-  }
-
   async function upsertSkills(values: any, cvData: any) {
     values.cv_id = cvData[0].id;
     return supabase.from("technical_skills").upsert(values);
@@ -105,7 +100,6 @@ export default function AddNewCvForm({ id }: Props) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
-    // values.projects?.forEach((project: any) => upsertProjects(project, data));
     values.technical_skills?.forEach(async (skill: any) => {
       const { data: skillsData, error: skillError } = await upsertSkills(
         skill,
