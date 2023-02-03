@@ -13,9 +13,5 @@ export interface CV {
   projects: Array;
   certifications: Array;
   personal_qualities: Array;
-  programming_languages: Array;
-  libs_and_frameworks: Array;
-  big_data: Array;
-  databases: Array;
-  devops: Array;
+  technical_skills: Array;
 }
