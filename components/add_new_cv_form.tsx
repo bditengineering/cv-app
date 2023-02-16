@@ -5,27 +5,24 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
 import * as Options from "../constants/CvFormOptions";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import CvFieldArray from "./cv_form/cv_field_array";
 import Projects from "./cv_form/projects";
 import TechnicalSkill from "./cv_form/technical_skill";
+import * as Icons from "./Icons";
 
 const attributes = [
   "id",
   "first_name",
   "last_name",
   "summary",
-  "university",
-  "degree",
-  "university_end",
-  "university_start",
-  "english_spoken",
-  "english_written",
+  "english_spoken_level",
+  "english_written_level",
   "certifications",
   "personal_qualities",
+  "education",
   "projects",
-  "technical_skills",
 ];
 
 interface Props {
@@ -34,44 +31,54 @@ interface Props {
 
 export default function AddNewCvForm({ id }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState<Partial<CV>>({
+  const [form, setForm] = useState<Partial<any>>({
     first_name: "",
     last_name: "",
     summary: "",
-    university: "",
-    degree: "",
-    university_end: "",
-    university_start: "",
-    english_spoken: "",
-    english_written: "",
+    education: {
+      university_name: "",
+      start_year: "",
+      end_year: "",
+      degree: "",
+    },
+    english_written_level: "",
+    english_spoken_level: "",
     projects: [],
     certifications: [],
     personal_qualities: [],
-    technical_skills: [],
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
     last_name: Yup.string().required("Last name is required"),
-    english_spoken: Yup.string().required("Please select a level"),
-    english_written: Yup.string().required("Please select a level"),
+    english_spoken_level: Yup.string().required("Please select a level"),
+    english_written_level: Yup.string().required("Please select a level"),
   });
 
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, technical_skills(*)")
+      .select("*, projects(*), education(*), certifications(*)")
       .eq("id", employeeId);
 
-    if (data && data.length === 1) {
-      const formData = attributes.reduce((acc, attr) => {
-        acc[attr as keyof CV] = data[0][attr];
-        return acc;
-      }, {} as Partial<CV>);
+    if (!data) return;
 
-      setForm(formData);
-    }
+    const updatedProjects = data[0].projects.map((project: any) => {
+      return {
+        ...project,
+        date_start: new Date(project.date_start),
+        date_end: new Date(project.date_end),
+      };
+    });
+
+    const formData = {
+      ...data[0],
+      projects: updatedProjects,
+      education: data[0].education[0],
+    };
+
+    setForm(formData);
   }
 
   async function upsert(values: any) {
@@ -86,27 +93,88 @@ export default function AddNewCvForm({ id }: Props) {
     }
 
     delete updatedCv.projects;
-    delete updatedCv.technical_skills;
+    delete updatedCv.certifications;
+    delete updatedCv.education;
 
     return supabase.from("cv").upsert(updatedCv).select();
   }
 
-  async function upsertSkills(values: any, cvData: any) {
-    values.cv_id = cvData[0].id;
-    return supabase.from("technical_skills").upsert(values);
+  async function upsertCertifications(certifications: any, cvId: string) {
+    if (certifications.length === 0) {
+      return await supabase.from("certifications").delete().eq("cv_id", cvId);
+    }
+
+    const updatedCertifications = certifications.map((certification: any) => ({
+      ...certification,
+      cv_id: cvId,
+    }));
+    return supabase.from("certifications").upsert(updatedCertifications);
+  }
+
+  async function upsertEducation(education: any, cvId: string) {
+    education.cv_id = cvId;
+    return supabase.from("education").upsert(education);
+  }
+
+  async function upsertProjects(projects: any, cvId: string) {
+    if (projects.length === 0) {
+      return await supabase.from("projects").delete().eq("cv_id", cvId);
+    }
+
+    const updatedProjects = projects.map((project: any) => {
+      const startDate = new Date(project.date_start);
+      const endDate = new Date(project.date_end);
+      const formattedStartDate = `${startDate.getDay() + 1}.${
+        startDate.getMonth() + 1
+      }.${startDate.getFullYear()}`;
+      const formattedEndDate = `${endDate.getDay() + 1}.${
+        endDate.getMonth() + 1
+      }.${endDate.getFullYear()}`;
+
+      return {
+        ...project,
+        cv_id: cvId,
+        date_start: formattedStartDate,
+        date_end: formattedEndDate,
+      };
+    });
+
+    return supabase.from("projects").upsert(updatedProjects);
   }
 
   async function handleSubmit(values: any) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
-    values.technical_skills?.forEach(async (skill: any) => {
-      const { data: skillsData, error: skillError } = await upsertSkills(
-        skill,
-        data,
-      );
-      setServerErrorMessage(skillError ? skillError.message : "");
-    });
+    if (!data) return;
+
+    const cvId = data[0].id;
+
+    if (values.education) {
+      const { error } = await upsertEducation(values.education, cvId);
+      if (error) {
+        setServerErrorMessage(error ? error.message : "");
+        return;
+      }
+    }
+
+    if (values.certifications) {
+      const { error } = await upsertCertifications(values.certifications, cvId);
+      if (error) {
+        setServerErrorMessage(error ? error.message : "");
+        return;
+      }
+    }
+
+    if (values.projects) {
+      const { error } = await upsertProjects(values.projects, cvId);
+      if (error) {
+        setServerErrorMessage(error ? error.message : "");
+        return;
+      }
+    }
+
+    router.push("/");
   }
 
   useEffect(() => {
@@ -208,7 +276,7 @@ export default function AddNewCvForm({ id }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       className="w-full rounded-md"
-                      name="university"
+                      name="education.university_name"
                       type="text"
                       placeholder="Name of University"
                     />
@@ -224,7 +292,7 @@ export default function AddNewCvForm({ id }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       className="w-full rounded-md"
-                      name="degree"
+                      name="education.degree"
                       type="text"
                       placeholder="Degree"
                     />
@@ -241,7 +309,7 @@ export default function AddNewCvForm({ id }: Props) {
                     <label className="dark:text-gray-400">From</label>
                     <Field
                       as="select"
-                      name="university_start"
+                      name="education.start_year"
                       className="rounded-md ml-2 mr-6"
                     >
                       <option />
@@ -255,7 +323,7 @@ export default function AddNewCvForm({ id }: Props) {
                     <label className="dark:text-gray-400">Until</label>
                     <Field
                       as="select"
-                      name="university_end"
+                      name="education.end_year"
                       className="rounded-md mx-2"
                     >
                       <option />
@@ -283,7 +351,7 @@ export default function AddNewCvForm({ id }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       as="select"
-                      name="english_spoken"
+                      name="english_spoken_level"
                       className="w-full rounded-md"
                     >
                       <option />
@@ -295,7 +363,7 @@ export default function AddNewCvForm({ id }: Props) {
                     </Field>
                     <ErrorMessage
                       className="text-red-600 w-full"
-                      name="english_spoken"
+                      name="english_spoken_level"
                       component="span"
                     />
                   </div>
@@ -309,7 +377,7 @@ export default function AddNewCvForm({ id }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       as="select"
-                      name="english_written"
+                      name="english_written_level"
                       className="w-full rounded-md"
                     >
                       <option />
@@ -321,7 +389,7 @@ export default function AddNewCvForm({ id }: Props) {
                     </Field>
                     <ErrorMessage
                       className="text-red-600 w-full"
-                      name="english_written"
+                      name="english_written_level"
                       component="span"
                     />
                   </div>
@@ -333,11 +401,60 @@ export default function AddNewCvForm({ id }: Props) {
               </h2>
 
               <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Certifications"}
-                  fieldArrayName={"certifications"}
-                />
+                <div className="flex flex-wrap py-8 md:flex-nowrap">
+                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
+                      Certifications
+                    </span>
+                  </div>
+                  <div className="md:flex-grow">
+                    <FieldArray
+                      name={"certifications"}
+                      render={(arrayHelpers) => (
+                        <div>
+                          {formProps.values &&
+                            formProps.values["certifications"] &&
+                            formProps.values["certifications"].length > 0 &&
+                            formProps.values["certifications"].map(
+                              (item: any, index: any) => (
+                                <div key={index} className="py-2">
+                                  <div className="mb-2 flex w-full">
+                                    <Field
+                                      name={`certifications.${index}.certificate_name`}
+                                      className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
+                                      placeholder="name"
+                                    />
+                                  </div>
+                                  <div className="mb-2 flex w-full">
+                                    <Field
+                                      name={`certifications.${index}.description`}
+                                      className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
+                                      placeholder="description"
+                                    />
+                                  </div>
+                                  <button
+                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1 text-white float-right"
+                                    type="button"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                  >
+                                    <Icons.TrashCan />
+                                  </button>
+                                </div>
+                              ),
+                            )}
+                          <button
+                            type="button"
+                            onClick={() => arrayHelpers.push("")}
+                            className="flex text-indigo-500"
+                          >
+                            <Icons.PlusCircle />
+                            <span>Add</span>
+                          </button>
+                        </div>
+                      )}
+                    />
+                  </div>
+                </div>
 
                 <CvFieldArray
                   fProps={formProps}

@@ -2,6 +2,7 @@ import { Field, FieldArray } from "formik";
 import * as Icons from "../Icons";
 import * as Options from "../../constants/CvFormOptions";
 import NestedRow from "./nested_row";
+import DatePicker from "../datepicker";
 
 interface Props {
   fProps: any;
@@ -135,30 +136,9 @@ export default function Projects({ fProps }: Props) {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <Field
-                      as="select"
-                      name={`projects[${projectsIndex}].from_month`}
-                      className="rounded-md w-1/2 mr-2"
-                    >
-                      <option />
-                      {Options.monthsOptions.map((month) => (
-                        <option value={month.value} key={month.value}>
-                          {month.label}
-                        </option>
-                      ))}
-                    </Field>
-                    <Field
-                      as="select"
-                      name={`projects[${projectsIndex}].from_year`}
-                      className="rounded-md w-1/3"
-                    >
-                      <option />
-                      {Options.yearsOptions.map((year) => (
-                        <option value={year} key={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </Field>
+                    <DatePicker
+                      name={`projects[${projectsIndex}].date_start`}
+                    />
                   </div>
                 </div>
 
@@ -169,30 +149,7 @@ export default function Projects({ fProps }: Props) {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <Field
-                      as="select"
-                      name={`projects[${projectsIndex}].until_month`}
-                      className="rounded-md w-1/2 mr-2"
-                    >
-                      <option />
-                      {Options.monthsOptions.map((month) => (
-                        <option value={month.value} key={month.value}>
-                          {month.label}
-                        </option>
-                      ))}
-                    </Field>
-                    <Field
-                      as="select"
-                      name={`projects[${projectsIndex}].until_year`}
-                      className="rounded-md w-1/3"
-                    >
-                      <option />
-                      {Options.yearsOptions.map((year) => (
-                        <option value={year} key={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </Field>
+                    <DatePicker name={`projects[${projectsIndex}].date_end`} />
                   </div>
                 </div>
 

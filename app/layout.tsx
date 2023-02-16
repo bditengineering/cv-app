@@ -1,6 +1,7 @@
 // based on https://github.com/supabase/auth-helpers/tree/main/examples/nextjs-server-components
 
 import "./globals.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 import createClient from "../utils/supabase_server";
 import SupabaseListener from "../components/supabase_listener";
