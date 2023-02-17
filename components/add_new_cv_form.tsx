@@ -4,26 +4,14 @@ import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CV } from "./types";
-import * as Options from "../constants/CvFormOptions";
-import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import CvFieldArray from "./cv_form/cv_field_array";
 import Projects from "./cv_form/projects";
 import TechnicalSkill from "./cv_form/technical_skill";
-import * as Icons from "./Icons";
-
-const attributes = [
-  "id",
-  "first_name",
-  "last_name",
-  "summary",
-  "english_spoken_level",
-  "english_written_level",
-  "certifications",
-  "personal_qualities",
-  "education",
-  "projects",
-];
+import { Education } from "./cv_form/education";
+import { EnglishLevel } from "./cv_form/english_level";
+import { PersonalInfo } from "./cv_form/personal_info";
+import { AdditionalInfo } from "./cv_form/additional_info";
 
 interface Props {
   id?: string;
@@ -122,9 +110,16 @@ export default function AddNewCvForm({ id }: Props) {
     }
 
     const updatedProjects = projects.map((project: any) => {
+      const startDate = new Date(project.date_start);
+      startDate.setDate(15);
+
+      const endDate = new Date(project.date_end);
+      endDate.setDate(15);
       return {
         ...project,
         cv_id: cvId,
+        date_start: startDate.toISOString(),
+        date_end: endDate.toISOString(),
       };
     });
 
@@ -185,270 +180,12 @@ export default function AddNewCvForm({ id }: Props) {
         <Form>
           <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
             <div className="container mx-auto px-16 py-24">
-              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Name
-                    </span>
-                  </div>
-                  <div className="md:flex-grow flex">
-                    <div className="w-1/2 inline-block pr-1">
-                      <Field
-                        className="rounded-md w-full"
-                        name="first_name"
-                        type="text"
-                        placeholder="First Name"
-                      />
-                      <ErrorMessage
-                        className="text-red-600 w-full"
-                        name="first_name"
-                        component="span"
-                      />
-                    </div>
-                    <div className="w-1/2 inline-block pl-1">
-                      <Field
-                        className="rounded-md w-full"
-                        name="last_name"
-                        type="text"
-                        placeholder="Last Name"
-                      />
-                      <ErrorMessage
-                        className="text-red-600 w-full"
-                        name="last_name"
-                        component="span"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Summary of Qualification
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <Field
-                      className="w-full rounded-md"
-                      name="summary"
-                      type="text"
-                      as="textarea"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
-                Technical skills
-              </h2>
-
+              <PersonalInfo />
               <TechnicalSkill fProps={formProps} />
-
-              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
-                Projects
-              </h2>
-
               <Projects fProps={formProps} />
-
-              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
-                Education
-              </h2>
-
-              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      University
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <Field
-                      className="w-full rounded-md"
-                      name="education.university_name"
-                      type="text"
-                      placeholder="Name of University"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Degree
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <Field
-                      className="w-full rounded-md"
-                      name="education.degree"
-                      type="text"
-                      placeholder="Degree"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Duration
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <label className="dark:text-gray-400">From</label>
-                    <Field
-                      as="select"
-                      name="education.start_year"
-                      className="rounded-md ml-2 mr-6"
-                    >
-                      <option />
-                      {Options.yearsOptions.map((year) => (
-                        <option value={year} key={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </Field>
-
-                    <label className="dark:text-gray-400">Until</label>
-                    <Field
-                      as="select"
-                      name="education.end_year"
-                      className="rounded-md mx-2"
-                    >
-                      <option />
-                      {Options.yearsOptions.map((year) => (
-                        <option value={year} key={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </Field>
-                  </div>
-                </div>
-              </div>
-
-              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
-                Level of English
-              </h2>
-
-              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Spoken
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <Field
-                      as="select"
-                      name="english_spoken_level"
-                      className="w-full rounded-md"
-                    >
-                      <option />
-                      {Options.englishLevels.map((level) => (
-                        <option value={level.value} key={level.value}>
-                          {level.label}
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      className="text-red-600 w-full"
-                      name="english_spoken_level"
-                      component="span"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Written
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <Field
-                      as="select"
-                      name="english_written_level"
-                      className="w-full rounded-md"
-                    >
-                      <option />
-                      {Options.englishLevels.map((level) => (
-                        <option value={level.value} key={level.value}>
-                          {level.label}
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      className="text-red-600 w-full"
-                      name="english_written_level"
-                      component="span"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
-                Additional
-              </h2>
-
-              <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
-                <div className="flex flex-wrap py-8 md:flex-nowrap">
-                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
-                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
-                      Certifications
-                    </span>
-                  </div>
-                  <div className="md:flex-grow">
-                    <FieldArray
-                      name={"certifications"}
-                      render={(arrayHelpers) => (
-                        <div>
-                          {formProps.values?.["certifications"]?.length > 0 &&
-                            formProps.values["certifications"].map(
-                              (item: any, index: any) => (
-                                <div key={index} className="py-2">
-                                  <div className="mb-2 flex w-full">
-                                    <Field
-                                      name={`certifications.${index}.certificate_name`}
-                                      className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                      placeholder="name"
-                                    />
-                                  </div>
-                                  <div className="mb-2 flex w-full">
-                                    <Field
-                                      name={`certifications.${index}.description`}
-                                      className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                                      placeholder="description"
-                                    />
-                                  </div>
-                                  <button
-                                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1 text-white float-right"
-                                    type="button"
-                                    onClick={() => arrayHelpers.remove(index)}
-                                  >
-                                    <Icons.TrashCan />
-                                  </button>
-                                </div>
-                              ),
-                            )}
-                          <button
-                            type="button"
-                            onClick={() => arrayHelpers.push("")}
-                            className="flex text-indigo-500"
-                          >
-                            <Icons.PlusCircle />
-                            <span>Add</span>
-                          </button>
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <CvFieldArray
-                  fProps={formProps}
-                  title={"Personal Qualities"}
-                  fieldArrayName={"personal_qualities"}
-                />
-              </div>
+              <Education />
+              <EnglishLevel />
+              <AdditionalInfo formProps={formProps} />
 
               <button
                 className="mt-20 rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600 w-full"

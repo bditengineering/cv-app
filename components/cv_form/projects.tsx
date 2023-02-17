@@ -13,6 +13,9 @@ export default function Projects({ fProps }: Props) {
       name="projects"
       render={(arrayHelpers) => (
         <div>
+          <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+            Projects
+          </h2>
           {fProps.values.projects &&
             fProps.values.projects.length > 0 &&
             fProps.values.projects.map((project: any, projectsIndex: any) => (
