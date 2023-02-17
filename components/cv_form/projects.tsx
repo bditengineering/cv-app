@@ -1,8 +1,7 @@
 import { Field, FieldArray } from "formik";
 import * as Icons from "../Icons";
-import * as Options from "../../constants/CvFormOptions";
 import NestedRow from "./nested_row";
-import DatePicker from "../datepicker";
+import { MonthYearDatePicker } from "../datepicker";
 
 interface Props {
   fProps: any;
@@ -136,7 +135,7 @@ export default function Projects({ fProps }: Props) {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <DatePicker
+                    <MonthYearDatePicker
                       name={`projects[${projectsIndex}].date_start`}
                     />
                   </div>
@@ -149,7 +148,9 @@ export default function Projects({ fProps }: Props) {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    <DatePicker name={`projects[${projectsIndex}].date_end`} />
+                    <MonthYearDatePicker
+                      name={`projects[${projectsIndex}].date_end`}
+                    />
                   </div>
                 </div>
 

@@ -122,20 +122,9 @@ export default function AddNewCvForm({ id }: Props) {
     }
 
     const updatedProjects = projects.map((project: any) => {
-      const startDate = new Date(project.date_start);
-      const endDate = new Date(project.date_end);
-      const formattedStartDate = `${startDate.getDay() + 1}.${
-        startDate.getMonth() + 1
-      }.${startDate.getFullYear()}`;
-      const formattedEndDate = `${endDate.getDay() + 1}.${
-        endDate.getMonth() + 1
-      }.${endDate.getFullYear()}`;
-
       return {
         ...project,
         cv_id: cvId,
-        date_start: formattedStartDate,
-        date_end: formattedEndDate,
       };
     });
 
@@ -412,9 +401,7 @@ export default function AddNewCvForm({ id }: Props) {
                       name={"certifications"}
                       render={(arrayHelpers) => (
                         <div>
-                          {formProps.values &&
-                            formProps.values["certifications"] &&
-                            formProps.values["certifications"].length > 0 &&
+                          {formProps.values?.["certifications"]?.length > 0 &&
                             formProps.values["certifications"].map(
                               (item: any, index: any) => (
                                 <div key={index} className="py-2">

@@ -1,36 +1,34 @@
 import { Field } from "formik";
 import DateView from "react-datepicker";
 
-export default function MonthYearDatePicker({ name, ...rest }: any) {
+export function MonthYearDatePicker({ name, ...rest }: any) {
   return (
-    <div>
-      <Field name={name}>
-        {({ form, field }: any) => {
-          const { setFieldValue } = form;
-          const { value } = field;
+    <Field name={name}>
+      {({ form, field }: any) => {
+        const { setFieldValue } = form;
+        const { value } = field;
 
-          return (
-            <DateView
-              {...field}
-              {...rest}
-              selected={value}
-              onChange={(val: any) => setFieldValue(name, val)}
-              dateFormat="MMMM yyyy"
-              showMonthYearPicker
-              renderCustomHeader={({ date, changeYear }) =>
-                CustomYearDropdownPicker({ date, changeYear })
-              }
-            />
-          );
-        }}
-      </Field>
-    </div>
+        return (
+          <DateView
+            {...field}
+            {...rest}
+            selected={value}
+            onChange={(val: any) => setFieldValue(name, val)}
+            dateFormat="MMMM yyyy"
+            showMonthYearPicker
+            renderCustomHeader={({ date, changeYear }) => (
+              <CustomYearDropdownPicker date={date} onChange={changeYear} />
+            )}
+          />
+        );
+      }}
+    </Field>
   );
 }
 
-function CustomYearDropdownPicker({ date, changeYear }: any) {
+function CustomYearDropdownPicker({ date, onChange }: any) {
   const currentYear = new Date().getFullYear();
-  const years = range(currentYear - 20, currentYear).map((y) => ({
+  const years = rangeReverse(currentYear - 20, currentYear).map((y) => ({
     label: y.toString(),
     value: y,
   }));
@@ -39,7 +37,7 @@ function CustomYearDropdownPicker({ date, changeYear }: any) {
     <select
       value={date.getFullYear()}
       onChange={(event) => {
-        changeYear(event.target.value);
+        onChange(event.target.value);
       }}
     >
       {years.map((y) => {
@@ -53,10 +51,10 @@ function CustomYearDropdownPicker({ date, changeYear }: any) {
   );
 }
 
-function range(start: number, end: number) {
+function rangeReverse(start: number, end: number) {
   const arr = [];
-  for (let i = start; i <= end; i++) {
+  for (let i = end; i > start; i--) {
     arr.push(i);
   }
-  return arr.reverse();
+  return arr;
 }
