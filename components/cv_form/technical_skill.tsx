@@ -12,6 +12,9 @@ export default function TechnicalSkill({ fProps }: Props) {
       name="technical_skills"
       render={(arrayHelpers) => (
         <div>
+          <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
+            Technical skills
+          </h2>
           {fProps.values.technical_skills &&
             fProps.values.technical_skills.length > 0 &&
             fProps.values.technical_skills.map((item: any, index: any) => (
