@@ -1,65 +1,70 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { auth, auth as GoogleAuth, JWT } from "google-auth-library";
+import { Readable } from 'stream';
 import { google } from "googleapis";
-
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { JSONClient } from "google-auth-library/build/src/auth/googleauth";
-
-const { CREDS } = process.env;
+import { supabase } from "../../utils/supabase";
 
 /**
  * Upload a file to the specified folder
- * @param{string} folderId folder ID
- * @return{obj} file Id
+ * @param{string} filneName folder ID
  * */
 async function uploadFile(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  name: string,
+  fileName: string,
 ) {
-  // load the environment variable with our keys
-  const keysEnvVar = CREDS;
-  if (!keysEnvVar) {
-    throw new Error("The $CREDS environment variable was not found!");
+
+  const gdriveSettings = process.env.GOOGLE_DRIVE_SETTINGS || ""
+  const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID || ""
+  const driveCredentials = JSON.parse(gdriveSettings)
+  const scopes = ["https://www.googleapis.com/auth/drive"];
+  const { data, error } = await supabase.storage.from("pdfs").download(fileName);
+
+  if (error || data === null) {
+    console.error(error);
+    return;
   }
-  const keys = JSON.parse(keysEnvVar);
-  keys.scopes = ["https://www.googleapis.com/auth/drive"];
-  const client = GoogleAuth.fromJSON(keys);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  client.scopes = ["https://www.googleapis.com/auth/drive"];
-  const url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
-  const res1 = await client.request({ url });
-  const service = google.drive({ version: "v3", auth });
 
-  const folderId = "1Ysxsvp0ZFI-2nIPCy9acxwHqMQVE-Nfe";
+  if (data === null) {
+    console.error("No data received from Supabase.")
+    return
+  }
+
+  const stream = await createStream(data)
+
+  const auth = new google.auth.GoogleAuth({
+    credentials: driveCredentials,
+    scopes: scopes
+  });
+
+  const driveService = google.drive({ version: 'v3', auth })
   const fileMetadata = {
-    name,
-    parents: [folderId],
-  };
-
-  // Create a Supabase client with the Auth context of the logged in user.
-  const supabase = createServerSupabaseClient({ req, res });
-
-  const { data, error } = await supabase.storage.from("pdfs").download(name);
+    'name': fileName,
+    'parents': [driveFolderId]
+  }
   const media = {
     mimeType: "application/pdf",
-    body: data,
-  };
+    body: stream,
+  }
 
-  const file = await service.files.create({
+  await driveService.files.create({
     requestBody: fileMetadata,
     media: media,
-    fields: "id",
-  });
-  console.log("File Id:", file.data.id);
-  return file.data.id;
+    fields: 'id'
+  })
+
+}
+
+async function createStream(data: Blob) {
+  const buffer = Buffer.from(await data!.arrayBuffer());
+  const stream = new Readable();
+  stream._read = () => { }; // _read is required but we can noop it
+  stream.push(buffer);
+  stream.push(null);
+  return stream;
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  await uploadFile(req, res, "name11_lastname11");
-  res.status(200).json({ name: "John Doe" });
+  const fileName = req.query.file_name as string
+  await uploadFile(fileName);
 }

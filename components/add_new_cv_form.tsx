@@ -69,11 +69,10 @@ export default function AddNewCvForm({ id }: Props) {
     setForm(formData);
   }
 
-  async function uploadPdf() {
-    const result = await fetch("/api/upload_to_drive", {
+  async function uploadPdf(fileName: string) {
+    await fetch(`/api/upload_to_drive?file_name=${fileName}`, {
       method: "GET",
     });
-    console.log(result);
   }
 
   async function upsert(values: any) {
@@ -137,7 +136,8 @@ export default function AddNewCvForm({ id }: Props) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
-    uploadPdf();
+    const fileName = values.first_name + ' ' + values.last_name + ' CV'
+    await uploadPdf(fileName);
 
     if (error) {
       setServerErrorMessage(error.message);
