@@ -70,9 +70,17 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function uploadPdf(fileName: string) {
-    await fetch(`/api/upload_to_drive?file_name=${fileName}`, {
+    const response = await fetch(`/api/upload_to_drive?file_name=${fileName}`, {
       method: "GET",
     });
+    return response
+  }
+
+  async function edgeUploadInvocation(cvId: string) {
+    const response = await supabase.functions.invoke("upload-to-storage", {
+      body: { id: cvId },
+    })
+    return response
   }
 
   async function upsert(values: any) {
@@ -136,16 +144,13 @@ export default function AddNewCvForm({ id }: Props) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
-    const fileName = values.first_name + ' ' + values.last_name + ' CV'
-    await uploadPdf(fileName);
-
     if (error) {
       setServerErrorMessage(error.message);
     } else {
       await router.push("/");
-      if (!data) return;
     }
 
+    if (!data) return;
     const cvId = data[0].id;
 
     if (values.education) {
@@ -170,6 +175,13 @@ export default function AddNewCvForm({ id }: Props) {
         setServerErrorMessage(error ? error.message : "");
         return;
       }
+    }
+
+    const storageUploadResponse = await edgeUploadInvocation(cvId);
+
+    if (!storageUploadResponse.error) {
+      const fileName = values.first_name + '-' + values.last_name + '-CV'
+      await uploadPdf(fileName);
     }
 
     router.push("/");

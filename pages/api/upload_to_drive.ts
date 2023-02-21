@@ -17,15 +17,9 @@ async function uploadFile(
   const scopes = ["https://www.googleapis.com/auth/drive"];
   const { data, error } = await supabase.storage.from("pdfs").download(fileName);
 
-  if (error || data === null) {
-    console.error(error);
-    return;
-  }
+  if (error) throw error;
 
-  if (data === null) {
-    console.error("No data received from Supabase.")
-    return
-  }
+  if (!data) throw new Error("No data received from Supabase.");
 
   const stream = await createStream(data)
 
@@ -44,17 +38,19 @@ async function uploadFile(
     body: stream,
   }
 
-  await driveService.files.create({
+  const response = await driveService.files.create({
     requestBody: fileMetadata,
     media: media,
     fields: 'id'
   })
-
+  return response
 }
 
 async function createStream(data: Blob) {
-  const buffer = Buffer.from(await data!.arrayBuffer());
+  const buffer = Buffer.from(await data.arrayBuffer());
   const stream = new Readable();
+
+  // eslint-disable-next-line  @typescript-eslint/no-empty-function
   stream._read = () => { }; // _read is required but we can noop it
   stream.push(buffer);
   stream.push(null);
@@ -65,6 +61,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const fileName = req.query.file_name as string
-  await uploadFile(fileName);
+  try {
+    const fileName = req.query.file_name as string
+    await uploadFile(fileName);
+    res.status(200).end();
+  } catch (error) {
+    res.status(405).end()
+  }
 }
