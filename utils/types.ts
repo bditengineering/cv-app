@@ -31,8 +31,9 @@ export type Certificate = {
 };
 
 export type CV = {
+  id?: string;
   certifications: Array<Certificate>;
-  created_at?: Date;
+  created_at?: string;
   created_by?: string;
   education: Education;
   english_spoken_level: string;

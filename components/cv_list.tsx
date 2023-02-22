@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Session } from "@supabase/supabase-js";
-import { CV } from "./types";
+import { CV } from "../utils/types";
 
 interface CVListProps {
   cvs: CV[] | null;
