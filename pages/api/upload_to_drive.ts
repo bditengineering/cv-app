@@ -62,7 +62,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const fileName = req.query.file_name as string
+    const fileName = JSON.parse(req.body).fileName
     await uploadFile(fileName);
     res.status(200).end();
   } catch (error) {

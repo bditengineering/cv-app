@@ -70,10 +70,11 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function uploadPdf(fileName: string) {
-    const response = await fetch(`/api/upload_to_drive?file_name=${fileName}`, {
-      method: "GET",
+    const response = await fetch("/api/upload_to_drive", {
+      method: "POST",
+      body: JSON.stringify({ fileName: fileName })
     });
-    return response
+    return response.ok
   }
 
   async function edgeUploadInvocation(cvId: string) {
@@ -181,7 +182,11 @@ export default function AddNewCvForm({ id }: Props) {
 
     if (!storageUploadResponse.error) {
       const fileName = values.first_name + '-' + values.last_name + '-CV'
-      await uploadPdf(fileName);
+      const uploadsuccessful = await uploadPdf(fileName);
+      if (!uploadsuccessful) {
+        setServerErrorMessage("An error occured while uploading to google drive");
+        return;
+      }
     }
 
     router.push("/");

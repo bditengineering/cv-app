@@ -8,8 +8,6 @@ import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
 import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
 import { corsHeaders } from '../_shared/cors.ts'
 
-console.log("Hello from Functions");
-
 serve(async function handler(req: Request) {
 
   // This is needed if you're planning to invoke your function from a browser.
@@ -173,7 +171,6 @@ serve(async function handler(req: Request) {
     });
 
     const result = doc.output("arraybuffer");
-    // const result = 'test!!';
 
     const uploadName = `${employee.first_name}-${employee.last_name
       }-CV`;
@@ -181,7 +178,6 @@ serve(async function handler(req: Request) {
       .from("pdfs")
       .upload(uploadName, result, {
         contentType: "application/pdf",
-        // contentType: 'text/html',
         cacheControl: "3600",
         upsert: false,
       });
