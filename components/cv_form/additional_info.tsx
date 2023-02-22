@@ -1,8 +1,12 @@
-import { Field, FieldArray } from "formik";
+import { Field, FieldArray, FormikProps } from "formik";
 import CvFieldArray from "./cv_field_array";
 import * as Icons from "../Icons";
+import type { CV, Certificate } from "../../utils/types";
+interface AdditionalInfoProps {
+  formProps: FormikProps<CV>;
+}
 
-export function AdditionalInfo({ formProps }: any) {
+export function AdditionalInfo({ formProps }: AdditionalInfoProps) {
   return (
     <div>
       <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
@@ -23,7 +27,7 @@ export function AdditionalInfo({ formProps }: any) {
                 <div>
                   {formProps.values?.["certifications"]?.length > 0 &&
                     formProps.values["certifications"].map(
-                      (item: any, index: any) => (
+                      (item: Certificate, index: number) => (
                         <div key={index} className="py-2">
                           <div className="mb-2 flex w-full">
                             <Field
@@ -64,7 +68,7 @@ export function AdditionalInfo({ formProps }: any) {
         </div>
 
         <CvFieldArray
-          fProps={formProps}
+          formProps={formProps}
           title={"Personal Qualities"}
           fieldArrayName={"personal_qualities"}
         />

@@ -3,7 +3,6 @@
 import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CV } from "./types";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Projects from "./cv_form/projects";
@@ -12,6 +11,12 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
+import type {
+  Project,
+  Certificate,
+  Education as EducationType,
+  CV,
+} from "../utils/types";
 
 interface Props {
   id?: string;
@@ -19,7 +24,7 @@ interface Props {
 
 export default function AddNewCvForm({ id }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState<Partial<any>>({
+  const [form, setForm] = useState<CV>({
     first_name: "",
     last_name: "",
     summary: "",
@@ -34,6 +39,7 @@ export default function AddNewCvForm({ id }: Props) {
     projects: [],
     certifications: [],
     personal_qualities: [],
+    technical_skills: [],
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
 
@@ -52,7 +58,7 @@ export default function AddNewCvForm({ id }: Props) {
 
     if (!data) return;
 
-    const updatedProjects = data[0].projects.map((project: any) => {
+    const updatedProjects = data[0].projects.map((project: Project) => {
       return {
         ...project,
         date_start: new Date(project.date_start),
@@ -69,8 +75,8 @@ export default function AddNewCvForm({ id }: Props) {
     setForm(formData);
   }
 
-  async function upsert(values: any) {
-    const updatedCv = { ...values };
+  async function upsert(values: CV) {
+    const updatedCv = { ...values } as Partial<CV>;
 
     if (!id) {
       const {
@@ -87,29 +93,34 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("cv").upsert(updatedCv).select();
   }
 
-  async function upsertCertifications(certifications: any, cvId: string) {
+  async function upsertCertifications(
+    certifications: Certificate[],
+    cvId: string,
+  ) {
     if (certifications.length === 0) {
       return await supabase.from("certifications").delete().eq("cv_id", cvId);
     }
 
-    const updatedCertifications = certifications.map((certification: any) => ({
-      ...certification,
-      cv_id: cvId,
-    }));
+    const updatedCertifications = certifications.map(
+      (certification: Certificate) => ({
+        ...certification,
+        cv_id: cvId,
+      }),
+    );
     return supabase.from("certifications").upsert(updatedCertifications);
   }
 
-  async function upsertEducation(education: any, cvId: string) {
+  async function upsertEducation(education: EducationType, cvId: string) {
     education.cv_id = cvId;
     return supabase.from("education").upsert(education);
   }
 
-  async function upsertProjects(projects: any, cvId: string) {
+  async function upsertProjects(projects: Project[], cvId: string) {
     if (projects.length === 0) {
       return await supabase.from("projects").delete().eq("cv_id", cvId);
     }
 
-    const updatedProjects = projects.map((project: any) => {
+    const updatedProjects = projects.map((project: Project) => {
       const startDate = new Date(project.date_start);
       startDate.setDate(15);
 
@@ -126,7 +137,7 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("projects").upsert(updatedProjects);
   }
 
-  async function handleSubmit(values: any) {
+  async function handleSubmit(values: CV) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
@@ -181,8 +192,8 @@ export default function AddNewCvForm({ id }: Props) {
           <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
             <div className="container mx-auto px-16 py-24">
               <PersonalInfo />
-              <TechnicalSkill fProps={formProps} />
-              <Projects fProps={formProps} />
+              <TechnicalSkill formProps={formProps} />
+              <Projects formProps={formProps} />
               <Education />
               <EnglishLevel />
               <AdditionalInfo formProps={formProps} />

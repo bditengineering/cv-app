@@ -1,5 +1,5 @@
 import { Field } from "formik";
-import * as Options from "../../constants/CvFormOptions";
+import { YEAR_OPTIONS } from "../../constants/form_options";
 
 export function Education() {
   return (
@@ -53,7 +53,7 @@ export function Education() {
               className="rounded-md ml-2 mr-6"
             >
               <option />
-              {Options.yearsOptions.map((year) => (
+              {YEAR_OPTIONS.map((year) => (
                 <option value={year} key={year}>
                   {year}
                 </option>
@@ -67,7 +67,7 @@ export function Education() {
               className="rounded-md mx-2"
             >
               <option />
-              {Options.yearsOptions.map((year) => (
+              {YEAR_OPTIONS.map((year) => (
                 <option value={year} key={year}>
                   {year}
                 </option>

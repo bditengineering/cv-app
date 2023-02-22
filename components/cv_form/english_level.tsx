@@ -1,5 +1,5 @@
 import { Field, ErrorMessage } from "formik";
-import * as Options from "../../constants/CvFormOptions";
+import { ENGLISH_LEVELS } from "../../constants/form_options";
 
 export function EnglishLevel() {
   return (
@@ -22,7 +22,7 @@ export function EnglishLevel() {
               className="w-full rounded-md"
             >
               <option />
-              {Options.englishLevels.map((level) => (
+              {ENGLISH_LEVELS.map((level) => (
                 <option value={level.value} key={level.value}>
                   {level.label}
                 </option>
@@ -48,7 +48,7 @@ export function EnglishLevel() {
               className="w-full rounded-md"
             >
               <option />
-              {Options.englishLevels.map((level) => (
+              {ENGLISH_LEVELS.map((level) => (
                 <option value={level.value} key={level.value}>
                   {level.label}
                 </option>

@@ -1,19 +1,22 @@
-import { Field } from "formik";
+import { Field, FieldProps } from "formik";
 import DateView from "react-datepicker";
 
-export function MonthYearDatePicker({ name, ...rest }: any) {
+interface MonthYearDatePickerProps {
+  name: string;
+}
+
+export function MonthYearDatePicker({ name }: MonthYearDatePickerProps) {
   return (
     <Field name={name}>
-      {({ form, field }: any) => {
+      {({ form, field }: FieldProps) => {
         const { setFieldValue } = form;
         const { value } = field;
 
         return (
           <DateView
             {...field}
-            {...rest}
             selected={value}
-            onChange={(val: any) => setFieldValue(name, val)}
+            onChange={(val: Date) => setFieldValue(name, val)}
             dateFormat="MMMM yyyy"
             showMonthYearPicker
             renderCustomHeader={({ date, changeYear }) => (
@@ -26,7 +29,15 @@ export function MonthYearDatePicker({ name, ...rest }: any) {
   );
 }
 
-function CustomYearDropdownPicker({ date, onChange }: any) {
+interface CustomYearDropdownPickerProps {
+  date: Date;
+  onChange: (year: number) => void;
+}
+
+function CustomYearDropdownPicker({
+  date,
+  onChange,
+}: CustomYearDropdownPickerProps) {
   const currentYear = new Date().getFullYear();
   const years = rangeReverse(currentYear - 20, currentYear).map((y) => ({
     label: y.toString(),
@@ -37,7 +48,7 @@ function CustomYearDropdownPicker({ date, onChange }: any) {
     <select
       value={date.getFullYear()}
       onChange={(event) => {
-        onChange(event.target.value);
+        onChange(parseInt(event.target.value, 10));
       }}
     >
       {years.map((y) => {

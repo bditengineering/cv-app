@@ -1,28 +1,31 @@
-import { Field, FieldArray } from "formik";
+import { Field, FieldArray, FormikProps } from "formik";
 import * as Icons from "../Icons";
+import { CV } from "../../utils/types";
 
-interface Props {
-  fProps: any;
+interface NestedRowProps<Outer, Inner> {
+  // formProps: FormikProps<CV>;
+  // TODO: figure out dynamic/generic type for formProps, outerArray, innerArray
+  formProps: any;
   outerIndex: number;
   outerArray: string;
   innerArray: string;
 }
 
-export default function NestedRow({
-  fProps,
+export default function NestedRow<Outer, Inner>({
+  formProps,
   outerIndex,
   outerArray,
   innerArray,
-}: Props) {
+}: NestedRowProps<Outer, Inner>) {
   return (
     <FieldArray
       name={`[${outerArray}][${outerIndex}][${innerArray}]`}
       render={(arrayHelpers) => (
         <div>
-          {fProps.values[outerArray][outerIndex][innerArray] &&
-            fProps.values[outerArray][outerIndex][innerArray].length > 0 &&
-            fProps.values[outerArray][outerIndex][innerArray].map(
-              (item: any, itemIndex: any) => (
+          {formProps.values[outerArray][outerIndex][innerArray] &&
+            formProps.values[outerArray][outerIndex][innerArray].length > 0 &&
+            formProps.values[outerArray][outerIndex][innerArray].map(
+              (item: string, itemIndex: number) => (
                 <div key={itemIndex} className="mb-2 flex w-full">
                   <Field
                     className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
