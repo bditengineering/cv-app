@@ -2,7 +2,7 @@ import { Field, FieldArray, FormikProps } from "formik";
 import * as Icons from "../Icons";
 import { CV } from "../../utils/types";
 
-interface NestedRowProps<Outer, Inner> {
+interface NestedRowProps {
   // formProps: FormikProps<CV>;
   // TODO: figure out dynamic/generic type for formProps, outerArray, innerArray
   formProps: any;
@@ -11,12 +11,12 @@ interface NestedRowProps<Outer, Inner> {
   innerArray: string;
 }
 
-export default function NestedRow<Outer, Inner>({
+export default function NestedRow({
   formProps,
   outerIndex,
   outerArray,
   innerArray,
-}: NestedRowProps<Outer, Inner>) {
+}: NestedRowProps) {
   return (
     <FieldArray
       name={`[${outerArray}][${outerIndex}][${innerArray}]`}
