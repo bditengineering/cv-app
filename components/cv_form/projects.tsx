@@ -4,11 +4,11 @@ import NestedRow from "./nested_row";
 import { MonthYearDatePicker } from "../datepicker";
 import type { CV, Project } from "../../utils/types";
 
-interface Props {
+interface ProjectsProps {
   formProps: FormikProps<CV>;
 }
 
-export default function Projects({ formProps }: Props) {
+export default function Projects({ formProps }: ProjectsProps) {
   return (
     <FieldArray
       name="projects"
