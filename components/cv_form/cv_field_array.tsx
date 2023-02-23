@@ -1,5 +1,5 @@
 import { Field, FieldArray, FormikProps } from "formik";
-import { CV } from "../../utils/types";
+import { CV } from "../../types";
 import * as Icons from "../Icons";
 
 interface CvFieldArrayProps {

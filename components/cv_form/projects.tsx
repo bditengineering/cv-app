@@ -2,7 +2,7 @@ import { Field, FieldArray, FormikProps } from "formik";
 import * as Icons from "../Icons";
 import NestedRow from "./nested_row";
 import { MonthYearDatePicker } from "../datepicker";
-import type { CV, Project } from "../../utils/types";
+import type { CV, Project } from "../../types";
 
 interface ProjectsProps {
   formProps: FormikProps<CV>;

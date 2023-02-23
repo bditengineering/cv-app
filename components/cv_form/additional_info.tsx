@@ -1,7 +1,7 @@
 import { Field, FieldArray, FormikProps } from "formik";
 import CvFieldArray from "./cv_field_array";
 import * as Icons from "../Icons";
-import type { CV, Certificate } from "../../utils/types";
+import type { CV, Certificate } from "../../types";
 interface AdditionalInfoProps {
   formProps: FormikProps<CV>;
 }

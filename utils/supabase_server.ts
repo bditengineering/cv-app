@@ -2,7 +2,7 @@
 
 import { headers, cookies } from "next/headers";
 import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "../supabase/schema";
+import { Database } from "../types/supabase";
 
 const createServerClient = () =>
   // data returned from the response does not match up with auto-generated types

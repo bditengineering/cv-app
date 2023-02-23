@@ -1,6 +1,6 @@
 import { Field, FieldArray, FormikProps } from "formik";
 import * as Icons from "../Icons";
-import { CV } from "../../utils/types";
+import { CV } from "../../types";
 
 interface NestedRowProps {
   // formProps: FormikProps<CV>;

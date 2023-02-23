@@ -16,7 +16,7 @@ import type {
   Certificate,
   Education as EducationType,
   CV,
-} from "../utils/types";
+} from "../types";
 
 interface Props {
   id?: string;
