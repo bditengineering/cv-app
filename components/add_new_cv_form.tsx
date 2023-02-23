@@ -69,6 +69,21 @@ export default function AddNewCvForm({ id }: Props) {
     setForm(formData);
   }
 
+  async function uploadPdf(fileName: string) {
+    const response = await fetch("/api/upload_to_drive", {
+      method: "POST",
+      body: JSON.stringify({ fileName: fileName })
+    });
+    return response.ok
+  }
+
+  async function edgeUploadInvocation(cvId: string) {
+    const response = await supabase.functions.invoke("upload-to-storage", {
+      body: { id: cvId },
+    })
+    return response
+  }
+
   async function upsert(values: any) {
     const updatedCv = { ...values };
 
@@ -130,8 +145,13 @@ export default function AddNewCvForm({ id }: Props) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
-    if (!data) return;
+    if (error) {
+      setServerErrorMessage(error.message);
+    } else {
+      await router.push("/");
+    }
 
+    if (!data) return;
     const cvId = data[0].id;
 
     if (values.education) {
@@ -154,6 +174,17 @@ export default function AddNewCvForm({ id }: Props) {
       const { error } = await upsertProjects(values.projects, cvId);
       if (error) {
         setServerErrorMessage(error ? error.message : "");
+        return;
+      }
+    }
+
+    const storageUploadResponse = await edgeUploadInvocation(cvId);
+
+    if (!storageUploadResponse.error) {
+      const fileName = values.first_name + '-' + values.last_name + '-CV'
+      const uploadsuccessful = await uploadPdf(fileName);
+      if (!uploadsuccessful) {
+        setServerErrorMessage("An error occured while uploading to google drive");
         return;
       }
     }
