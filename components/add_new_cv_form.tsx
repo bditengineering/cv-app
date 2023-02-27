@@ -11,12 +11,7 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
-import type {
-  Project,
-  Certificate,
-  Education as EducationType,
-  CV,
-} from "../types";
+import * as Types from "../types";
 
 interface Props {
   id?: string;
@@ -24,16 +19,18 @@ interface Props {
 
 export default function AddNewCvForm({ id }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState<CV>({
+  const [form, setForm] = useState<Types.FullCv<"Row" | "Insert" | "Update">>({
     first_name: "",
     last_name: "",
     summary: "",
-    education: {
-      university_name: "",
-      start_year: "",
-      end_year: "",
-      degree: "",
-    },
+    education: [
+      // {
+      //   university_name: "",
+      //   start_year: null,
+      //   end_year: null,
+      //   degree: "",
+      // },
+    ],
     english_written_level: "",
     english_spoken_level: "",
     projects: [],
@@ -54,22 +51,27 @@ export default function AddNewCvForm({ id }: Props) {
     const { data } = await supabase
       .from("cv")
       .select("*, projects(*), education(*), certifications(*)")
-      .eq("id", employeeId);
+      .eq("id", employeeId)
+      .returns<Types.FullCv>();
 
     if (!data) return;
 
-    const updatedProjects = data[0].projects.map((project: Project) => {
+    const updatedProjects = data[0].projects.map((project) => {
       return {
         ...project,
-        date_start: new Date(project.date_start),
-        date_end: new Date(project.date_end),
+        date_start: project.date_start
+          ? new Date(project.date_start)
+          : project.date_start,
+        date_end: project.date_end
+          ? new Date(project.date_end)
+          : project.date_end,
       };
     });
 
     const formData = {
       ...data[0],
       projects: updatedProjects,
-      education: data[0].education[0],
+      education: data[0].education,
     };
 
     setForm(formData);
@@ -90,8 +92,8 @@ export default function AddNewCvForm({ id }: Props) {
     return response;
   }
 
-  async function upsert(values: CV) {
-    const updatedCv = { ...values } as Partial<CV>;
+  async function upsert(values: Types.FullCv<"Insert" | "Update">) {
+    const updatedCv: Partial<typeof values> = { ...values };
 
     if (!id) {
       const {
@@ -109,7 +111,7 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function upsertCertifications(
-    certifications: Certificate[],
+    certifications: Types.Certification<"Insert" | "Update">[],
     cvId: string,
   ) {
     if (certifications.length === 0) {
@@ -117,7 +119,7 @@ export default function AddNewCvForm({ id }: Props) {
     }
 
     const updatedCertifications = certifications.map(
-      (certification: Certificate) => ({
+      (certification: Types.Certification<"Update">) => ({
         ...certification,
         cv_id: cvId,
       }),
@@ -125,34 +127,50 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("certifications").upsert(updatedCertifications);
   }
 
-  async function upsertEducation(education: EducationType, cvId: string) {
-    education.cv_id = cvId;
+  // check if education should be array or single item
+  async function upsertEducation(
+    education: Types.Education<"Insert" | "Update">[],
+    cvId: string,
+  ) {
+    education[0].cv_id = cvId;
     return supabase.from("education").upsert(education);
   }
 
-  async function upsertProjects(projects: Project[], cvId: string) {
+  async function upsertProjects(
+    projects: Types.Project<"Update">[],
+    cvId: string,
+  ) {
     if (projects.length === 0) {
       return await supabase.from("projects").delete().eq("cv_id", cvId);
     }
 
-    const updatedProjects = projects.map((project: Project) => {
-      const startDate = new Date(project.date_start);
-      startDate.setDate(15);
+    const updatedProjects = projects.map((project: Types.Project<"Update">) => {
+      let dateStart = project.date_start;
+      if (dateStart) {
+        const dateStartAsDate = new Date(dateStart);
+        dateStartAsDate.setDate(15);
+        dateStart = dateStartAsDate.toISOString();
+      }
 
-      const endDate = new Date(project.date_end);
-      endDate.setDate(15);
+      let dateEnd = project.date_end;
+      if (dateEnd) {
+        const dateEndAsDate = new Date(dateEnd);
+        dateEndAsDate.setDate(15);
+        dateEnd = dateEndAsDate.toISOString();
+      }
+
       return {
         ...project,
         cv_id: cvId,
-        date_start: startDate.toISOString(),
-        date_end: endDate.toISOString(),
+        date_start: dateStart,
+        date_end: dateEnd,
       };
     });
 
     return supabase.from("projects").upsert(updatedProjects);
   }
 
-  async function handleSubmit(values: CV) {
+  async function handleSubmit(values: Types.FullCv<"Insert" | "Update">) {
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 

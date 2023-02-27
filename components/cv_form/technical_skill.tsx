@@ -1,10 +1,10 @@
 import { Field, FieldArray, FormikProps } from "formik";
 import * as Icons from "../Icons";
 import NestedRow from "./nested_row";
-import { CV } from "../../types";
+import type { FullCv } from "../../types";
 
 interface Props {
-  formProps: FormikProps<CV>;
+  formProps: FormikProps<FullCv<"Update">>;
 }
 
 export default function TechnicalSkill({ formProps }: Props) {

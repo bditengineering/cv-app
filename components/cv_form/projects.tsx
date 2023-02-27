@@ -2,10 +2,10 @@ import { Field, FieldArray, FormikProps } from "formik";
 import * as Icons from "../Icons";
 import NestedRow from "./nested_row";
 import { MonthYearDatePicker } from "../datepicker";
-import type { CV, Project } from "../../types";
+import type { FullCv, Project } from "../../types";
 
 interface ProjectsProps {
-  formProps: FormikProps<CV>;
+  formProps: FormikProps<FullCv<"Update">>;
 }
 
 export default function Projects({ formProps }: ProjectsProps) {
@@ -20,7 +20,7 @@ export default function Projects({ formProps }: ProjectsProps) {
           {formProps.values.projects &&
             formProps.values.projects.length > 0 &&
             formProps.values.projects.map(
-              (project: Project, projectsIndex: number) => (
+              (project: Project<"Update">, projectsIndex: number) => (
                 <div
                   key={project.id}
                   className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 dark:divide-gray-700 rounded-md border border-gray-400 dark:border-gray-700 px-6"
