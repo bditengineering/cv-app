@@ -28,15 +28,17 @@ serve(async function handler(req: Request) {
 
     const { data, error } = await supabaseClient
       .from("cv")
-      .select("*")
+      .select("*, positions(title), education(*), certifications(certificate_name, description)")
       .eq("id", id);
     if (error) throw error;
 
     if (data.length < 1) throw new Error("no employees found");
 
     const [employee] = data;
-    const name = `${employee.first_name} ${employee.last_name}`;
 
+    const name = `${employee.first_name} - ${employee.positions.title}`;
+
+    const certifications = employee.certifications.map(item => item.certificate_name + ' - ' + item.description);
     const options = { format: "A4" };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -131,13 +133,13 @@ serve(async function handler(req: Request) {
       body: [
         [
           "University degree",
-          `${employee.university}\n${employee.degree}\n${employee.university_start} - ${employee.university_end}`,
+          `${employee.education[0].university_name}\n${employee.education[0].degree}\n${employee.education[0].start_year} - ${employee.education[0].end_year}`,
         ],
         [
           "Level of English \nSpoken \nWritten",
-          `\n${employee.english_spoken}\n${employee.english_written}`,
+          `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
         ],
-        ["Certifications", employee.certifications],
+        ["Certifications", certifications.join("\n")],
       ],
     });
 
@@ -172,8 +174,8 @@ serve(async function handler(req: Request) {
 
     const result = doc.output("arraybuffer");
 
-    const uploadName = `${employee.first_name}-${employee.last_name
-      }-CV`;
+    const uploadName = `${employee.first_name} - ${employee.positions.title}`;
+
     const { data: upload } = await supabaseClient.storage
       .from("pdfs")
       .upload(uploadName, result, {
