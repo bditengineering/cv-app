@@ -38,7 +38,9 @@ serve(async function handler(req: Request) {
 
     const name = `${employee.first_name} - ${employee.positions.title}`;
 
-    const certifications = employee.certifications.map(item => item.certificate_name + ' - ' + item.description);
+    const education = employee.education.map(item => `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`);
+
+    const certifications = employee.certifications.map(item => `${item.certificate_name} - ${item.description}`);
     const options = { format: "A4" };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -131,10 +133,7 @@ serve(async function handler(req: Request) {
         ],
       ],
       body: [
-        [
-          "University degree",
-          `${employee.education[0].university_name}\n${employee.education[0].degree}\n${employee.education[0].start_year} - ${employee.education[0].end_year}`,
-        ],
+        ["University degree", education.join("\n\n")],
         [
           "Level of English \nSpoken \nWritten",
           `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
