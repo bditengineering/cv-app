@@ -28,15 +28,19 @@ serve(async function handler(req: Request) {
 
     const { data, error } = await supabaseClient
       .from("cv")
-      .select("*")
+      .select("*, positions(title), education(*), certifications(certificate_name, description)")
       .eq("id", id);
     if (error) throw error;
 
     if (data.length < 1) throw new Error("no employees found");
 
     const [employee] = data;
-    const name = `${employee.first_name} ${employee.last_name}`;
 
+    const name = `${employee.first_name} - ${employee.positions.title}`;
+
+    const education = employee.education.map(item => `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`);
+
+    const certifications = employee.certifications.map(item => `${item.certificate_name} - ${item.description}`);
     const options = { format: "A4" };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -129,15 +133,12 @@ serve(async function handler(req: Request) {
         ],
       ],
       body: [
-        [
-          "University degree",
-          `${employee.university}\n${employee.degree}\n${employee.university_start} - ${employee.university_end}`,
-        ],
+        ["University degree", education.join("\n\n")],
         [
           "Level of English \nSpoken \nWritten",
-          `\n${employee.english_spoken}\n${employee.english_written}`,
+          `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
         ],
-        ["Certifications", employee.certifications],
+        ["Certifications", certifications.join("\n")],
       ],
     });
 
@@ -172,14 +173,14 @@ serve(async function handler(req: Request) {
 
     const result = doc.output("arraybuffer");
 
-    const uploadName = `${employee.first_name}-${employee.last_name
-      }-CV`;
+    const uploadName = `${employee.first_name} - ${employee.positions.title}`;
+
     const { data: upload } = await supabaseClient.storage
       .from("pdfs")
       .upload(uploadName, result, {
         contentType: "application/pdf",
         cacheControl: "3600",
-        upsert: false,
+        upsert: true,
       });
 
     return new Response(JSON.stringify(result), {

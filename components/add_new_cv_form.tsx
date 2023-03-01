@@ -181,7 +181,7 @@ export default function AddNewCvForm({ id }: Props) {
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
     if (!storageUploadResponse.error) {
-      const fileName = values.first_name + '-' + values.last_name + '-CV'
+      const fileName = `${values.first_name} - Software Engineer` // TODO: Use values.positions.title when dropdown is implemented
       const uploadsuccessful = await uploadPdf(fileName);
       if (!uploadsuccessful) {
         setServerErrorMessage("An error occured while uploading to google drive");
