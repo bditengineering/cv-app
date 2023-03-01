@@ -181,7 +181,7 @@ serve(async function handler(req: Request) {
       .upload(uploadName, result, {
         contentType: "application/pdf",
         cacheControl: "3600",
-        upsert: false,
+        upsert: true,
       });
 
     return new Response(JSON.stringify(result), {
