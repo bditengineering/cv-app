@@ -28,7 +28,7 @@ serve(async function handler(req: Request) {
 
     const { data, error } = await supabaseClient
       .from("cv")
-      .select("*, positions(title), education(*), certifications(certificate_name, description)")
+      .select("*, projects(*), positions(title), education(*), certifications(certificate_name, description)")
       .eq("id", id);
     if (error) throw error;
 
@@ -37,6 +37,22 @@ serve(async function handler(req: Request) {
     const [employee] = data;
 
     const name = `${employee.first_name} - ${employee.positions.title}`;
+
+    const projects = employee.projects.map((item: any) => {
+      const startDate = new Date(item.date_start).toLocaleString('default', { month: 'long', year: 'numeric' });
+      const endDate = item.ongoing ? "Present" : new Date(item.date_end).toLocaleString('default', { month: 'long', year: 'numeric' })
+      return [
+        ["Project Name", item.name],
+        ["Project Description", item.description],
+        ["Field", item.field],
+        ["Size of the team", item.team_size],
+        ["Position", item.position],
+        ["Tools & Technologies", item.technologies.join(", ")],
+        ["Responsibilities", item.responsibilities.join(", ")],
+        ["Time Period", `${startDate} - ${endDate}`],
+        [{ content: '', colSpan: 2 }],
+      ]
+    });
 
     const education = employee.education.map(item => `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`);
 
@@ -104,6 +120,35 @@ serve(async function handler(req: Request) {
         ["Databases", employee.databases],
         ["Dev Ops", employee.devops],
       ],
+    });
+
+    autoTable(doc, {
+      theme: "grid",
+      tableLineColor: [192, 192, 192],
+      tableLineWidth: 1,
+      styles: {
+        lineColor: [192, 192, 192],
+        lineWidth: 1,
+      },
+      headStyles: {
+        fillColor: [224, 224, 224],
+        fontSize: 15,
+        halign: "center",
+        textColor: 0,
+      },
+      bodyStyles: {
+        fillColor: [250, 250, 250],
+        textColor: 0,
+      },
+      head: [
+        [
+          {
+            content: "Projects",
+            colSpan: 2,
+          },
+        ],
+      ],
+      body: projects.flat().slice(0, -1),
     });
 
     autoTable(doc, {

@@ -153,6 +153,23 @@ export default function Projects({ fProps }: Props) {
                   <div className="md:flex-grow">
                     <MonthYearDatePicker
                       name={`projects[${projectsIndex}].date_end`}
+                      disabled={project.ongoing}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap py-8 md:flex-nowrap">
+                  <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
+                    <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
+                      Ongoing
+                    </span>
+                  </div>
+                  <div className="md:flex-grow">
+                    <Field
+                      className="flex text-indigo-500"
+                      name={`projects[${projectsIndex}].ongoing`}
+                      type="checkbox"
+                      checked={project.ongoing}
                     />
                   </div>
                 </div>
