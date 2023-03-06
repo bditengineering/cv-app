@@ -6,17 +6,17 @@ interface Props {
 }
 
 export function PersonalInfo({ fProps }: Props) {
-  const [position, setSpecialty] = useState<string>();
-  const handleSpecialtyChange = (event: any) => {
+  const [position, setPosition] = useState<string>();
+  const handlePositionChange = (event: any) => {
     const position = fProps.values.availablePositions.find((position: any) => position.title === event.target.value);
-    setSpecialty(event.target.value);
+    setPosition(event.target.value);
     fProps.values.position_id = position.id;
     fProps.values.positions = position;
   };
 
   useEffect(() => {
     const currentPosition = fProps.values.positions ? fProps.values.positions.title : fProps.values.availablePositions[0]?.title;
-    setSpecialty(currentPosition)
+    setPosition(currentPosition)
   }, [fProps]);
   return (
     <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
@@ -63,7 +63,7 @@ export function PersonalInfo({ fProps }: Props) {
           </span>
         </div>
         <div className="md:flex-grow">
-          <select className="rounded-md" value={position} onChange={handleSpecialtyChange}>
+          <select className="rounded-md" value={position} onChange={handlePositionChange}>
             {fProps.values.availablePositions.map((option: any, index: number) => (
               <option key={index} value={option.title} label={option.title} />
             ))}
