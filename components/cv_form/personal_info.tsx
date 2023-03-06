@@ -1,4 +1,4 @@
-import { Field, Dropdown, ErrorMessage } from "formik";
+import { Field, ErrorMessage } from "formik";
 import { useEffect, useState } from "react";
 
 interface Props {
