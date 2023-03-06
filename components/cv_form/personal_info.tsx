@@ -1,6 +1,23 @@
-import { Field, ErrorMessage } from "formik";
+import { Field, Dropdown, ErrorMessage } from "formik";
+import { useEffect, useState } from "react";
 
-export function PersonalInfo() {
+interface Props {
+  fProps: any;
+}
+
+export function PersonalInfo({ fProps }: Props) {
+  const [position, setSpecialty] = useState<string>();
+  const handleSpecialtyChange = (event: any) => {
+    const position = fProps.values.availablePositions.find((position: any) => position.title === event.target.value);
+    setSpecialty(event.target.value);
+    fProps.values.position_id = position.id;
+    fProps.values.positions = position;
+  };
+
+  useEffect(() => {
+    const currentPosition = fProps.values.positions ? fProps.values.positions.title : fProps.values.availablePositions[0]?.title;
+    setSpecialty(currentPosition)
+  }, [fProps]);
   return (
     <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
       <div className="flex flex-wrap py-8 md:flex-nowrap">
@@ -36,6 +53,21 @@ export function PersonalInfo() {
               component="span"
             />
           </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap py-8 md:flex-nowrap">
+        <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
+          <span className="title-font font-semibold text-gray-700 dark:text-gray-400">
+            Specialty
+          </span>
+        </div>
+        <div className="md:flex-grow">
+          <select className="rounded-md" value={position} onChange={handleSpecialtyChange}>
+            {fProps.values.availablePositions.map((option: any, index: number) => (
+              <option key={index} value={option.title} label={option.title} />
+            ))}
+          </select>
         </div>
       </div>
 

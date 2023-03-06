@@ -34,6 +34,7 @@ export default function AddNewCvForm({ id }: Props) {
     projects: [],
     certifications: [],
     personal_qualities: [],
+    availablePositions: [],
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
 
@@ -44,13 +45,29 @@ export default function AddNewCvForm({ id }: Props) {
     english_written_level: Yup.string().required("Please select a level"),
   });
 
+  async function setAvailablePositions() {
+    const availablePositions = await fetchAvailablePositions();
+    const formData = {
+      ...form,
+      availablePositions: availablePositions
+    };
+    setForm(formData);
+  }
+
+  async function fetchAvailablePositions() {
+    const positions = await supabase.from("positions").select("id, title");
+    return positions.data;
+  }
+
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, projects(*), education(*), certifications(*)")
+      .select("*, projects(*), education(*), certifications(*), positions(*)")
       .eq("id", employeeId);
 
     if (!data) return;
+
+    const availablePositions = await fetchAvailablePositions();
 
     const updatedProjects = data[0].projects.map((project: any) => {
       return {
@@ -64,6 +81,7 @@ export default function AddNewCvForm({ id }: Props) {
       ...data[0],
       projects: updatedProjects,
       education: data[0].education[0],
+      availablePositions: availablePositions,
     };
 
     setForm(formData);
@@ -98,6 +116,8 @@ export default function AddNewCvForm({ id }: Props) {
     delete updatedCv.projects;
     delete updatedCv.certifications;
     delete updatedCv.education;
+    delete updatedCv.availablePositions;
+    delete updatedCv.positions;
 
     return supabase.from("cv").upsert(updatedCv).select();
   }
@@ -142,6 +162,7 @@ export default function AddNewCvForm({ id }: Props) {
   }
 
   async function handleSubmit(values: any) {
+    const positionTitle = values.positions.title;
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
@@ -181,7 +202,7 @@ export default function AddNewCvForm({ id }: Props) {
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
     if (!storageUploadResponse.error) {
-      const fileName = `${values.first_name} - Software Engineer` // TODO: Use values.positions.title when dropdown is implemented
+      const fileName = `${values.first_name} - ${positionTitle}`;
       const uploadsuccessful = await uploadPdf(fileName);
       if (!uploadsuccessful) {
         setServerErrorMessage("An error occured while uploading to google drive");
@@ -195,6 +216,8 @@ export default function AddNewCvForm({ id }: Props) {
   useEffect(() => {
     if (id) {
       fetchCv(id);
+    } else {
+      setAvailablePositions();
     }
   }, [id]);
 
@@ -211,7 +234,7 @@ export default function AddNewCvForm({ id }: Props) {
         <Form>
           <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
             <div className="container mx-auto px-16 py-24">
-              <PersonalInfo />
+              <PersonalInfo fProps={formProps} />
               <TechnicalSkill fProps={formProps} />
               <Projects fProps={formProps} />
               <Education />
