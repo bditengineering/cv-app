@@ -31,7 +31,7 @@ export default function CVList({ cvs, session }: CVListProps) {
     if (!data) throw new Error("No data received from Supabase.");
 
     const objectUrl = window.URL.createObjectURL(data);
-    var link = document.createElement('a');
+    const link = document.createElement('a');
     link.href = objectUrl;
     link.download = fileName;
     link.click();
