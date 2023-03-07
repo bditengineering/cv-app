@@ -7,7 +7,7 @@ import createClient from "../utils/supabase_server";
 
 export default async function Home() {
   const supabase = createClient();
-  const { data } = await supabase.from("cv").select("*");
+  const { data } = await supabase.from("cv").select("*, positions(*)");
   const {
     data: { session: supabaseSession },
   } = await supabase.auth.getSession();
