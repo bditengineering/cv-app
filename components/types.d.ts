@@ -3,6 +3,7 @@ export interface CV {
   first_name: string;
   last_name: string;
   created_at: string;
+  updated_by: string;
   updated_at: string;
   summary: string;
   university: string;
@@ -16,6 +17,7 @@ export interface CV {
   personal_qualities: Array;
   technical_skills: Array;
   positions: POSITION;
+  user: USER;
 }
 
 export interface POSITION {
@@ -24,4 +26,9 @@ export interface POSITION {
   created_at: string;
   updated_at: string;
   updated_by: string;
+}
+
+export interface USER {
+  id: string;
+  email: string;
 }

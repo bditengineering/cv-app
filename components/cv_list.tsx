@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Session } from "@supabase/supabase-js";
 import { CV } from "./types";
-import supabase from "../utils/supabase_browser";
+import { supabase } from "../utils/supabase";
 
 interface CVListProps {
   cvs: CV[] | null;
@@ -58,7 +58,7 @@ export default function CVList({ cvs, session }: CVListProps) {
               <td className="px-16 py-2 dark:text-black">{cv.last_name}</td>
               <td className="px-16 py-2 dark:text-black">{cv.positions.title}</td>
               <td className="px-16 py-2 dark:text-black">{new Date(cv.updated_at).toLocaleDateString("de-DE")}</td>
-              <td className="px-16 py-2 dark:text-black">{session?.user.email}</td>
+              <td className="px-16 py-2 dark:text-black">{cv.user.email}</td>
               <td className="px-16 py-2 dark:text-black"><button onClick={() => downloadPdf(`${cv.first_name} - ${cv.positions.title}`)}>Download</button></td>
               <td className="px-16 py-2 dark:text-black">
                 <Link
