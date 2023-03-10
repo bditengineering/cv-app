@@ -128,8 +128,6 @@ export default function AddNewCvForm({ id }: Props) {
       return await supabase.from("certifications").delete().eq("cv_id", cvId);
     }
 
-    console.log(certificationsToRemove);
-
     if (certificationsToRemove.length !== 0) {
       await supabase
         .from("certifications")
@@ -196,8 +194,6 @@ export default function AddNewCvForm({ id }: Props) {
         technologies: project.technologies || null,
       };
     });
-
-    console.log(updatedProjects);
 
     return supabase.from("projects").upsert(updatedProjects);
   }
