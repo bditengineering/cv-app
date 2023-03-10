@@ -2,7 +2,22 @@ import { Field, FieldArray } from "formik";
 import CvFieldArray from "./cv_field_array";
 import * as Icons from "../Icons";
 
-export function AdditionalInfo({ formProps }: any) {
+interface AdditionalInfoProps {
+  formProps: any;
+  setCertificationsToRemove: (cb: (prevState: string[]) => string[]) => void;
+}
+
+export function AdditionalInfo({
+  formProps,
+  setCertificationsToRemove,
+}: AdditionalInfoProps) {
+  const onRemove = (certificationId: string) => {
+    setCertificationsToRemove((prevIds: Array<string>) => [
+      ...prevIds,
+      certificationId,
+    ]);
+  };
+
   return (
     <div>
       <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
@@ -23,7 +38,7 @@ export function AdditionalInfo({ formProps }: any) {
                 <div>
                   {formProps.values?.["certifications"]?.length > 0 &&
                     formProps.values["certifications"].map(
-                      (item: any, index: any) => (
+                      (certification: any, index: any) => (
                         <div key={index} className="py-2">
                           <div className="mb-2 flex w-full">
                             <Field
@@ -42,7 +57,10 @@ export function AdditionalInfo({ formProps }: any) {
                           <button
                             className="rounded-md border border-indigo-500 bg-indigo-500 p-1 text-white float-right"
                             type="button"
-                            onClick={() => arrayHelpers.remove(index)}
+                            onClick={() => {
+                              arrayHelpers.remove(index);
+                              onRemove(certification.id);
+                            }}
                           >
                             <Icons.TrashCan />
                           </button>

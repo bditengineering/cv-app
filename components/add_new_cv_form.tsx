@@ -3,7 +3,6 @@
 import supabase from "../utils/supabase_browser";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CV } from "./types";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Projects from "./cv_form/projects";
@@ -23,12 +22,7 @@ export default function AddNewCvForm({ id }: Props) {
     first_name: "",
     last_name: "",
     summary: "",
-    education: {
-      university_name: "",
-      start_year: "",
-      end_year: "",
-      degree: "",
-    },
+    educations: [],
     english_written_level: "",
     english_spoken_level: "",
     projects: [],
@@ -37,6 +31,13 @@ export default function AddNewCvForm({ id }: Props) {
     availablePositions: [],
   });
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
+  const [educationsToRemove, setEducationsToRemove] = useState<Array<string>>(
+    [],
+  );
+  const [projectsToRemove, setProjectsToRemove] = useState<Array<string>>([]);
+  const [certificationsToRemove, setCertificationsToRemove] = useState<
+    Array<string>
+  >([]);
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
@@ -49,7 +50,7 @@ export default function AddNewCvForm({ id }: Props) {
     const availablePositions = await fetchAvailablePositions();
     const formData = {
       ...form,
-      availablePositions: availablePositions
+      availablePositions: availablePositions,
     };
     setForm(formData);
   }
@@ -62,7 +63,7 @@ export default function AddNewCvForm({ id }: Props) {
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, projects(*), education(*), certifications(*), positions(*)")
+      .select("*, projects(*), educations(*), certifications(*), positions(*)")
       .eq("id", employeeId);
 
     if (!data) return;
@@ -80,7 +81,7 @@ export default function AddNewCvForm({ id }: Props) {
     const formData = {
       ...data[0],
       projects: updatedProjects,
-      education: data[0].education[0],
+      educations: data[0].educations,
       availablePositions: availablePositions,
     };
 
@@ -90,16 +91,16 @@ export default function AddNewCvForm({ id }: Props) {
   async function uploadPdf(fileName: string) {
     const response = await fetch("/api/upload_to_drive", {
       method: "POST",
-      body: JSON.stringify({ fileName: fileName })
+      body: JSON.stringify({ fileName: fileName }),
     });
-    return response.ok
+    return response.ok;
   }
 
   async function edgeUploadInvocation(cvId: string) {
     const response = await supabase.functions.invoke("upload-to-storage", {
       body: { id: cvId },
-    })
-    return response
+    });
+    return response;
   }
 
   async function upsert(values: any) {
@@ -115,7 +116,7 @@ export default function AddNewCvForm({ id }: Props) {
 
     delete updatedCv.projects;
     delete updatedCv.certifications;
-    delete updatedCv.education;
+    delete updatedCv.educations;
     delete updatedCv.availablePositions;
     delete updatedCv.positions;
 
@@ -127,16 +128,43 @@ export default function AddNewCvForm({ id }: Props) {
       return await supabase.from("certifications").delete().eq("cv_id", cvId);
     }
 
+    console.log(certificationsToRemove);
+
+    if (certificationsToRemove.length !== 0) {
+      await supabase
+        .from("certifications")
+        .delete()
+        .in("id", certificationsToRemove);
+    }
+
     const updatedCertifications = certifications.map((certification: any) => ({
       ...certification,
       cv_id: cvId,
+      id: certification.id || null,
+      created_at: certification.created_at || null,
     }));
     return supabase.from("certifications").upsert(updatedCertifications);
   }
 
-  async function upsertEducation(education: any, cvId: string) {
-    education.cv_id = cvId;
-    return supabase.from("education").upsert(education);
+  async function upsertEducation(educations: any, cvId: string) {
+    if (educations.length === 0) {
+      return await supabase.from("educations").delete().match({ cv_id: cvId });
+    }
+
+    if (educationsToRemove.length !== 0) {
+      await supabase.from("educations").delete().in("id", educationsToRemove);
+    }
+
+    const updatedEducations = educations.map((education: any) => {
+      return {
+        ...education,
+        cv_id: cvId,
+        id: education.id || null,
+        created_at: education.created_at || null,
+      };
+    });
+
+    return supabase.from("educations").upsert(updatedEducations);
   }
 
   async function upsertProjects(projects: any, cvId: string) {
@@ -144,19 +172,32 @@ export default function AddNewCvForm({ id }: Props) {
       return await supabase.from("projects").delete().eq("cv_id", cvId);
     }
 
+    if (projectsToRemove.length !== 0) {
+      await supabase.from("projects").delete().in("id", projectsToRemove);
+    }
+
     const updatedProjects = projects.map((project: any) => {
       const startDate = new Date(project.date_start);
       startDate.setDate(15);
 
-      const endDate = new Date(project.date_end);
-      endDate.setDate(15);
+      let endDate = null;
+      if (project.date_end) {
+        endDate = new Date(project.date_end);
+        endDate.setDate(15);
+      }
       return {
         ...project,
         cv_id: cvId,
         date_start: startDate.toISOString(),
-        date_end: endDate.toISOString(),
+        date_end: endDate?.toISOString() || null,
+        id: project.id || null,
+        created_at: project.created_at || null,
+        responsibilities: project.responsibilities || null,
+        technologies: project.technologies || null,
       };
     });
+
+    console.log(updatedProjects);
 
     return supabase.from("projects").upsert(updatedProjects);
   }
@@ -167,16 +208,14 @@ export default function AddNewCvForm({ id }: Props) {
     setServerErrorMessage(error ? error.message : "");
 
     if (error) {
-      setServerErrorMessage(error.message);
-    } else {
-      await router.push("/");
+      return setServerErrorMessage(error.message);
     }
 
     if (!data) return;
     const cvId = data[0].id;
 
-    if (values.education) {
-      const { error } = await upsertEducation(values.education, cvId);
+    if (values.educations) {
+      const { error } = await upsertEducation(values.educations, cvId);
       if (error) {
         setServerErrorMessage(error ? error.message : "");
         return;
@@ -205,7 +244,9 @@ export default function AddNewCvForm({ id }: Props) {
       const fileName = `${values.first_name} - ${positionTitle}`;
       const uploadsuccessful = await uploadPdf(fileName);
       if (!uploadsuccessful) {
-        setServerErrorMessage("An error occured while uploading to google drive");
+        setServerErrorMessage(
+          "An error occured while uploading to google drive",
+        );
         return;
       }
     }
@@ -236,10 +277,19 @@ export default function AddNewCvForm({ id }: Props) {
             <div className="container mx-auto px-16 py-24">
               <PersonalInfo fProps={formProps} />
               <TechnicalSkill fProps={formProps} />
-              <Projects fProps={formProps} />
-              <Education />
+              <Projects
+                fProps={formProps}
+                setProjectsToRemove={setProjectsToRemove}
+              />
+              <Education
+                fProps={formProps}
+                setEducationsToRemove={setEducationsToRemove}
+              />
               <EnglishLevel />
-              <AdditionalInfo formProps={formProps} />
+              <AdditionalInfo
+                formProps={formProps}
+                setCertificationsToRemove={setCertificationsToRemove}
+              />
 
               <button
                 className="mt-20 rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600 w-full"
