@@ -1,30 +1,30 @@
-import React from "react";
+import React, { Component, ErrorInfo, ReactNode } from "react";
 
-class ErrorBoundary extends React.Component {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
+interface Props {
+  children?: ReactNode;
+}
 
-  static getDerivedStateFromError(error) {
+interface State {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false,
+  };
+
+  public static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
-  componentDidCatch(error, info) {
-    // Example "componentStack":
-    //   in ComponentThatThrows (created by App)
-    //   in ErrorBoundary (created by App)
-    //   in div (created by App)
-    //   in App
-    console.log(error);
-    console.log(info.componentStack);
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
   }
 
-  render() {
+  public render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return this.props.fallback;
+      return <h1>Sorry.. there was an error</h1>;
     }
 
     return this.props.children;
