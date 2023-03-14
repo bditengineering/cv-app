@@ -5,9 +5,10 @@ import { MonthYearDatePicker } from "../datepicker";
 
 interface Props {
   fProps: any;
+  setProjectsToRemove: (cb: (prevState: string[]) => string[]) => void;
 }
 
-export default function Projects({ fProps }: Props) {
+export default function Projects({ fProps, setProjectsToRemove }: Props) {
   return (
     <FieldArray
       name="projects"
@@ -178,7 +179,13 @@ export default function Projects({ fProps }: Props) {
                   <button
                     className="flex text-indigo-500"
                     type="button"
-                    onClick={() => arrayHelpers.remove(projectsIndex)}
+                    onClick={() => {
+                      arrayHelpers.remove(projectsIndex);
+                      setProjectsToRemove((prevIds) => [
+                        ...prevIds,
+                        project.id,
+                      ]);
+                    }}
                   >
                     <Icons.TrashCan />
                     Remove Project

@@ -6,18 +6,28 @@ interface Props {
 }
 
 export function PersonalInfo({ fProps }: Props) {
+  // TODO: don't manually mutate formik values and move state to parent component
+  const availablePositions = fProps.values.availablePositions;
+
   const [position, setPosition] = useState<string>();
   const handlePositionChange = (event: any) => {
-    const position = fProps.values.availablePositions.find((position: any) => position.title === event.target.value);
+    const position = fProps.values.availablePositions.find(
+      (position: any) => position.title === event.target.value,
+    );
     setPosition(event.target.value);
     fProps.values.position_id = position.id;
     fProps.values.positions = position;
   };
 
   useEffect(() => {
-    const currentPosition = fProps.values.positions ? fProps.values.positions.title : fProps.values.availablePositions[0]?.title;
-    setPosition(currentPosition)
-  }, [fProps]);
+    if (availablePositions.length === 0) return;
+    const currentPosition = fProps.values.positions
+      ? fProps.values.positions
+      : availablePositions[0];
+    fProps.values.position_id = currentPosition.id;
+    fProps.values.positions = currentPosition;
+    setPosition(currentPosition.title);
+  }, [availablePositions]);
   return (
     <div className="-my-8 divide-y-2 divide-gray-100 dark:divide-gray-700">
       <div className="flex flex-wrap py-8 md:flex-nowrap">
@@ -63,10 +73,16 @@ export function PersonalInfo({ fProps }: Props) {
           </span>
         </div>
         <div className="md:flex-grow">
-          <select className="rounded-md" value={position} onChange={handlePositionChange}>
-            {fProps.values.availablePositions.map((option: any, index: number) => (
-              <option key={index} value={option.title} label={option.title} />
-            ))}
+          <select
+            className="rounded-md"
+            value={position}
+            onChange={handlePositionChange}
+          >
+            {fProps.values.availablePositions.map(
+              (option: any, index: number) => (
+                <option key={index} value={option.title} label={option.title} />
+              ),
+            )}
           </select>
         </div>
       </div>
