@@ -38,6 +38,15 @@ export default function AddNewCvForm({ id }: Props) {
   const [certificationsToRemove, setCertificationsToRemove] = useState<
     Array<string>
   >([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      fetchCv(id);
+    } else {
+      setAvailablePositions();
+    }
+  }, [id]);
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
@@ -53,6 +62,7 @@ export default function AddNewCvForm({ id }: Props) {
       availablePositions: availablePositions,
     };
     setForm(formData);
+    setLoading(false);
   }
 
   async function fetchAvailablePositions() {
@@ -86,6 +96,7 @@ export default function AddNewCvForm({ id }: Props) {
     };
 
     setForm(formData);
+    setLoading(false);
   }
 
   async function uploadPdf(fileName: string) {
@@ -251,13 +262,7 @@ export default function AddNewCvForm({ id }: Props) {
     router.push("/");
   }
 
-  useEffect(() => {
-    if (id) {
-      fetchCv(id);
-    } else {
-      setAvailablePositions();
-    }
-  }, [id]);
+  if (loading) return <h1>Loading...</h1>;
 
   return (
     <Formik
