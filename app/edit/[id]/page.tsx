@@ -8,6 +8,8 @@ interface Props {
   };
 }
 
+export const dynamic = "force-static";
+
 export default function EditCv({ params: { id } }: Props) {
   console.log(id);
   return (

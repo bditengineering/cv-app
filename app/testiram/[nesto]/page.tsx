@@ -5,3 +5,5 @@ export default function Test({
 }) {
   return <h1>{nesto}</h1>;
 }
+
+export const dynamic = "force-static";
