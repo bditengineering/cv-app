@@ -9,13 +9,6 @@ interface EducationProps {
 }
 
 export function Education({ fProps, setEducationsToRemove }: EducationProps) {
-  const onRemove = (educationId: string) => {
-    setEducationsToRemove((prevIds: Array<string>) => [
-      ...prevIds,
-      educationId,
-    ]);
-  };
-
   return (
     <FieldArray
       name="educations"
@@ -108,7 +101,10 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                       type="button"
                       onClick={() => {
                         arrayHelpers.remove(educationIndex);
-                        onRemove(education.id);
+                        setEducationsToRemove((prevIds) => [
+                          ...prevIds,
+                          education.id,
+                        ]);
                       }}
                     >
                       <Icons.TrashCan />

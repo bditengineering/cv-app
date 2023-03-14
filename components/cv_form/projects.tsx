@@ -9,10 +9,6 @@ interface Props {
 }
 
 export default function Projects({ fProps, setProjectsToRemove }: Props) {
-  const onRemove = (projectId: string) => {
-    setProjectsToRemove((prevIds: Array<string>) => [...prevIds, projectId]);
-  };
-
   return (
     <FieldArray
       name="projects"
@@ -185,7 +181,10 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                     type="button"
                     onClick={() => {
                       arrayHelpers.remove(projectsIndex);
-                      onRemove(project.id);
+                      setProjectsToRemove((prevIds) => [
+                        ...prevIds,
+                        project.id,
+                      ]);
                     }}
                   >
                     <Icons.TrashCan />

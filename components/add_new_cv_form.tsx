@@ -192,6 +192,7 @@ export default function AddNewCvForm({ id }: Props) {
         created_at: project.created_at || null,
         responsibilities: project.responsibilities || null,
         technologies: project.technologies || null,
+        ongoing: project.ongoing || false,
       };
     });
 

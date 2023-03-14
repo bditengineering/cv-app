@@ -11,13 +11,6 @@ export function AdditionalInfo({
   formProps,
   setCertificationsToRemove,
 }: AdditionalInfoProps) {
-  const onRemove = (certificationId: string) => {
-    setCertificationsToRemove((prevIds: Array<string>) => [
-      ...prevIds,
-      certificationId,
-    ]);
-  };
-
   return (
     <div>
       <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
@@ -59,7 +52,10 @@ export function AdditionalInfo({
                             type="button"
                             onClick={() => {
                               arrayHelpers.remove(index);
-                              onRemove(certification.id);
+                              setCertificationsToRemove((prevIds) => [
+                                ...prevIds,
+                                certification.id,
+                              ]);
                             }}
                           >
                             <Icons.TrashCan />
