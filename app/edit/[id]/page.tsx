@@ -19,6 +19,6 @@ export default function EditCv({ params: { id } }: Props) {
     //     </ErrorBoundary>
     //   </main>
     // </div>
-    <h1>Edit</h1>
+    <p>Edit</p>
   );
 }
