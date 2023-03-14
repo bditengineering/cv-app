@@ -9,14 +9,16 @@ interface Props {
 }
 
 export default function EditCv({ params: { id } }: Props) {
+  console.log(id);
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className="mb-6 text-center text-5xl font-bold">Edit CV</h1>
-        <ErrorBoundary>
-          <AddNewCvForm id={id} />
-        </ErrorBoundary>
-      </main>
-    </div>
+    // <div className={styles.container}>
+    //   <main className={styles.main}>
+    //     <h1 className="mb-6 text-center text-5xl font-bold">Edit CV</h1>
+    //     <ErrorBoundary>
+    //       <AddNewCvForm id={id} />
+    //     </ErrorBoundary>
+    //   </main>
+    // </div>
+    <h1>Edit</h1>
   );
 }
