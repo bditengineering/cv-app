@@ -7,6 +7,8 @@ interface Props {
   };
 }
 
+export const dynamic = "force-static";
+
 export default function EditCv({ params: { id } }: Props) {
   return (
     <div className={styles.container}>
