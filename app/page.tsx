@@ -4,7 +4,6 @@ import SignOut from "../components/sign_out";
 import SignIn from "../components/sign_in_form";
 import Link from "next/link";
 import createClient from "../utils/supabase_server";
-import ErrorBoundary from "../components/error_boundary";
 
 export default async function Home() {
   const supabase = createClient();
@@ -20,19 +19,17 @@ export default async function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>CV App</h1>
         <div>
-          <ErrorBoundary>
-            {supabaseSession ? (
-              <>
-                <SignOut />
-                <CVList cvs={data} session={supabaseSession} />
-              </>
-            ) : (
-              <>
-                <SignIn />
-                <Link href={"/signup"}>Sign Up</Link>
-              </>
-            )}
-          </ErrorBoundary>
+          {supabaseSession ? (
+            <>
+              <SignOut />
+              <CVList cvs={data} session={supabaseSession} />
+            </>
+          ) : (
+            <>
+              <SignIn />
+              <Link href={"/signup"}>Sign Up</Link>
+            </>
+          )}
         </div>
       </main>
     </div>
