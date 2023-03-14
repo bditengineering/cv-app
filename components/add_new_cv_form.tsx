@@ -277,7 +277,7 @@ export default function AddNewCvForm({ id }: Props) {
         <Form>
           <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
             <div className="container mx-auto px-16 py-24">
-              <PersonalInfo fProps={formProps} />
+              {/* <PersonalInfo fProps={formProps} />
               <TechnicalSkill fProps={formProps} />
               <Projects
                 fProps={formProps}
@@ -299,7 +299,8 @@ export default function AddNewCvForm({ id }: Props) {
               >
                 Submit
               </button>
-              {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
+              {serverErrorMessage && <p>Error: {serverErrorMessage}</p>} */}
+              <h1>Zdravo</h1>
             </div>
           </div>
         </Form>
