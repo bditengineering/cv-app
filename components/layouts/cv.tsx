@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Logo from "../logo";
 
 interface Props {
   children: React.ReactNode;
@@ -16,9 +16,7 @@ const CVLayout = ({ children, title }: Props) => {
     <>
       <header className="bg-white text-gray-900 dark:bg-black dark:text-gray-50 shadow">
         <Container>
-          <Link href="/" className="font-serif text-3xl hover:underline">
-            cv
-          </Link>
+          <Logo />
           <h1 className="text-3xl font-bold tracking-tight inline-block ml-4">
             {title}
           </h1>
