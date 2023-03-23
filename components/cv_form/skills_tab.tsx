@@ -1,6 +1,7 @@
+import { ChangeEvent } from "react";
 import { Tab } from "@headlessui/react";
 import { FieldArray, FieldArrayRenderProps } from "formik";
-import { ChangeEvent } from "react";
+import Checkbox from "@ui/checkbox";
 
 interface SkillsTabProps {
   fProps: any;
@@ -51,19 +52,21 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
           render={(arrayHelpers) => (
             <div>
               {Object.entries(skills).map(([id, group]) => (
-                <Tab.Panel key={id}>
+                <Tab.Panel
+                  key={id}
+                  className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+                >
                   {group.skills.map((skill) => (
-                    <label key={skill.id}>
-                      <input
-                        name="cv_skill"
-                        type="checkbox"
-                        checked={isChecked(skill)}
-                        onChange={(event) =>
-                          onChangeHandler(event, arrayHelpers, skill)
-                        }
-                      />
+                    <Checkbox
+                      checked={isChecked(skill)}
+                      key={skill.id}
+                      name={"cv_skill-" + skill.id}
+                      onChange={(event) =>
+                        onChangeHandler(event, arrayHelpers, skill)
+                      }
+                    >
                       {skill.name}
-                    </label>
+                    </Checkbox>
                   ))}
                 </Tab.Panel>
               ))}
