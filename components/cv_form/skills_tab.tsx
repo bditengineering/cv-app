@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
+import { Tab } from "@headlessui/react";
 import { FieldArray, FieldArrayRenderProps } from "formik";
 import Checkbox from "@ui/checkbox";
-import { Tab } from "@headlessui/react";
 
 interface SkillsTabProps {
   fProps: any;
