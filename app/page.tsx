@@ -18,11 +18,11 @@ export default async function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <h1 className={styles.title}>CV App</h1>
-        <div>
+        <div className="w-full">
           {supabaseSession ? (
             <>
               <SignOut />
-              <CVList cvs={data} session={supabaseSession} />
+              <CVList cvs={data} />
             </>
           ) : (
             <>

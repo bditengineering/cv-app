@@ -1,37 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Session } from "@supabase/supabase-js";
 import { CV } from "./types";
 import { supabase } from "../utils/supabase";
 
 interface CVListProps {
   cvs: CV[] | null;
-  session: Session | null;
 }
 
-export default function CVList({ cvs, session }: CVListProps) {
-  function renderAddNew() {
-    if (!session) return null;
-    return (
-      <Link
-        className="rounded-md border bg-purple-700 px-4 py-2 text-white block w-fit m-auto"
-        prefetch={false}
-        href={"/new"}
-      >
-        Add new CV
-      </Link>
-    );
-  }
-
+export default function CVList({ cvs }: CVListProps) {
   async function downloadPdf(fileName: string) {
-    const { data, error } = await supabase.storage.from("pdfs").download(fileName);
+    const { data, error } = await supabase.storage
+      .from("pdfs")
+      .download(fileName);
 
     if (error) throw error;
     if (!data) throw new Error("No data received from Supabase.");
 
     const objectUrl = window.URL.createObjectURL(data);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = objectUrl;
     link.download = fileName;
     link.click();
@@ -56,10 +43,22 @@ export default function CVList({ cvs, session }: CVListProps) {
             <tr key={cv.id}>
               <td className="px-16 py-2 dark:text-black">{cv.first_name}</td>
               <td className="px-16 py-2 dark:text-black">{cv.last_name}</td>
-              <td className="px-16 py-2 dark:text-black">{cv.positions.title}</td>
-              <td className="px-16 py-2 dark:text-black">{new Date(cv.updated_at).toLocaleDateString("de-DE")}</td>
+              <td className="px-16 py-2 dark:text-black">
+                {cv.positions.title}
+              </td>
+              <td className="px-16 py-2 dark:text-black">
+                {new Date(cv.updated_at).toLocaleDateString("de-DE")}
+              </td>
               <td className="px-16 py-2 dark:text-black">{cv.user.email}</td>
-              <td className="px-16 py-2 dark:text-black"><button onClick={() => downloadPdf(`${cv.first_name} - ${cv.positions.title}`)}>Download</button></td>
+              <td className="px-16 py-2 dark:text-black">
+                <button
+                  onClick={() =>
+                    downloadPdf(`${cv.first_name} - ${cv.positions.title}`)
+                  }
+                >
+                  Download
+                </button>
+              </td>
               <td className="px-16 py-2 dark:text-black">
                 <Link
                   className="rounded-md border bg-purple-700 px-4 py-2 text-white"
@@ -73,7 +72,14 @@ export default function CVList({ cvs, session }: CVListProps) {
           ))}
         </tbody>
       </table>
-      {renderAddNew()}
+
+      <Link
+        className="rounded-md border bg-purple-700 px-4 py-2 text-white block w-fit m-auto"
+        prefetch={false}
+        href={"/new"}
+      >
+        Add new CV
+      </Link>
     </>
   );
 }
