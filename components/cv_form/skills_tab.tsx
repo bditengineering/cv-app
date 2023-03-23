@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
-import { Tab } from "@headlessui/react";
 import { FieldArray, FieldArrayRenderProps } from "formik";
 import Checkbox from "@ui/checkbox";
+import { Tab } from "@headlessui/react";
 
 interface SkillsTabProps {
   fProps: any;
@@ -37,14 +37,15 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
 
   return (
     <Tab.Group>
-      <Tab.List>
-        {Object.entries(skills).map(([id, group]) => {
-          return (
-            <Tab className="mb-5 mr-5" key={id}>
-              {group.group_name}
-            </Tab>
-          );
-        })}
+      <Tab.List className="bg-gray-50 border-solid border-1 border-gray-100 rounded-lg p-1 mb-5 gap-2 flex flex-row items-center">
+        {Object.entries(skills).map(([id, group]) => (
+          <Tab
+            key={id}
+            className="aria-selected:bg-white aria-selected:text-gray-700 aria-selected:font-medium aria-selected:rounded-md aria-selected:shadow px-2 py-3 text-gray-500 outline-none"
+          >
+            {group.group_name}
+          </Tab>
+        ))}
       </Tab.List>
       <Tab.Panels>
         <FieldArray
