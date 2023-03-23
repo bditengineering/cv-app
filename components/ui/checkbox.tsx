@@ -1,6 +1,6 @@
 import { cva } from "class-variance-authority";
 
-interface Props {
+interface CheckboxProps {
   checked: boolean;
   children: React.ReactNode;
   className?: string;
@@ -38,7 +38,7 @@ const Checkbox = ({
   name,
   onChange,
   supportingText,
-}: Props) => {
+}: CheckboxProps) => {
   return (
     <div className="flex items-start">
       <div className="flex h-5 items-center">
