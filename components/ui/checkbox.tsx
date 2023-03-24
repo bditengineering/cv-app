@@ -13,9 +13,8 @@ interface CheckboxProps {
 
 const checkboxClasses = cva(
   [
-    "checkbox",
-    "h-5 w-5 rounded-md border-gray-300",
-    "focus:border-indigo-300 focus:ring-indigo-600",
+    "checkbox h-5 w-5 rounded-md border-gray-300",
+    "focus:outline-0 focus:border-indigo-300 focus:ring-4 focus:ring-offset-0 focus:ring-indigo-100",
   ],
   {
     variants: {
