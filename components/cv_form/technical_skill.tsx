@@ -1,5 +1,5 @@
 import { Field, FieldArray } from "formik";
-import * as Icons from "../Icons";
+import * as Icons from "@ui/icons";
 import NestedRow from "./nested_row";
 
 interface Props {
