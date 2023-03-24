@@ -4,7 +4,7 @@ import type { ExtractProps } from "../types";
 export const Tab = (props: ExtractProps<typeof HeadlessTab>) => {
   return (
     <HeadlessTab
-      className="aria-selected:bg-white aria-selected:text-gray-700 aria-selected:font-medium aria-selected:rounded-md aria-selected:shadow px-3 py-2 text-gray-500 outline-none"
+      className="m-1.5 px-3.5 py-2.5 text-gray-500 font-semibold aria-selected:bg-white aria-selected:text-gray-700 aria-selected:rounded-md aria-selected:shadow focus:outline-none"
       {...props}
     />
   );
@@ -15,12 +15,7 @@ export const TabGroup = (props: ExtractProps<typeof HeadlessTab.Group>) => {
 };
 
 export const TabPanel = (props: ExtractProps<typeof HeadlessTab.Panel>) => {
-  return (
-    <HeadlessTab.Panel
-      className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
-      {...props}
-    />
-  );
+  return <HeadlessTab.Panel {...props} />;
 };
 
 export const TabPanels = (props: ExtractProps<typeof HeadlessTab.Panels>) => {
@@ -30,7 +25,7 @@ export const TabPanels = (props: ExtractProps<typeof HeadlessTab.Panels>) => {
 export const TabList = (props: ExtractProps<typeof HeadlessTab.List>) => {
   return (
     <HeadlessTab.List
-      className="bg-gray-50 border-solid border-1 border-gray-100 rounded-lg gap-2 flex flex-row items-center"
+      className="bg-gray-50 border border-gray-100 rounded-lg gap-2 flex flex-row items-center"
       {...props}
     />
   );
