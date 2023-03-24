@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
-import { Tab } from "@headlessui/react";
 import { FieldArray, FieldArrayRenderProps } from "formik";
 import Checkbox from "@ui/checkbox";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@ui/tab";
 
 interface SkillsTabProps {
   fProps: any;
@@ -36,25 +36,21 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
   };
 
   return (
-    <Tab.Group>
-      <Tab.List>
-        {Object.entries(skills).map(([id, group]) => {
-          return (
-            <Tab className="mb-5 mr-5" key={id}>
-              {group.group_name}
-            </Tab>
-          );
-        })}
-      </Tab.List>
-      <Tab.Panels>
+    <TabGroup>
+      <TabList>
+        {Object.entries(skills).map(([id, group]) => (
+          <Tab key={id}>{group.group_name}</Tab>
+        ))}
+      </TabList>
+      <TabPanels>
         <FieldArray
           name="cv_skill"
           render={(arrayHelpers) => (
-            <div>
+            <>
               {Object.entries(skills).map(([id, group]) => (
-                <Tab.Panel
+                <TabPanel
+                  className="px-1.5 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
                   key={id}
-                  className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
                 >
                   {group.skills.map((skill) => (
                     <Checkbox
@@ -68,12 +64,12 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
                       {skill.name}
                     </Checkbox>
                   ))}
-                </Tab.Panel>
+                </TabPanel>
               ))}
-            </div>
+            </>
           )}
         />
-      </Tab.Panels>
-    </Tab.Group>
+      </TabPanels>
+    </TabGroup>
   );
 }
