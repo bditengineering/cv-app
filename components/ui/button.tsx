@@ -20,13 +20,28 @@ export const buttonClasses = cva(
   {
     variants: {
       variant: {
-        filled:
+        filled: [
           "shadow-sm bg-indigo-600 text-white focus:ring-4 focus:ring-indigo-100",
-        tinted:
-          "bg-indigo-50 text-indigo-700 hover:text-indigo-800 focus:ring-4 focus:ring-indigo-100",
-        outlined:
-          "shadow-sm border border-gray-300 bg-white text-gray-700 hover:text-gray-800 focus:ring-4 focus:ring-gray-100",
-        plain: "text-gray-600 hover:text-gray-700 focus:bg-gray-50",
+          "hover:bg-indigo-700",
+          "disabled:hover:bg-indigo-600",
+        ],
+        tinted: [
+          "bg-indigo-50 text-indigo-700 focus:ring-4 focus:ring-indigo-100",
+          "hover:bg-indigo-100 hover:text-indigo-800",
+          // when button is disabled, we dont't want to change background and font color
+          // hence we're reverting it to the same values that non-hovered button have
+          "disabled:hover:bg-indigo-50 disabled:hover:text-indigo-700",
+        ],
+        outlined: [
+          "shadow-sm border border-gray-300 bg-white text-gray-700 focus:ring-4 focus:ring-gray-100",
+          "hover:bg-gray-50 hover:text-gray-800",
+          "disabled:hover:bg-white disabled:hover:text-gray-700",
+        ],
+        plain: [
+          "text-gray-600 focus:bg-gray-50",
+          "hover:bg-gray-50 hover:text-gray-700",
+          "disabled:hover:bg-transparent disabled:hover:text-gray-600",
+        ],
       },
       size: {
         small: "py-2 px-3.5 text-sm",
@@ -35,51 +50,8 @@ export const buttonClasses = cva(
       },
       disabled: {
         true: "opacity-50",
-        false: "",
       },
     },
-    compoundVariants: [
-      {
-        disabled: false,
-        variant: "filled",
-        className: "hover:bg-indigo-700",
-      },
-      {
-        disabled: true,
-        variant: "filled",
-        className: "hover:bg-indigo-600",
-      },
-      {
-        disabled: false,
-        variant: "tinted",
-        className: "hover:bg-indigo-100",
-      },
-      {
-        disabled: true,
-        variant: "tinted",
-        className: "hover:bg-indigo-50 hover:text-indigo-700",
-      },
-      {
-        disabled: false,
-        variant: "outlined",
-        className: "hover:bg-gray-50",
-      },
-      {
-        disabled: true,
-        variant: "outlined",
-        className: "hover:bg-white hover:text-gray-700",
-      },
-      {
-        disabled: false,
-        variant: "plain",
-        className: "hover:bg-gray-50",
-      },
-      {
-        disabled: true,
-        variant: "plain",
-        className: "hover:text-gray-600",
-      },
-    ],
     defaultVariants: {
       disabled: false,
       variant: "filled",
