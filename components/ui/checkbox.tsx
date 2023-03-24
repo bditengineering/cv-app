@@ -52,7 +52,7 @@ const Checkbox = ({
         />
       </div>
 
-      <div className="ml-2 text-sm leading-5">
+      <div className="ml-3 text-base leading-5">
         <label htmlFor={name} className="font-medium text-gray-700">
           {children}
         </label>
