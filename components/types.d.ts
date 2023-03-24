@@ -1,3 +1,6 @@
+import type { ComponentType } from "react";
+
+export type ExtractProps<T> = T extends ComponentType<infer P> ? P : T;
 export interface CV {
   id: string;
   first_name: string;
