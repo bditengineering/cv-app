@@ -15,7 +15,7 @@ interface ButtonProps {
 /* TODO
 - disabled
 */
-export const buttonClassNames = cva(
+export const buttonClasses = cva(
   "button shadow rounded-lg flex items-center gap-x-2 font-semibold focus:outline-none",
   {
     variants: {
@@ -55,7 +55,7 @@ const Button = ({
   return (
     <button
       type={type}
-      className={buttonClassNames({ className, variant, size })}
+      className={buttonClasses({ className, variant, size })}
       onClick={onClick}
     >
       {prefix}
