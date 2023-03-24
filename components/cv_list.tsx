@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { supabase } from "../utils/supabase";
 import { cva } from "class-variance-authority";
-import { Plus } from "./Icons";
-import { buttonClassNames } from "@ui/Button";
+import { supabase } from "../utils/supabase";
+import { Plus } from "@ui/icons";
+import { buttonClasses } from "@ui/button";
 import type { CV } from "./types";
 
 interface CVListProps {
@@ -96,7 +96,7 @@ export default function CVList({ cvs }: CVListProps) {
       </div>
 
       <div className="w-fit mx-auto">
-        <Link className={buttonClassNames()} prefetch={false} href="/new">
+        <Link className={buttonClasses()} prefetch={false} href="/new">
           <Plus className="w-5 h-5" /> Add new CV
         </Link>
       </div>

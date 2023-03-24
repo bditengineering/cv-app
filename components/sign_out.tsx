@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@ui/Button";
+import Button from "@ui/button";
 import { useRouter } from "next/navigation";
 import supabase from "../utils/supabase_browser";
 
