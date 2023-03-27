@@ -75,7 +75,7 @@ export default function CVList({ cvs }: CVListProps) {
                     </button>
 
                     <Link
-                      className="font-semibold text-indigo-700 text-base leading-normal"
+                      className="font-semibold text-indigo-700 text-base leading-normal hover:text-indigo-800"
                       prefetch={false}
                       href={`/edit/${cv.id}`}
                     >
