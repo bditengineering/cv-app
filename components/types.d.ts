@@ -1,6 +1,28 @@
 import type { ComponentType } from "react";
 
 export type ExtractProps<T> = T extends ComponentType<infer P> ? P : T;
+
+interface SkillResponse {
+  id: string;
+  name: string;
+  skill_group: {
+    id: string;
+    name: string;
+  };
+}
+
+interface Skill {
+  id: string;
+  name: string;
+}
+
+interface SkillGroup {
+  [group_id: string]: {
+    group_name: string;
+    skills: Array<Skill>;
+  };
+}
+
 export interface CV {
   id: string;
   first_name: string;
