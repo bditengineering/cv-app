@@ -6,13 +6,12 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
 import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
-import { corsHeaders } from '../_shared/cors.ts'
+import { corsHeaders } from "../_shared/cors.ts";
 
 serve(async function handler(req: Request) {
-
   // This is needed if you're planning to invoke your function from a browser.
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
@@ -28,7 +27,9 @@ serve(async function handler(req: Request) {
 
     const { data, error } = await supabaseClient
       .from("cv")
-      .select("*, projects(*), positions(title), education(*), certifications(certificate_name, description)")
+      .select(
+        "*, projects(*), positions(title), education(*), certifications(certificate_name, description)",
+      )
       .eq("id", id);
     if (error) throw error;
 
@@ -39,8 +40,16 @@ serve(async function handler(req: Request) {
     const name = `${employee.first_name} - ${employee.positions.title}`;
 
     const projects = employee.projects.map((item: any) => {
-      const startDate = new Date(item.date_start).toLocaleString('default', { month: 'long', year: 'numeric' });
-      const endDate = item.ongoing ? "Present" : new Date(item.date_end).toLocaleString('default', { month: 'long', year: 'numeric' })
+      const startDate = new Date(item.date_start).toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      });
+      const endDate = item.ongoing
+        ? "Present"
+        : new Date(item.date_end).toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          });
       return [
         ["Project Name", item.name],
         ["Project Description", item.description],
@@ -50,61 +59,76 @@ serve(async function handler(req: Request) {
         ["Tools & Technologies", item.technologies.join(", ")],
         ["Responsibilities", item.responsibilities.join(", ")],
         ["Time Period", `${startDate} - ${endDate}`],
-        [{ content: '', colSpan: 2 }],
-      ]
+        [{ content: "", colSpan: 2 }],
+      ];
     });
 
-    const education = employee.education.map(item => `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`);
+    const education = employee.education.map(
+      (item) =>
+        `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`,
+    );
 
-    const certifications = employee.certifications.map(item => `${item.certificate_name} - ${item.description}`);
-    const options = { format: "A4" };
-
+    const certifications = employee.certifications.map(
+      (item) => `${item.certificate_name} - ${item.description}`,
+    );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const doc = new jsPDF();
 
-    doc.text(`${name}`, 10, 10);
+    const width = doc.internal.pageSize.getWidth();
 
-    autoTable(doc, {
+    const cellBodyTextColor = [95, 95, 95];
+    const backgroundColor = [240, 240, 240];
+    const borderColor = [215, 215, 215];
+    const borderWidth = 0.3;
+    const cellPadding = 3;
+
+    const tableStyles = {
       theme: "grid",
-      tableLineColor: [192, 192, 192],
-      tableLineWidth: 1,
+      tableLineColor: borderColor,
+      tableLineWidth: borderWidth,
       styles: {
-        lineColor: [192, 192, 192],
-        lineWidth: 1,
+        lineColor: borderColor,
+        lineWidth: borderWidth,
       },
       headStyles: {
-        fillColor: [224, 224, 224],
-        fontSize: 15,
+        fillColor: backgroundColor,
+        fontSize: 12,
+        fontStyle: "normal",
         halign: "center",
         textColor: 0,
       },
       bodyStyles: {
-        fillColor: [250, 250, 250],
-        textColor: 0,
+        textColor: cellBodyTextColor,
+        cellPadding,
       },
+      columnStyles: { 0: { textColor: 95, fontStyle: "bold" } },
+      pageBreak: "avoid",
+      margin: { left: 25, right: 25 },
+    };
+
+    doc.text(`${name}`, 10, 10, "center");
+
+    doc.setTextColor(95, 95, 95);
+    doc.setFont("times", "bold");
+
+    doc.text(`${name}`, width / 2, 32, {
+      align: "center",
+    });
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("times", "normal");
+
+    autoTable(doc, {
+      ...tableStyles,
+      columnStyles: {},
       head: [["Summary of Qualification"]],
       body: [[employee.summary || ""]],
+      margin: { ...tableStyles.margin, top: 40 },
     });
 
     autoTable(doc, {
-      theme: "grid",
-      tableLineColor: [192, 192, 192],
-      tableLineWidth: 1,
-      styles: {
-        lineColor: [192, 192, 192],
-        lineWidth: 1,
-      },
-      headStyles: {
-        fillColor: [224, 224, 224],
-        fontSize: 15,
-        halign: "center",
-        textColor: 0,
-      },
-      bodyStyles: {
-        fillColor: [250, 250, 250],
-        textColor: 0,
-      },
+      ...tableStyles,
       head: [
         [
           {
@@ -123,23 +147,7 @@ serve(async function handler(req: Request) {
     });
 
     autoTable(doc, {
-      theme: "grid",
-      tableLineColor: [192, 192, 192],
-      tableLineWidth: 1,
-      styles: {
-        lineColor: [192, 192, 192],
-        lineWidth: 1,
-      },
-      headStyles: {
-        fillColor: [224, 224, 224],
-        fontSize: 15,
-        halign: "center",
-        textColor: 0,
-      },
-      bodyStyles: {
-        fillColor: [250, 250, 250],
-        textColor: 0,
-      },
+      ...tableStyles,
       head: [
         [
           {
@@ -152,23 +160,7 @@ serve(async function handler(req: Request) {
     });
 
     autoTable(doc, {
-      theme: "grid",
-      tableLineColor: [192, 192, 192],
-      tableLineWidth: 1,
-      styles: {
-        lineColor: [192, 192, 192],
-        lineWidth: 1,
-      },
-      headStyles: {
-        fillColor: [224, 224, 224],
-        fontSize: 15,
-        halign: "center",
-        textColor: 0,
-      },
-      bodyStyles: {
-        fillColor: [250, 250, 250],
-        textColor: 0,
-      },
+      ...tableStyles,
       head: [
         [
           {
@@ -188,23 +180,7 @@ serve(async function handler(req: Request) {
     });
 
     autoTable(doc, {
-      theme: "grid",
-      tableLineColor: [192, 192, 192],
-      tableLineWidth: 1,
-      styles: {
-        lineColor: [192, 192, 192],
-        lineWidth: 1,
-      },
-      headStyles: {
-        fillColor: [224, 224, 224],
-        fontSize: 15,
-        halign: "center",
-        textColor: 0,
-      },
-      bodyStyles: {
-        fillColor: [250, 250, 250],
-        textColor: 0,
-      },
+      ...tableStyles,
       head: [
         [
           {
@@ -220,13 +196,11 @@ serve(async function handler(req: Request) {
 
     const uploadName = `${employee.first_name} - ${employee.positions.title}`;
 
-    const { data: upload } = await supabaseClient.storage
-      .from("pdfs")
-      .upload(uploadName, result, {
-        contentType: "application/pdf",
-        cacheControl: "3600",
-        upsert: true,
-      });
+    await supabaseClient.storage.from("pdfs").upload(uploadName, result, {
+      contentType: "application/pdf",
+      cacheControl: "3600",
+      upsert: true,
+    });
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
