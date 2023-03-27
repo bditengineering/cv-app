@@ -33,9 +33,10 @@ type SkillResponse = {
 
 interface Props {
   id?: string;
+  skills: SkillGroup;
 }
 
-export default function AddNewCvForm({ id }: Props) {
+export default function AddNewCvForm({ id, skills }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<Partial<any>>({
     first_name: "",
@@ -50,7 +51,6 @@ export default function AddNewCvForm({ id }: Props) {
     availablePositions: [],
     cv_skill: [],
   });
-  const [skills, setSkills] = useState<SkillGroup>({});
   const [initialUserSkills, setInitialUserSkills] = useState<
     Array<SkillResponse>
   >([]);
@@ -65,42 +65,13 @@ export default function AddNewCvForm({ id }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetches = [fetchSkills()];
     if (id) {
-      fetches.push(fetchCv(id));
+      fetchCv(id);
     } else {
-      fetches.push(setAvailablePositions());
+      setAvailablePositions();
     }
-    Promise.all(fetches).then(() => setLoading(false));
+    setLoading(false);
   }, [id]);
-
-  async function fetchSkills() {
-    const { data } = await supabase
-      .from("skill")
-      .select("id, name, skill_group(name, id)")
-      .order("name");
-
-    const mappedSkills: SkillGroup = (data as any)?.reduce(
-      (acc: SkillGroup, skill: any) => {
-        return {
-          [skill?.skill_group.id]: {
-            group_name: skill?.skill_group.name,
-            group_id: skill?.skill_group.id,
-            skills: acc[skill.skill_group.id]
-              ? acc[skill.skill_group.id].skills.push({
-                  name: skill.name,
-                  id: skill.id,
-                })
-              : [],
-          },
-          ...acc,
-        };
-      },
-      {},
-    );
-
-    setSkills(mappedSkills);
-  }
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
