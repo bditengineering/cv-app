@@ -1,6 +1,6 @@
 import { Field, FieldArray } from "formik";
 import CvFieldArray from "./cv_field_array";
-import * as Icons from "../Icons";
+import * as Icons from "@ui/icons";
 
 interface AdditionalInfoProps {
   formProps: any;

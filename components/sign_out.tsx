@@ -1,7 +1,8 @@
 "use client";
 
-import supabase from "../utils/supabase_browser";
+import Button from "@ui/button";
 import { useRouter } from "next/navigation";
+import supabase from "../utils/supabase_browser";
 
 export default function SignOut() {
   const router = useRouter();
@@ -12,8 +13,8 @@ export default function SignOut() {
   }
 
   return (
-    <a href="#" onClick={signOut} className="signOut">
+    <Button variant="plain" className="mx-auto" onClick={signOut}>
       Sign Out
-    </a>
+    </Button>
   );
 }

@@ -18,19 +18,18 @@ export default async function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <h1 className={styles.title}>CV App</h1>
-        <div>
-          {supabaseSession ? (
-            <>
-              <SignOut />
-              <CVList cvs={data} session={supabaseSession} />
-            </>
-          ) : (
-            <>
-              <SignIn />
-              <Link href={"/signup"}>Sign Up</Link>
-            </>
-          )}
-        </div>
+
+        {supabaseSession ? (
+          <>
+            <SignOut />
+            <CVList cvs={data} />
+          </>
+        ) : (
+          <>
+            <SignIn />
+            <Link href={"/signup"}>Sign Up</Link>
+          </>
+        )}
       </main>
     </div>
   );
