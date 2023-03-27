@@ -107,8 +107,6 @@ serve(async function handler(req: Request) {
       margin: { left: 25, right: 25 },
     };
 
-    doc.text(`${name}`, 10, 10, "center");
-
     doc.setTextColor(95, 95, 95);
     doc.setFont("times", "bold");
 
