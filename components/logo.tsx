@@ -4,7 +4,7 @@ const Logo = () => {
   return (
     <Link
       href="/"
-      className="font-serif text-2xl text-gray-900 hover:underline"
+      className="font-serif text-2xl px-2 text-gray-900 leading-none hover:underline"
     >
       cv
     </Link>
