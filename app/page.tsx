@@ -3,10 +3,10 @@ import CVList from "../components/cv_list";
 import SignOut from "../components/sign_out";
 import SignIn from "../components/sign_in_form";
 import Link from "next/link";
-import createClient from "../utils/supabase_server";
+import createServerClient from "../utils/supabase_server";
 
 export default async function Home() {
-  const supabase = createClient();
+  const supabase = createServerClient();
   const { data } = await supabase
     .from("cv")
     .select("*, positions(*), user: users!updated_by(*)");
