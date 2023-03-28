@@ -47,11 +47,11 @@ export interface CV {
   certifications: Array;
   personal_qualities: Array;
   technical_skills: Array;
-  positions: Position;
+  titles: Title;
   user: User;
 }
 
-export interface Position {
+export interface Title {
   id: string;
   name: string;
   created_at: string;
