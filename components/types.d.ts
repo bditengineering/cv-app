@@ -2,6 +2,12 @@ import type { ComponentType } from "react";
 
 export type ExtractProps<T> = T extends ComponentType<infer P> ? P : T;
 
+interface CvSkillResponse {
+  id: string;
+  cv_id: string;
+  skill_id: string;
+};
+
 interface SkillResponse {
   id: string;
   name: string;

@@ -11,6 +11,7 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
+import type { CvSkillResponse } from "./types";
 
 type Skill = {
   id: string | null;
@@ -23,12 +24,6 @@ type SkillGroup = {
     group_name: string;
     skills: Array<{ id: string; name: string }>;
   };
-};
-
-type SkillResponse = {
-  id: string;
-  cv_id: string;
-  skill_id: string;
 };
 
 interface Props {
@@ -52,7 +47,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
     cv_skill: [],
   });
   const [initialUserSkills, setInitialUserSkills] = useState<
-    Array<SkillResponse>
+    Array<CvSkillResponse>
   >([]);
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
   const [educationsToRemove, setEducationsToRemove] = useState<Array<string>>(
