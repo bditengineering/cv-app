@@ -36,7 +36,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
     projects: [],
     certifications: [],
     personal_qualities: [],
-    availablePositions: [],
+    availableTitles: [],
     cv_skill: [],
   });
   const [initialUserSkills, setInitialUserSkills] = useState<
@@ -56,7 +56,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
     if (id) {
       fetchCv(id);
     } else {
-      setAvailablePositions();
+      setAvailableTitles();
     }
   }, [id]);
 
@@ -67,26 +67,26 @@ export default function AddNewCvForm({ id, skills }: Props) {
     english_written_level: Yup.string().required("Please select a level"),
   });
 
-  async function setAvailablePositions() {
-    const availablePositions = await fetchAvailablePositions();
+  async function setAvailableTitles() {
+    const availableTitles = await fetchAvailableTitles();
     const formData = {
       ...form,
-      availablePositions: availablePositions,
+      availableTitles: availableTitles,
     };
     setForm(formData);
     setLoading(false);
   }
 
-  async function fetchAvailablePositions() {
-    const positions = await supabase.from("titles").select("id, name");
-    return positions.data;
+  async function fetchAvailableTitles() {
+    const response = await supabase.from("titles").select("id, name");
+    return response.data;
   }
 
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
       .select(
-        "*, projects(*), educations(*), certifications(*), positions(*), cv_skill(*)",
+        "*, projects(*), educations(*), certifications(*), titles(*), cv_skill(*)",
       )
       .eq("id", employeeId);
 
@@ -94,7 +94,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
 
     setInitialUserSkills(data[0].cv_skill);
 
-    const availablePositions = await fetchAvailablePositions();
+    const availableTitles = await fetchAvailableTitles();
 
     const updatedProjects = data[0].projects.map((project: any) => {
       return {
@@ -108,7 +108,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
       ...data[0],
       projects: updatedProjects,
       educations: data[0].educations,
-      availablePositions: availablePositions,
+      availableTitles: availableTitles,
     };
 
     setForm(formData);
@@ -144,8 +144,8 @@ export default function AddNewCvForm({ id, skills }: Props) {
     delete updatedCv.projects;
     delete updatedCv.certifications;
     delete updatedCv.educations;
-    delete updatedCv.availablePositions;
-    delete updatedCv.positions;
+    delete updatedCv.availableTitles;
+    delete updatedCv.titles;
     delete updatedCv.cv_skill;
 
     return supabase.from("cv").upsert(updatedCv).select();
@@ -260,7 +260,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
   }
 
   async function handleSubmit(values: any) {
-    const positionTitle = values.positions.title;
+    const title = values.titles.name;
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
@@ -306,7 +306,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
     if (!storageUploadResponse.error) {
-      const fileName = `${values.first_name} - ${positionTitle}`;
+      const fileName = `${values.first_name} - ${title}`;
       const uploadsuccessful = await uploadPdf(fileName);
       if (!uploadsuccessful) {
         setServerErrorMessage(

@@ -9,7 +9,7 @@ export default async function Home() {
   const supabase = createServerClient();
   const { data } = await supabase
     .from("cv")
-    .select("*, positions(*), user: users!updated_by(*)");
+    .select("*, titles(*), user: users!updated_by(*)");
   const {
     data: { session: supabaseSession },
   } = await supabase.auth.getSession();

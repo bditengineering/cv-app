@@ -54,7 +54,7 @@ export default function CVList({ cvs }: CVListProps) {
                     {cv.first_name} {cv.last_name}
                   </div>
                 </TableCell>
-                <TableCell>{cv.positions.title}</TableCell>
+                <TableCell>{cv.titles.name}</TableCell>
                 <TableCell>
                   <div>
                     {new Date(cv.updated_at).toLocaleDateString("de-DE")}
@@ -68,7 +68,7 @@ export default function CVList({ cvs }: CVListProps) {
                       className="text-base font-semibold leading-normal text-gray-600"
                       type="button"
                       onClick={() =>
-                        downloadPdf(`${cv.first_name} - ${cv.positions.title}`)
+                        downloadPdf(`${cv.first_name} - ${cv.titles.name}`)
                       }
                     >
                       Download
