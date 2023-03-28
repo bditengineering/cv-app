@@ -9,6 +9,7 @@ interface ButtonProps
     >,
     "prefix"
   > {
+  fullWidth?: boolean;
   prefix?: React.ReactNode;
   size?: "small" | "medium" | "large";
   suffix?: React.ReactNode;
@@ -51,11 +52,15 @@ export const buttonClasses = cva(
       disabled: {
         true: "opacity-50",
       },
+      fullWidth: {
+        true: "w-full justify-center",
+      },
     },
     defaultVariants: {
       disabled: false,
-      variant: "filled",
+      fullWidth: false,
       size: "medium",
+      variant: "filled",
     },
   },
 );
@@ -64,6 +69,7 @@ const Button = ({
   children,
   className,
   disabled,
+  fullWidth,
   onClick,
   prefix,
   size,
@@ -73,7 +79,13 @@ const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      className={buttonClasses({ className, disabled, size, variant })}
+      className={buttonClasses({
+        className,
+        disabled,
+        fullWidth,
+        size,
+        variant,
+      })}
       disabled={disabled}
       onClick={onClick}
       type={type}
