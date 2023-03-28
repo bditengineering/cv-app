@@ -1,9 +1,9 @@
-import styles from "./Home.module.css";
 import CVList from "../components/cv_list";
 import SignOut from "../components/sign_out";
 import SignIn from "../components/sign_in_form";
 import Link from "next/link";
 import createServerClient from "../utils/supabase_server";
+import Container from "@ui/container";
 
 export default async function Home() {
   const supabase = createServerClient();
@@ -15,22 +15,18 @@ export default async function Home() {
   } = await supabase.auth.getSession();
 
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>CV App</h1>
-
-        {supabaseSession ? (
-          <>
-            <SignOut />
-            <CVList cvs={data} />
-          </>
-        ) : (
-          <>
-            <SignIn />
-            <Link href={"/signup"}>Sign Up</Link>
-          </>
-        )}
-      </main>
-    </div>
+    <Container>
+      {supabaseSession ? (
+        <>
+          <SignOut />
+          <CVList cvs={data} />
+        </>
+      ) : (
+        <div className="flex min-h-full flex-col items-center justify-center py-12">
+          <SignIn />
+          <Link href={"/signup"}>Sign Up</Link>
+        </div>
+      )}
+    </Container>
   );
 }
