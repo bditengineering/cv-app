@@ -25,9 +25,11 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-xs space-y-8 text-center">
+      <div className="w-full max-w-xs">
         <SignIn />
-        <Link href="/signup">Sign Up</Link>
+        <Link className="block text-center" href="/signup">
+          Sign Up
+        </Link>
       </div>
     </div>
   );
