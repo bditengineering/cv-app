@@ -25,6 +25,12 @@ type SkillGroup = {
   };
 };
 
+type SkillResponse = {
+  id: string;
+  cv_id: string;
+  skill_id: string;
+};
+
 interface Props {
   id?: string;
 }
@@ -44,13 +50,9 @@ export default function AddNewCvForm({ id }: Props) {
     availablePositions: [],
     cv_skill: [],
   });
-  const [skills, setSkills] = useState({});
+  const [skills, setSkills] = useState<SkillGroup>({});
   const [initialUserSkills, setInitialUserSkills] = useState<
-    Array<{
-      id: string;
-      cv_id: string;
-      skill_id: string;
-    }>
+    Array<SkillResponse>
   >([]);
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
   const [educationsToRemove, setEducationsToRemove] = useState<Array<string>>(
