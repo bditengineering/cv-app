@@ -14,19 +14,21 @@ export default async function Home() {
     data: { session: supabaseSession },
   } = await supabase.auth.getSession();
 
+  if (supabaseSession) {
+    return (
+      <Container>
+        <SignOut />
+        <CVList cvs={data} />
+      </Container>
+    );
+  }
+
   return (
-    <Container>
-      {supabaseSession ? (
-        <>
-          <SignOut />
-          <CVList cvs={data} />
-        </>
-      ) : (
-        <div className="flex min-h-full flex-col items-center justify-center py-12">
-          <SignIn />
-          <Link href={"/signup"}>Sign Up</Link>
-        </div>
-      )}
-    </Container>
+    <div className="flex min-h-full flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-xs space-y-8 text-center">
+        <SignIn />
+        <Link href="/signup">Sign Up</Link>
+      </div>
+    </div>
   );
 }
