@@ -78,7 +78,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
   }
 
   async function fetchAvailablePositions() {
-    const positions = await supabase.from("positions").select("id, title");
+    const positions = await supabase.from("titles").select("id, name");
     return positions.data;
   }
 
