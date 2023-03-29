@@ -58,7 +58,6 @@ export default function AddNewCvForm({ id, skills }: Props) {
     } else {
       setAvailablePositions();
     }
-    setLoading(false);
   }, [id]);
 
   const validationSchema = Yup.object({
@@ -75,6 +74,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
       availablePositions: availablePositions,
     };
     setForm(formData);
+    setLoading(false);
   }
 
   async function fetchAvailablePositions() {
@@ -112,6 +112,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
     };
 
     setForm(formData);
+    setLoading(false);
   }
 
   async function uploadPdf(fileName: string) {
