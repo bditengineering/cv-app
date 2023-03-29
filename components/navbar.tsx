@@ -9,20 +9,22 @@ import { Plus } from "@ui/icons";
 import Button, { buttonClasses } from "@ui/button";
 import Container from "@ui/container";
 import supabase from "../utils/supabase_browser";
-import type { User } from "@supabase/supabase-js";
+import { useSupabase } from "./supabase_provider";
 
 interface NavBarProps {
   title?: string;
-  user?: User;
 }
 
-export default function NavBar({ title, user }: NavBarProps) {
+export default function NavBar({ title }: NavBarProps) {
+  const { session } = useSupabase();
   const router = useRouter();
 
   async function signOut() {
     await supabase.auth.signOut();
     await router.push("/");
   }
+
+  const email = session?.user?.email;
 
   return (
     <Disclosure as="nav" className="border-b border-b-gray-200">
@@ -50,7 +52,7 @@ export default function NavBar({ title, user }: NavBarProps) {
           {/* Profile dropdown */}
           <Menu as="div" className="relative ml-3">
             <Menu.Button className="rounded-full border bg-white p-2 text-sm font-semibold uppercase focus:outline-none focus:ring-4 focus:ring-indigo-100">
-              {user?.email ? user.email.slice(0, 2) : "jd"}
+              {email ? email.slice(0, 2) : "jd"}
             </Menu.Button>
 
             <Transition
