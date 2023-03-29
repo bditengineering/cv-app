@@ -49,7 +49,7 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
             <>
               {Object.entries(skills).map(([id, group]) => (
                 <TabPanel
-                  className="px-1.5 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+                  className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
                   key={id}
                 >
                   {group.skills.map((skill) => (

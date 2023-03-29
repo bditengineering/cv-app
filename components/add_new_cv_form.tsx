@@ -372,7 +372,7 @@ export default function AddNewCvForm({ id }: Props) {
     >
       {(formProps) => (
         <Form>
-          <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
+          <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 text-gray-600 dark:border-gray-700">
             <div className="container mx-auto px-16 py-24">
               <PersonalInfo fProps={formProps} />
               <TechnicalSkill fProps={formProps} skills={skills} />
@@ -391,7 +391,7 @@ export default function AddNewCvForm({ id }: Props) {
               />
 
               <button
-                className="mt-20 rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600 w-full"
+                className="mt-20 w-full rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600"
                 type="submit"
               >
                 Submit

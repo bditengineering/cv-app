@@ -48,7 +48,7 @@ export function AdditionalInfo({
                             />
                           </div>
                           <button
-                            className="rounded-md border border-indigo-500 bg-indigo-500 p-1 text-white float-right"
+                            className="float-right rounded-md border border-indigo-500 bg-indigo-500 p-1 text-white"
                             type="button"
                             onClick={() => {
                               arrayHelpers.remove(index);

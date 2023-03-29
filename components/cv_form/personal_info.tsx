@@ -36,29 +36,29 @@ export function PersonalInfo({ fProps }: Props) {
             Name
           </span>
         </div>
-        <div className="md:flex-grow flex">
-          <div className="w-1/2 inline-block pr-1">
+        <div className="flex md:flex-grow">
+          <div className="inline-block w-1/2 pr-1">
             <Field
-              className="rounded-md w-full"
+              className="w-full rounded-md"
               name="first_name"
               type="text"
               placeholder="First Name"
             />
             <ErrorMessage
-              className="text-red-600 w-full"
+              className="w-full text-red-600"
               name="first_name"
               component="span"
             />
           </div>
-          <div className="w-1/2 inline-block pl-1">
+          <div className="inline-block w-1/2 pl-1">
             <Field
-              className="rounded-md w-full"
+              className="w-full rounded-md"
               name="last_name"
               type="text"
               placeholder="Last Name"
             />
             <ErrorMessage
-              className="text-red-600 w-full"
+              className="w-full text-red-600"
               name="last_name"
               component="span"
             />

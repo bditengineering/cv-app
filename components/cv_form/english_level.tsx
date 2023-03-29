@@ -29,7 +29,7 @@ export function EnglishLevel() {
               ))}
             </Field>
             <ErrorMessage
-              className="text-red-600 w-full"
+              className="w-full text-red-600"
               name="english_spoken_level"
               component="span"
             />
@@ -55,7 +55,7 @@ export function EnglishLevel() {
               ))}
             </Field>
             <ErrorMessage
-              className="text-red-600 w-full"
+              className="w-full text-red-600"
               name="english_written_level"
               component="span"
             />
