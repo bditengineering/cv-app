@@ -1,9 +1,9 @@
 import CVList from "../components/cv_list";
-import SignOut from "../components/sign_out";
 import SignIn from "../components/sign_in_form";
 import Link from "next/link";
 import createServerClient from "../utils/supabase_server";
 import Container from "@ui/container";
+import NavBar from "../components/navbar";
 
 export default async function Home() {
   const supabase = createServerClient();
@@ -11,15 +11,18 @@ export default async function Home() {
     .from("cv")
     .select("*, titles(*), user: users!updated_by(*)");
   const {
-    data: { session: supabaseSession },
+    data: { session },
   } = await supabase.auth.getSession();
 
-  if (supabaseSession) {
+  if (session) {
     return (
-      <Container>
-        <SignOut />
-        <CVList cvs={data} />
-      </Container>
+      <>
+        <NavBar user={session.user} />
+
+        <Container className="py-6">
+          <CVList cvs={data} />
+        </Container>
+      </>
     );
   }
 
