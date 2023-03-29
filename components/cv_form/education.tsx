@@ -23,7 +23,7 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
               (education: any, educationIndex: any) => (
                 <div
                   key={education?.id || educationIndex}
-                  className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 dark:divide-gray-700 rounded-md border border-gray-400 dark:border-gray-700 px-6"
+                  className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 rounded-md border border-gray-400 px-6 dark:divide-gray-700 dark:border-gray-700"
                 >
                   <div className="flex flex-wrap py-8 md:flex-nowrap">
                     <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
@@ -69,7 +69,7 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                       <Field
                         as="select"
                         name={`educations[${educationIndex}].start_year`}
-                        className="rounded-md ml-2 mr-6"
+                        className="ml-2 mr-6 rounded-md"
                       >
                         <option />
                         {Options.yearsOptions.map((year) => (
@@ -83,7 +83,7 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                       <Field
                         as="select"
                         name={`educations[${educationIndex}].end_year`}
-                        className="rounded-md mx-2"
+                        className="mx-2 rounded-md"
                       >
                         <option />
                         {Options.yearsOptions.map((year) => (

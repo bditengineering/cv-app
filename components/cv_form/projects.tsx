@@ -22,7 +22,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
             fProps.values.projects.map((project: any, projectsIndex: any) => (
               <div
                 key={projectsIndex}
-                className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 dark:divide-gray-700 rounded-md border border-gray-400 dark:border-gray-700 px-6"
+                className="-my-8 mb-10 mt-2 divide-y-2 divide-gray-100 rounded-md border border-gray-400 px-6 dark:divide-gray-700 dark:border-gray-700"
               >
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">

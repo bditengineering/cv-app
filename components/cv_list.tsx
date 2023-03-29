@@ -50,7 +50,7 @@ export default function CVList({ cvs }: CVListProps) {
             {cvs?.map((cv) => (
               <TableRow key={cv.id}>
                 <TableCell>
-                  <div className="text-gray-900 font-medium">
+                  <div className="font-medium text-gray-900">
                     {cv.first_name} {cv.last_name}
                   </div>
                 </TableCell>
@@ -65,7 +65,7 @@ export default function CVList({ cvs }: CVListProps) {
                 <TableCell className="w-px">
                   <div className="flex gap-3">
                     <button
-                      className="font-semibold text-gray-600 text-base leading-normal"
+                      className="text-base font-semibold leading-normal text-gray-600"
                       type="button"
                       onClick={() =>
                         downloadPdf(`${cv.first_name} - ${cv.positions.title}`)
@@ -75,7 +75,7 @@ export default function CVList({ cvs }: CVListProps) {
                     </button>
 
                     <Link
-                      className="font-semibold text-indigo-700 text-base leading-normal hover:text-indigo-800"
+                      className="text-base font-semibold leading-normal text-indigo-700 hover:text-indigo-800"
                       prefetch={false}
                       href={`/edit/${cv.id}`}
                     >
@@ -89,9 +89,9 @@ export default function CVList({ cvs }: CVListProps) {
         </Table>
       </TableContainer>
 
-      <div className="w-fit mx-auto">
+      <div className="mx-auto w-fit">
         <Link className={buttonClasses()} prefetch={false} href="/new">
-          <Plus className="w-5 h-5" /> Add new CV
+          <Plus className="h-5 w-5" /> Add new CV
         </Link>
       </div>
     </>
