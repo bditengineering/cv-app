@@ -12,14 +12,13 @@ interface Props {
 export const dynamic = "force-static";
 
 export default async function EditCv({ params: { id } }: Props) {
-  const skillsResponse = await fetchSkills();
-  const skills = transformSkills(skillsResponse);
+  const skills = await fetchSkills();
 
   return (
     <div className={styles.container}>
       <main className={styles.main}>
         <h1 className="mb-6 text-center text-5xl font-bold">Edit CV</h1>
-        <AddNewCvForm id={id} skills={skills} />
+        <AddNewCvForm id={id} skills={transformSkills(skills)} />
       </main>
     </div>
   );
