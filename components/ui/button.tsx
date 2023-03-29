@@ -65,36 +65,43 @@ export const buttonClasses = cva(
   },
 );
 
-const Button = ({
-  children,
-  className,
-  disabled,
-  fullWidth,
-  onClick,
-  prefix,
-  size,
-  suffix,
-  type = "button",
-  variant,
-}: ButtonProps) => {
-  return (
-    <button
-      className={buttonClasses({
-        className,
-        disabled,
-        fullWidth,
-        size,
-        variant,
-      })}
-      disabled={disabled}
-      onClick={onClick}
-      type={type}
-    >
-      {prefix}
-      {children}
-      {suffix}
-    </button>
-  );
-};
+const Button = React.forwardRef(
+  (
+    {
+      children,
+      className,
+      disabled,
+      fullWidth,
+      onClick,
+      prefix,
+      size,
+      suffix,
+      type = "button",
+      variant,
+    }: ButtonProps,
+    ref: React.Ref<HTMLButtonElement>,
+  ) => {
+    return (
+      <button
+        className={buttonClasses({
+          className,
+          disabled,
+          fullWidth,
+          size,
+          variant,
+        })}
+        disabled={disabled}
+        onClick={onClick}
+        type={type}
+        ref={ref}
+      >
+        {prefix}
+        {children}
+        {suffix}
+      </button>
+    );
+  },
+);
+Button.displayName = "Button";
 
 export default Button;
