@@ -1,17 +1,18 @@
 // based on https://github.com/supabase/auth-helpers/tree/main/examples/nextjs-server-components
 
+import createServerClient from "../utils/supabase_server";
+import SupabaseListener from "../components/supabase_listener";
+import SupabaseProvider from "../components/supabase_provider";
+
 import "./globals.css";
 import "react-datepicker/dist/react-datepicker.css";
-
-import createClient from "../utils/supabase_server";
-import SupabaseListener from "../components/supabase_listener";
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
+  const supabase = createServerClient();
 
   const {
     data: { session },
@@ -25,8 +26,10 @@ export default async function RootLayout({
       */}
       <head />
       <body className="h-full">
-        <SupabaseListener accessToken={session?.access_token} />
-        {children}
+        <SupabaseProvider session={session}>
+          <SupabaseListener accessToken={session?.access_token} />
+          {children}
+        </SupabaseProvider>
       </body>
     </html>
   );
