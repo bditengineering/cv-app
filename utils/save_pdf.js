@@ -160,7 +160,7 @@ export async function savePdf(data) {
           rowIndex % 7 === 0 &&
           rowIndex !== projects.length * 7
         ) {
-          // draw a border around the last item in the body array
+          // draw a horizontal line (border) between projects
           data.row.cells[0].styles.lineWidth = { right: 0.3, bottom: 0.3 };
           data.row.cells[1].styles.lineWidth = { right: 0.3, bottom: 0.3 };
         }
