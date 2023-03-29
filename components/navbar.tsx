@@ -51,8 +51,8 @@ export default function NavBar({ title }: NavBarProps) {
 
           {/* Profile dropdown */}
           <Menu as="div" className="relative ml-3">
-            <Menu.Button className="rounded-full border bg-white p-2 text-sm font-semibold uppercase focus:outline-none focus:ring-4 focus:ring-indigo-100">
-              {email ? email.slice(0, 2) : "jd"}
+            <Menu.Button className="min-w-[38px] rounded-full border bg-white p-2 text-sm font-semibold uppercase focus:outline-none focus:ring-4 focus:ring-indigo-100">
+              {email ? email.slice(0, 2) : "👤"}
             </Menu.Button>
 
             <Transition
