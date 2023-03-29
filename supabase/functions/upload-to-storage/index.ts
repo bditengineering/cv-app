@@ -28,7 +28,7 @@ serve(async function handler(req: Request) {
     const { data, error } = await supabaseClient
       .from("cv")
       .select(
-        "*, projects(*), positions(title), education(*), certifications(certificate_name, description)",
+        "*, projects(*), titles(name), education(*), certifications(certificate_name, description)",
       )
       .eq("id", id);
     if (error) throw error;
@@ -37,7 +37,7 @@ serve(async function handler(req: Request) {
 
     const [employee] = data;
 
-    const name = `${employee.first_name} - ${employee.positions.title}`;
+    const name = `${employee.first_name} - ${employee.titles.name}`;
 
     const projects = employee.projects.map((item: any) => {
       const startDate = new Date(item.date_start).toLocaleString("default", {
@@ -192,7 +192,7 @@ serve(async function handler(req: Request) {
 
     const result = doc.output("arraybuffer");
 
-    const uploadName = `${employee.first_name} - ${employee.positions.title}`;
+    const uploadName = `${employee.first_name} - ${employee.titles.name}`;
 
     await supabaseClient.storage.from("pdfs").upload(uploadName, result, {
       contentType: "application/pdf",

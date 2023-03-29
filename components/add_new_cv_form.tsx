@@ -11,12 +11,20 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
+import type { CvSkillResponse, SkillGroup } from "./types";
+
+type FormSkill = {
+  id: string | null;
+  cv_id?: string;
+  skill_id: string;
+};
 
 interface Props {
   id?: string;
+  skills: SkillGroup;
 }
 
-export default function AddNewCvForm({ id }: Props) {
+export default function AddNewCvForm({ id, skills }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<Partial<any>>({
     first_name: "",
@@ -28,8 +36,12 @@ export default function AddNewCvForm({ id }: Props) {
     projects: [],
     certifications: [],
     personal_qualities: [],
-    availablePositions: [],
+    availableTitles: [],
+    cv_skill: [],
   });
+  const [initialUserSkills, setInitialUserSkills] = useState<
+    Array<CvSkillResponse>
+  >([]);
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
   const [educationsToRemove, setEducationsToRemove] = useState<Array<string>>(
     [],
@@ -44,7 +56,7 @@ export default function AddNewCvForm({ id }: Props) {
     if (id) {
       fetchCv(id);
     } else {
-      setAvailablePositions();
+      setAvailableTitles();
     }
   }, [id]);
 
@@ -55,30 +67,34 @@ export default function AddNewCvForm({ id }: Props) {
     english_written_level: Yup.string().required("Please select a level"),
   });
 
-  async function setAvailablePositions() {
-    const availablePositions = await fetchAvailablePositions();
+  async function setAvailableTitles() {
+    const availableTitles = await fetchAvailableTitles();
     const formData = {
       ...form,
-      availablePositions: availablePositions,
+      availableTitles: availableTitles,
     };
     setForm(formData);
     setLoading(false);
   }
 
-  async function fetchAvailablePositions() {
-    const positions = await supabase.from("positions").select("id, title");
-    return positions.data;
+  async function fetchAvailableTitles() {
+    const response = await supabase.from("titles").select("id, name");
+    return response.data;
   }
 
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
       .from("cv")
-      .select("*, projects(*), educations(*), certifications(*), positions(*)")
+      .select(
+        "*, projects(*), educations(*), certifications(*), titles(*), cv_skill(*)",
+      )
       .eq("id", employeeId);
 
     if (!data) return;
 
-    const availablePositions = await fetchAvailablePositions();
+    setInitialUserSkills(data[0].cv_skill);
+
+    const availableTitles = await fetchAvailableTitles();
 
     const updatedProjects = data[0].projects.map((project: any) => {
       return {
@@ -92,7 +108,7 @@ export default function AddNewCvForm({ id }: Props) {
       ...data[0],
       projects: updatedProjects,
       educations: data[0].educations,
-      availablePositions: availablePositions,
+      availableTitles: availableTitles,
     };
 
     setForm(formData);
@@ -128,8 +144,9 @@ export default function AddNewCvForm({ id }: Props) {
     delete updatedCv.projects;
     delete updatedCv.certifications;
     delete updatedCv.educations;
-    delete updatedCv.availablePositions;
-    delete updatedCv.positions;
+    delete updatedCv.availableTitles;
+    delete updatedCv.titles;
+    delete updatedCv.cv_skill;
 
     return supabase.from("cv").upsert(updatedCv).select();
   }
@@ -210,8 +227,40 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("projects").upsert(updatedProjects);
   }
 
+  async function upsertSkills(skills: Array<FormSkill>, cvId: string) {
+    if (skills.length === 0) {
+      return await supabase.from("cv_skill").delete().eq("cv_id", cvId);
+    }
+
+    const skillsToUpsert: Array<FormSkill> = skills.map((skill) => {
+      const initialSkill = initialUserSkills.find(
+        (is) => is.skill_id === skill.skill_id,
+      );
+      if (initialSkill) return initialSkill;
+      return { id: null, cv_id: cvId, skill_id: skill.skill_id };
+    });
+
+    const skillsToRemove: Array<string> = [];
+
+    // compare initial skills with updated skills to determine if we need to remove some of the skills from database
+    initialUserSkills.forEach((initialSkill) => {
+      const skillFound = skillsToUpsert.find(
+        (skill) => skill.skill_id === initialSkill.skill_id,
+      );
+      if (!skillFound) {
+        skillsToRemove.push(initialSkill.id);
+      }
+    });
+
+    if (skillsToRemove.length !== 0) {
+      await supabase.from("cv_skill").delete().in("id", skillsToRemove);
+    }
+
+    return supabase.from("cv_skill").upsert(skillsToUpsert);
+  }
+
   async function handleSubmit(values: any) {
-    const positionTitle = values.positions.title;
+    const title = values.titles.name;
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
@@ -221,6 +270,14 @@ export default function AddNewCvForm({ id }: Props) {
 
     if (!data) return;
     const cvId = data[0].id;
+
+    if (values.cv_skill) {
+      const { error } = await upsertSkills(values.cv_skill, cvId);
+      if (error) {
+        setServerErrorMessage(error ? error.message : "");
+        return;
+      }
+    }
 
     if (values.educations) {
       const { error } = await upsertEducation(values.educations, cvId);
@@ -249,7 +306,7 @@ export default function AddNewCvForm({ id }: Props) {
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
     if (!storageUploadResponse.error) {
-      const fileName = `${values.first_name} - ${positionTitle}`;
+      const fileName = `${values.first_name} - ${title}`;
       const uploadsuccessful = await uploadPdf(fileName);
       if (!uploadsuccessful) {
         setServerErrorMessage(
@@ -275,10 +332,10 @@ export default function AddNewCvForm({ id }: Props) {
     >
       {(formProps) => (
         <Form>
-          <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 dark:border-gray-700 text-gray-600">
+          <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 text-gray-600 dark:border-gray-700">
             <div className="container mx-auto px-16 py-24">
               <PersonalInfo fProps={formProps} />
-              <TechnicalSkill fProps={formProps} />
+              <TechnicalSkill fProps={formProps} skills={skills} />
               <Projects
                 fProps={formProps}
                 setProjectsToRemove={setProjectsToRemove}
@@ -294,7 +351,7 @@ export default function AddNewCvForm({ id }: Props) {
               />
 
               <button
-                className="mt-20 rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600 w-full"
+                className="mt-20 w-full rounded-md bg-indigo-500 p-5 text-white hover:bg-indigo-600"
                 type="submit"
               >
                 Submit

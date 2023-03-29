@@ -1,3 +1,34 @@
+import type { ComponentType } from "react";
+
+export type ExtractProps<T> = T extends ComponentType<infer P> ? P : T;
+
+interface CvSkillResponse {
+  id: string;
+  cv_id: string;
+  skill_id: string;
+};
+
+interface SkillResponse {
+  id: string;
+  name: string;
+  skill_group: {
+    id: string;
+    name: string;
+  };
+}
+
+interface Skill {
+  id: string;
+  name: string;
+}
+
+interface SkillGroup {
+  [group_id: string]: {
+    group_name: string;
+    skills: Array<Skill>;
+  };
+}
+
 export interface CV {
   id: string;
   first_name: string;
@@ -16,19 +47,19 @@ export interface CV {
   certifications: Array;
   personal_qualities: Array;
   technical_skills: Array;
-  positions: POSITION;
-  user: USER;
+  titles: Title;
+  user: User;
 }
 
-export interface POSITION {
+export interface Title {
   id: string;
-  title: string;
+  name: string;
   created_at: string;
   updated_at: string;
   updated_by: string;
 }
 
-export interface USER {
+export interface User {
   id: string;
   email: string;
 }
