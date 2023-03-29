@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { Readable } from 'stream';
 import { google } from "googleapis";
 import { supabase } from "../../utils/supabase";

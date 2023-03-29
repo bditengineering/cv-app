@@ -1,5 +1,6 @@
-import { ChangeEvent } from "react";
-import { FieldArray, FieldArrayRenderProps } from "formik";
+import type { ChangeEvent } from "react";
+import type { FieldArrayRenderProps } from "formik";
+import { FieldArray } from "formik";
 import Checkbox from "@ui/checkbox";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@ui/tab";
 
