@@ -47,19 +47,19 @@ export interface CV {
   certifications: Array;
   personal_qualities: Array;
   technical_skills: Array;
-  positions: POSITION;
-  user: USER;
+  titles: Title;
+  user: User;
 }
 
-export interface POSITION {
+export interface Title {
   id: string;
-  title: string;
+  name: string;
   created_at: string;
   updated_at: string;
   updated_by: string;
 }
 
-export interface USER {
+export interface User {
   id: string;
   email: string;
 }
