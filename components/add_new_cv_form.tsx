@@ -11,31 +11,20 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
+import type { CvSkillResponse, SkillGroup } from "./types";
 
-type Skill = {
+type FormSkill = {
   id: string | null;
   cv_id?: string;
   skill_id: string;
 };
 
-type SkillGroup = {
-  [key: string]: {
-    group_name: string;
-    skills: Array<{ id: string; name: string }>;
-  };
-};
-
-type SkillResponse = {
-  id: string;
-  cv_id: string;
-  skill_id: string;
-};
-
 interface Props {
   id?: string;
+  skills: SkillGroup;
 }
 
-export default function AddNewCvForm({ id }: Props) {
+export default function AddNewCvForm({ id, skills }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<Partial<any>>({
     first_name: "",
@@ -50,9 +39,8 @@ export default function AddNewCvForm({ id }: Props) {
     availablePositions: [],
     cv_skill: [],
   });
-  const [skills, setSkills] = useState<SkillGroup>({});
   const [initialUserSkills, setInitialUserSkills] = useState<
-    Array<SkillResponse>
+    Array<CvSkillResponse>
   >([]);
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
   const [educationsToRemove, setEducationsToRemove] = useState<Array<string>>(
@@ -65,42 +53,12 @@ export default function AddNewCvForm({ id }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetches = [fetchSkills()];
     if (id) {
-      fetches.push(fetchCv(id));
+      fetchCv(id);
     } else {
-      fetches.push(setAvailablePositions());
+      setAvailablePositions();
     }
-    Promise.all(fetches).then(() => setLoading(false));
   }, [id]);
-
-  async function fetchSkills() {
-    const { data } = await supabase
-      .from("skill")
-      .select("id, name, skill_group(name, id)")
-      .order("name");
-
-    const mappedSkills: SkillGroup = (data as any)?.reduce(
-      (acc: SkillGroup, skill: any) => {
-        return {
-          [skill?.skill_group.id]: {
-            group_name: skill?.skill_group.name,
-            group_id: skill?.skill_group.id,
-            skills: acc[skill.skill_group.id]
-              ? acc[skill.skill_group.id].skills.push({
-                  name: skill.name,
-                  id: skill.id,
-                })
-              : [],
-          },
-          ...acc,
-        };
-      },
-      {},
-    );
-
-    setSkills(mappedSkills);
-  }
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
@@ -116,6 +74,7 @@ export default function AddNewCvForm({ id }: Props) {
       availablePositions: availablePositions,
     };
     setForm(formData);
+    setLoading(false);
   }
 
   async function fetchAvailablePositions() {
@@ -153,6 +112,7 @@ export default function AddNewCvForm({ id }: Props) {
     };
 
     setForm(formData);
+    setLoading(false);
   }
 
   async function uploadPdf(fileName: string) {
@@ -267,12 +227,12 @@ export default function AddNewCvForm({ id }: Props) {
     return supabase.from("projects").upsert(updatedProjects);
   }
 
-  async function upsertSkills(skills: Array<Skill>, cvId: string) {
+  async function upsertSkills(skills: Array<FormSkill>, cvId: string) {
     if (skills.length === 0) {
       return await supabase.from("cv_skill").delete().eq("cv_id", cvId);
     }
 
-    const skillsToUpsert: Array<Skill> = skills.map((skill) => {
+    const skillsToUpsert: Array<FormSkill> = skills.map((skill) => {
       const initialSkill = initialUserSkills.find(
         (is) => is.skill_id === skill.skill_id,
       );
