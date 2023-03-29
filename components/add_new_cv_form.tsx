@@ -11,19 +11,12 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
-import type { CvSkillResponse } from "./types";
+import type { CvSkillResponse, SkillGroup } from "./types";
 
-type Skill = {
+type FormSkill = {
   id: string | null;
   cv_id?: string;
   skill_id: string;
-};
-
-type SkillGroup = {
-  [key: string]: {
-    group_name: string;
-    skills: Array<{ id: string; name: string }>;
-  };
 };
 
 interface Props {
@@ -233,12 +226,12 @@ export default function AddNewCvForm({ id, skills }: Props) {
     return supabase.from("projects").upsert(updatedProjects);
   }
 
-  async function upsertSkills(skills: Array<Skill>, cvId: string) {
+  async function upsertSkills(skills: Array<FormSkill>, cvId: string) {
     if (skills.length === 0) {
       return await supabase.from("cv_skill").delete().eq("cv_id", cvId);
     }
 
-    const skillsToUpsert: Array<Skill> = skills.map((skill) => {
+    const skillsToUpsert: Array<FormSkill> = skills.map((skill) => {
       const initialSkill = initialUserSkills.find(
         (is) => is.skill_id === skill.skill_id,
       );
