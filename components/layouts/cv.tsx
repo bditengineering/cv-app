@@ -1,6 +1,5 @@
 import Container from "@ui/container";
 import NavBar from "../navbar";
-import { useSupabase } from "../supabase_provider";
 
 interface Props {
   children: React.ReactNode;
@@ -8,11 +7,9 @@ interface Props {
 }
 
 const CVLayout = ({ children, title }: Props) => {
-  const { session } = useSupabase();
-
   return (
     <>
-      <NavBar title={title} user={session?.user} />
+      <NavBar title={title} />
 
       <main className="py-6">
         <Container>{children}</Container>

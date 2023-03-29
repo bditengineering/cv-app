@@ -17,7 +17,7 @@ export default async function Home() {
   if (session) {
     return (
       <>
-        <NavBar user={session.user} />
+        <NavBar />
 
         <Container className="py-6">
           <CVList cvs={data} />
