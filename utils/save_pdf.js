@@ -1,4 +1,22 @@
-// helper function for testing the saved PDF locally
+/* 
+  This helper function is created only for testing the PDF locally
+  Instead of re-deploying the edgde function everytime, you can use this function to 
+  play around the PDF stylings. It will save the PDF to your downloads folder.
+
+  To test it locally:
+
+  1. in add_new_cv_form comment out edgeUploadInvocation usage in handleSubmit function
+
+  2. fetch data from supabase
+    const response = await supabase
+      .from("cv")
+      .select(
+        "*, projects(*), titles(name), educations(*), certifications(certificate_name, description), cv_skill(*)",
+      )
+      .eq("id", cvId);
+
+  3. call savePdf(response.data)
+*/
 
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -28,7 +46,6 @@ export async function savePdf(data) {
       ["Tools & Technologies", item.technologies.join(", ")],
       ["Responsibilities", item.responsibilities.join(", ")],
       ["Time Period", `${startDate} - ${endDate}`],
-      [{ content: "", colSpan: 2 }],
     ];
   });
 
@@ -45,6 +62,7 @@ export async function savePdf(data) {
 
   const width = doc.internal.pageSize.getWidth();
 
+  const headerFontColor = [67, 67, 67];
   const cellBodyTextColor = [95, 95, 95];
   const backgroundColor = [240, 240, 240];
   const borderColor = [215, 215, 215];
@@ -64,26 +82,26 @@ export async function savePdf(data) {
       fontSize: 12,
       fontStyle: "normal",
       halign: "center",
-      textColor: 0,
+      textColor: headerFontColor,
     },
     bodyStyles: {
       textColor: cellBodyTextColor,
       cellPadding,
     },
     columnStyles: { 0: { textColor: 95, fontStyle: "bold" } },
-    pageBreak: "avoid",
+    pageBreak: "auto",
     margin: { left: 25, right: 25 },
   };
 
   doc.setTextColor(95, 95, 95);
-  doc.setFont("times", "bold");
+  doc.setFont("helvetica", "bold");
 
   doc.text(`${name}`, width / 2, 32, {
     align: "center",
   });
 
   doc.setTextColor(0, 0, 0);
-  doc.setFont("times", "normal");
+  doc.setFont("helvetica", "normal");
 
   autoTable(doc, {
     ...tableStyles,
@@ -114,6 +132,17 @@ export async function savePdf(data) {
 
   autoTable(doc, {
     ...tableStyles,
+    bodyStyles: {
+      ...tableStyles.bodyStyles,
+      lineWidth: 0,
+    },
+    columnStyles: {
+      0: {
+        lineWidth: { right: borderWidth },
+        textColor: 95,
+        fontStyle: "bold",
+      },
+    },
     head: [
       [
         {
@@ -123,6 +152,20 @@ export async function savePdf(data) {
       ],
     ],
     body: projects.flat().slice(0, -1),
+    willDrawCell: function (data) {
+      if (data.section === "body") {
+        const rowIndex = data.row.index;
+        if (
+          rowIndex !== 0 &&
+          rowIndex % 7 === 0 &&
+          rowIndex !== projects.length * 7
+        ) {
+          // draw a border around the last item in the body array
+          data.row.cells[0].styles.lineWidth = { right: 0.3, bottom: 0.3 };
+          data.row.cells[1].styles.lineWidth = { right: 0.3, bottom: 0.3 };
+        }
+      }
+    },
   });
 
   autoTable(doc, {

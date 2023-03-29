@@ -77,6 +77,7 @@ serve(async function handler(req: Request) {
 
     const width = doc.internal.pageSize.getWidth();
 
+    const headerFontColor = [67, 67, 67];
     const cellBodyTextColor = [95, 95, 95];
     const backgroundColor = [240, 240, 240];
     const borderColor = [215, 215, 215];
@@ -96,26 +97,26 @@ serve(async function handler(req: Request) {
         fontSize: 12,
         fontStyle: "normal",
         halign: "center",
-        textColor: 0,
+        textColor: headerFontColor,
       },
       bodyStyles: {
         textColor: cellBodyTextColor,
         cellPadding,
       },
       columnStyles: { 0: { textColor: 95, fontStyle: "bold" } },
-      pageBreak: "avoid",
+      pageBreak: "auto",
       margin: { left: 25, right: 25 },
     };
 
     doc.setTextColor(95, 95, 95);
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
 
     doc.text(`${name}`, width / 2, 32, {
       align: "center",
     });
 
     doc.setTextColor(0, 0, 0);
-    doc.setFont("times", "normal");
+    doc.setFont("helvetica", "normal");
 
     autoTable(doc, {
       ...tableStyles,
@@ -146,6 +147,17 @@ serve(async function handler(req: Request) {
 
     autoTable(doc, {
       ...tableStyles,
+      bodyStyles: {
+        ...tableStyles.bodyStyles,
+        lineWidth: 0,
+      },
+      columnStyles: {
+        0: {
+          lineWidth: { right: borderWidth },
+          textColor: 95,
+          fontStyle: "bold",
+        },
+      },
       head: [
         [
           {
@@ -155,6 +167,20 @@ serve(async function handler(req: Request) {
         ],
       ],
       body: projects.flat().slice(0, -1),
+      willDrawCell: function (data) {
+        if (data.section === "body") {
+          const rowIndex = data.row.index;
+          if (
+            rowIndex !== 0 &&
+            rowIndex % 7 === 0 &&
+            rowIndex !== projects.length * 7
+          ) {
+            // draw a border around the last item in the body array
+            data.row.cells[0].styles.lineWidth = { right: 0.3, bottom: 0.3 };
+            data.row.cells[1].styles.lineWidth = { right: 0.3, bottom: 0.3 };
+          }
+        }
+      },
     });
 
     autoTable(doc, {
