@@ -7,7 +7,6 @@ interface Props {
 }
 
 export default function TechnicalSkill({ fProps, skills }: Props) {
-  console.log(skills);
   return (
     <div>
       <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
