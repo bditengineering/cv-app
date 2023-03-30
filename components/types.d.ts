@@ -26,7 +26,7 @@ interface Skill {
 interface SkillGroup {
   [order: number]: {
     group_name: string;
-    skills: Array<Skill>
+    skills: Array<Skill>;
   };
 }
 
