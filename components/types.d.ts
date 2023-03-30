@@ -18,9 +18,9 @@ interface SkillResponse {
   };
 }
 
-interface PositionResponse {
+interface TitlesResponse {
   id: string;
-  title: string;
+  name: string;
 }
 
 interface Skill {
