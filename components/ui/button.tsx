@@ -9,6 +9,7 @@ interface ButtonProps
     >,
     "prefix"
   > {
+  fullWidth?: boolean;
   prefix?: React.ReactNode;
   size?: "small" | "medium" | "large";
   suffix?: React.ReactNode;
@@ -51,38 +52,56 @@ export const buttonClasses = cva(
       disabled: {
         true: "opacity-50",
       },
+      fullWidth: {
+        true: "w-full justify-center",
+      },
     },
     defaultVariants: {
       disabled: false,
-      variant: "filled",
+      fullWidth: false,
       size: "medium",
+      variant: "filled",
     },
   },
 );
 
-const Button = ({
-  children,
-  className,
-  disabled,
-  onClick,
-  prefix,
-  size,
-  suffix,
-  type = "button",
-  variant,
-}: ButtonProps) => {
-  return (
-    <button
-      className={buttonClasses({ className, disabled, size, variant })}
-      disabled={disabled}
-      onClick={onClick}
-      type={type}
-    >
-      {prefix}
-      {children}
-      {suffix}
-    </button>
-  );
-};
+const Button = React.forwardRef(
+  (
+    {
+      children,
+      className,
+      disabled,
+      fullWidth,
+      onClick,
+      prefix,
+      size,
+      suffix,
+      type = "button",
+      variant,
+    }: ButtonProps,
+    ref: React.Ref<HTMLButtonElement>,
+  ) => {
+    return (
+      <button
+        className={buttonClasses({
+          className,
+          disabled,
+          fullWidth,
+          size,
+          variant,
+        })}
+        disabled={disabled}
+        onClick={onClick}
+        type={type}
+        ref={ref}
+      >
+        {prefix}
+        {children}
+        {suffix}
+      </button>
+    );
+  },
+);
+Button.displayName = "Button";
 
 export default Button;

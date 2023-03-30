@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import Button from "@ui/button";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -44,50 +45,54 @@ export default function SignInForm() {
       }}
     >
       <Form>
-        <div className="mb-1 mt-8 flex flex-row justify-start space-x-2">
-          <div className="h-9 w-3 bg-purple-700"></div>
+        <div className="mt-8 flex flex-row justify-start space-x-2">
+          <div className="h-9 w-3 bg-indigo-700"></div>
           <div className="text-center text-3xl font-bold">
             <h1>Sign in</h1>
           </div>
         </div>
-        <div className="flex flex-col">
-          <Field
-            className="my-2 w-72 rounded-md border-gray-400 p-2 dark:text-black"
-            name="email"
-            type="email"
-            placeholder="Email"
-          />
-          <ErrorMessage
-            className="text-sm text-purple-400"
-            name="email"
-            component="span"
-          />
-          <Field
-            className="my-2 w-72 rounded-md border-gray-400 p-2 dark:text-black"
-            name="password"
-            type="password"
-            placeholder="Password"
-          />
-          <ErrorMessage
-            className="text-sm text-purple-400"
-            name="password"
-            component="span"
-          />
+
+        <div className="mt-8 flex flex-col gap-4">
+          <div className="gap-1.5">
+            <Field
+              className="w-full rounded-md border-gray-400 p-2 dark:text-black"
+              name="email"
+              type="email"
+              placeholder="Email"
+            />
+            <ErrorMessage
+              className="text-sm text-red-500"
+              name="email"
+              component="span"
+            />
+          </div>
+
+          <div className="gap-1.5">
+            <Field
+              className="w-full rounded-md border-gray-400 p-2 dark:text-black"
+              name="password"
+              type="password"
+              placeholder="Password"
+            />
+            <ErrorMessage
+              className="text-sm text-red-500"
+              name="password"
+              component="span"
+            />
+          </div>
         </div>
 
-        <div className="my-2 flex justify-start">
-          <button
-            className="w-72 rounded-md border bg-purple-700 p-2 font-bold text-white"
-            type="submit"
-          >
+        <div className="mt-6 gap-1.5 w-full">
+          <Button className="my-2" fullWidth type="submit">
             Submit
-          </button>
+          </Button>
+
+          {serverErrorMessage && (
+            <span className="my-2 flex justify-start text-red-500">
+              *{serverErrorMessage}
+            </span>
+          )}
         </div>
-        {serverErrorMessage && (
-          <span className="my-2 flex justify-start text-purple-400">
-            *{serverErrorMessage}
-          </span>
-        )}
       </Form>
     </Formik>
   );

@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { supabase } from "../utils/supabase";
-import { Plus } from "@ui/icons";
-import { buttonClasses } from "@ui/button";
 import { TableContainer, Table, TableCell, TableRow } from "@ui/table";
 import type { CV } from "./types";
 
@@ -28,72 +26,69 @@ export default function CVList({ cvs }: CVListProps) {
   }
 
   return (
-    <>
-      <TableContainer>
-        <Table>
-          <thead>
-            <TableRow header>
-              <TableCell header align="left">
-                Name
+    <TableContainer>
+      <Table>
+        <thead>
+          <TableRow header>
+            <TableCell header align="left">
+              Name
+            </TableCell>
+            <TableCell header align="left">
+              Role
+            </TableCell>
+            <TableCell header align="left">
+              Last update
+            </TableCell>
+            <TableCell header align="left" className="w-px"></TableCell>
+          </TableRow>
+        </thead>
+
+        <tbody>
+          {cvs?.map((cv) => (
+            <TableRow key={cv.id}>
+              <TableCell>
+                <div className="font-medium text-gray-900">
+                  {cv.first_name} {cv.last_name}
+                </div>
               </TableCell>
-              <TableCell header align="left">
-                Role
+              <TableCell>{cv.titles.name}</TableCell>
+              <TableCell>
+                <div>
+                  {new Date(cv.updated_at)
+                    .toLocaleDateString("sr-RS")
+                    // remove spaces from string to fix hydration error
+                    // currently we're getting string without spaces from server
+                    // but toLocaleDateString("sr-RS") returns with spaces (22. 11. 2022.)
+                    .replaceAll(" ", "")}
+                </div>
+
+                <div className="truncate">{cv.user.email}</div>
               </TableCell>
-              <TableCell header align="left">
-                Last update
+              <TableCell className="w-px">
+                <div className="flex gap-3">
+                  <button
+                    className="text-base font-semibold leading-normal text-gray-600"
+                    type="button"
+                    onClick={() =>
+                      downloadPdf(`${cv.first_name} - ${cv.titles.name}`)
+                    }
+                  >
+                    Download
+                  </button>
+
+                  <Link
+                    className="text-base font-semibold leading-normal text-indigo-700 hover:text-indigo-800"
+                    prefetch={false}
+                    href={`/edit/${cv.id}`}
+                  >
+                    Edit
+                  </Link>
+                </div>
               </TableCell>
-              <TableCell header align="left" className="w-px"></TableCell>
             </TableRow>
-          </thead>
-
-          <tbody>
-            {cvs?.map((cv) => (
-              <TableRow key={cv.id}>
-                <TableCell>
-                  <div className="font-medium text-gray-900">
-                    {cv.first_name} {cv.last_name}
-                  </div>
-                </TableCell>
-                <TableCell>{cv.titles.name}</TableCell>
-                <TableCell>
-                  <div>
-                    {new Date(cv.updated_at).toLocaleDateString("de-DE")}
-                  </div>
-
-                  <div className="truncate">{cv.user.email}</div>
-                </TableCell>
-                <TableCell className="w-px">
-                  <div className="flex gap-3">
-                    <button
-                      className="text-base font-semibold leading-normal text-gray-600"
-                      type="button"
-                      onClick={() =>
-                        downloadPdf(`${cv.first_name} - ${cv.titles.name}`)
-                      }
-                    >
-                      Download
-                    </button>
-
-                    <Link
-                      className="text-base font-semibold leading-normal text-indigo-700 hover:text-indigo-800"
-                      prefetch={false}
-                      href={`/edit/${cv.id}`}
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
-      </TableContainer>
-
-      <div className="mx-auto w-fit">
-        <Link className={buttonClasses()} prefetch={false} href="/new">
-          <Plus className="h-5 w-5" /> Add new CV
-        </Link>
-      </div>
-    </>
+          ))}
+        </tbody>
+      </Table>
+    </TableContainer>
   );
 }
