@@ -43,36 +43,34 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
   return (
     <TabGroup>
       <TabList>
-        {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => {
-          return <Tab key={orderedSkillGroupName}>{orderedSkillGroupName}</Tab>;
-        })}
+        {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => (
+          <Tab key={orderedSkillGroupName}>{orderedSkillGroupName}</Tab>
+        ))}
       </TabList>
       <TabPanels>
         <FieldArray
           name="cv_skill"
           render={(arrayHelpers) => (
             <>
-              {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => {
-                return (
-                  <TabPanel
-                    className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
-                    key={orderedSkillGroupName}
-                  >
-                    {skills[orderedSkillGroupName].map((skill) => (
-                      <Checkbox
-                        checked={isChecked(skill)}
-                        key={skill.id}
-                        name={"cv_skill-" + skill.id}
-                        onChange={(event) =>
-                          onChangeHandler(event, arrayHelpers, skill)
-                        }
-                      >
-                        {skill.name}
-                      </Checkbox>
-                    ))}
-                  </TabPanel>
-                );
-              })}
+              {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => (
+                <TabPanel
+                  className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+                  key={orderedSkillGroupName}
+                >
+                  {skills[orderedSkillGroupName].map((skill) => (
+                    <Checkbox
+                      checked={isChecked(skill)}
+                      key={skill.id}
+                      name={"cv_skill-" + skill.id}
+                      onChange={(event) =>
+                        onChangeHandler(event, arrayHelpers, skill)
+                      }
+                    >
+                      {skill.name}
+                    </Checkbox>
+                  ))}
+                </TabPanel>
+              ))}
             </>
           )}
         />
