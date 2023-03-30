@@ -5,26 +5,22 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Logo from "./logo";
-import { Plus } from "@ui/icons";
+import { Plus, UserSolid } from "@ui/icons";
 import Button, { buttonClasses } from "@ui/button";
 import Container from "@ui/container";
 import supabase from "../utils/supabase_browser";
-import { useSupabase } from "./supabase_provider";
 
 interface NavBarProps {
   title?: string;
 }
 
 export default function NavBar({ title }: NavBarProps) {
-  const { session } = useSupabase();
   const router = useRouter();
 
   async function signOut() {
     await supabase.auth.signOut();
     await router.push("/");
   }
-
-  const email = session?.user?.email;
 
   return (
     <Disclosure as="nav" className="border-b border-b-gray-200">
@@ -51,8 +47,8 @@ export default function NavBar({ title }: NavBarProps) {
 
           {/* Profile dropdown */}
           <Menu as="div" className="relative ml-3">
-            <Menu.Button className="min-w-[38px] rounded-full border bg-white p-2 text-sm font-semibold uppercase focus:outline-none focus:ring-4 focus:ring-indigo-100">
-              {email ? email.slice(0, 2) : "👤"}
+            <Menu.Button className="relative h-9 w-9 overflow-hidden rounded-full bg-gray-100 text-gray-300 transition-colors duration-500 hover:text-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-100">
+              <UserSolid className="absolute inset-0 m-auto h-8 w-8 translate-y-1.5" />
             </Menu.Button>
 
             <Transition
