@@ -19,13 +19,13 @@ export default async function RootLayout({
   } = await supabase.auth.getSession();
 
   return (
-    <html lang="en" className="h-full">
+    <html lang="en">
       {/*
         <head /> will contain the components returned by the nearest parent
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body className="h-full">
+      <body>
         <SupabaseProvider session={session}>
           <SupabaseListener accessToken={session?.access_token} />
           {children}
