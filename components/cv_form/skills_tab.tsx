@@ -3,16 +3,20 @@ import type { FieldArrayRenderProps } from "formik";
 import { FieldArray } from "formik";
 import Checkbox from "@ui/checkbox";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@ui/tab";
+import type { SkillGroup } from "../types";
 
 interface SkillsTabProps {
   fProps: any;
-  skills: {
-    [key: string]: {
-      group_name: string;
-      skills: Array<{ id: string; name: string }>;
-    };
-  };
+  skills: SkillGroup;
 }
+
+const ORDERED_SKILL_GROUPS = [
+  "Programming languages",
+  "Libs & Frameworks",
+  "Tools & Enviroments",
+  "Databases",
+  "Project Management",
+];
 
 export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
   const isChecked = (skill: { id: string; name: string }) =>
@@ -36,37 +40,42 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
     }
   };
 
+  console.log(skills);
+  console.log(skills["Libs & Frameworks"]);
+
   return (
     <TabGroup>
       <TabList>
-        {Object.entries(skills).map(([id, group]) => (
-          <Tab key={id}>{group.group_name}</Tab>
-        ))}
+        {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => {
+          return <Tab key={orderedSkillGroupName}>{orderedSkillGroupName}</Tab>;
+        })}
       </TabList>
       <TabPanels>
         <FieldArray
           name="cv_skill"
           render={(arrayHelpers) => (
             <>
-              {Object.entries(skills).map(([id, group]) => (
-                <TabPanel
-                  className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
-                  key={id}
-                >
-                  {group.skills.map((skill) => (
-                    <Checkbox
-                      checked={isChecked(skill)}
-                      key={skill.id}
-                      name={"cv_skill-" + skill.id}
-                      onChange={(event) =>
-                        onChangeHandler(event, arrayHelpers, skill)
-                      }
-                    >
-                      {skill.name}
-                    </Checkbox>
-                  ))}
-                </TabPanel>
-              ))}
+              {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => {
+                return (
+                  <TabPanel
+                    className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+                    key={orderedSkillGroupName}
+                  >
+                    {skills[orderedSkillGroupName].map((skill) => (
+                      <Checkbox
+                        checked={isChecked(skill)}
+                        key={skill.id}
+                        name={"cv_skill-" + skill.id}
+                        onChange={(event) =>
+                          onChangeHandler(event, arrayHelpers, skill)
+                        }
+                      >
+                        {skill.name}
+                      </Checkbox>
+                    ))}
+                  </TabPanel>
+                );
+              })}
             </>
           )}
         />

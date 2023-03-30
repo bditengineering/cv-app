@@ -6,7 +6,7 @@ interface CvSkillResponse {
   id: string;
   cv_id: string;
   skill_id: string;
-};
+}
 
 interface SkillResponse {
   id: string;
@@ -23,10 +23,7 @@ interface Skill {
 }
 
 interface SkillGroup {
-  [group_id: string]: {
-    group_name: string;
-    skills: Array<Skill>;
-  };
+  [group_name: string]: Array<Skill>;
 }
 
 export interface CV {
