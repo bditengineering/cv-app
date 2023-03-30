@@ -53,7 +53,14 @@ export default function CVList({ cvs }: CVListProps) {
               </TableCell>
               <TableCell>{cv.titles.name}</TableCell>
               <TableCell>
-                <div>{new Date(cv.updated_at).toLocaleDateString("de-DE")}</div>
+                <div>
+                  {new Date(cv.updated_at)
+                    .toLocaleDateString("sr-RS")
+                    // remove spaces from string to fix hydration error
+                    // currently we're getting string without spaces from server
+                    // but toLocaleDateString("sr-RS") returns with spaces (22. 11. 2022.)
+                    .replaceAll(" ", "")}
+                </div>
 
                 <div className="truncate">{cv.user.email}</div>
               </TableCell>
