@@ -40,9 +40,6 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
     }
   };
 
-  console.log(skills);
-  console.log(skills["Libs & Frameworks"]);
-
   return (
     <TabGroup>
       <TabList>
