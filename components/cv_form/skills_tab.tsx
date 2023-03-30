@@ -3,7 +3,7 @@ import type { FieldArrayRenderProps } from "formik";
 import { FieldArray } from "formik";
 import Checkbox from "@ui/checkbox";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@ui/tab";
-import type { SkillGroup, Skill } from "../types";
+import type { SkillGroup, Skill, CvSkillResponse } from "../types";
 
 interface SkillsTabProps {
   fProps: any;
@@ -11,22 +11,21 @@ interface SkillsTabProps {
 }
 
 export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
-  const isChecked = (skill: { id: string; name: string }) =>
+  const isChecked = (skill: Skill) =>
     fProps.values.cv_skill.some(
-      (cvSkill: { id?: string; skill_id: string; cv_id?: string }) =>
-        cvSkill.skill_id === skill.id,
+      (cvSkill: CvSkillResponse) => cvSkill.skill_id === skill.id,
     );
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
     arrayHelpers: FieldArrayRenderProps,
-    skill: { id: string; name: string },
+    skill: Skill,
   ) => {
     if (event.target.checked) {
       arrayHelpers.push({ skill_id: skill.id });
     } else {
       const index = fProps.values.cv_skill.findIndex(
-        (cvSkill: any) => cvSkill.skill_id === skill.id,
+        (cvSkill: CvSkillResponse) => cvSkill.skill_id === skill.id,
       );
       arrayHelpers.remove(index);
     }
@@ -35,7 +34,7 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
   return (
     <TabGroup>
       <TabList>
-        {Object.entries(skills).map(([_, skillGroup]) => (
+        {Object.values(skills).map((skillGroup: SkillGroup[number]) => (
           <Tab key={skillGroup.group_name}>{skillGroup.group_name}</Tab>
         ))}
       </TabList>
@@ -44,12 +43,12 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
           name="cv_skill"
           render={(arrayHelpers) => (
             <>
-              {Object.entries(skills).map(([_, skillGroup]) => (
+              {Object.values(skills).map((skillGroup: SkillGroup[number]) => (
                 <TabPanel
                   className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
                   key={skillGroup.group_name}
                 >
-                  {skillGroup.skills.map((skill: Skill) => (
+                  {skillGroup.skills.map((skill) => (
                     <Checkbox
                       checked={isChecked(skill)}
                       key={skill.id}
