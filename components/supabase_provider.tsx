@@ -7,6 +7,11 @@ import type { Session } from "@supabase/auth-helpers-nextjs";
 
 type MaybeSession = Session | null;
 
+interface SupabaseProviderProps {
+  children: React.ReactNode;
+  session: MaybeSession;
+}
+
 type SupabaseContext = {
   supabase: /* TypedSupabaseClient */ any;
   session: MaybeSession;
@@ -19,10 +24,7 @@ const Context = createContext<SupabaseContext>();
 export default function SupabaseProvider({
   children,
   session,
-}: {
-  children: React.ReactNode;
-  session: MaybeSession;
-}) {
+}: SupabaseProviderProps) {
   return (
     <Context.Provider value={{ supabase, session }}>
       {children}
