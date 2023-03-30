@@ -7,7 +7,10 @@ export function transformSkills(response: SkillResponse[] | null) {
     const order = skill.skill_group.order;
 
     if (!acc[order]) {
-      acc[order] = { group_name: skill.skill_group.name, skills: [] };
+      acc[order] = {
+        group_name: skill.skill_group.name,
+        skills: [],
+      };
     }
 
     acc[order].skills.push({

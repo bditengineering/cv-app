@@ -24,7 +24,10 @@ interface Skill {
 }
 
 interface SkillGroup {
-  [order: number]: { group_name: string; skills: Array<Skill> };
+  [order: number]: {
+    group_name: string;
+    skills: Array<Skill>
+  };
 }
 
 export interface CV {
