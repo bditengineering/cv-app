@@ -1,5 +1,5 @@
-import { SkillGroup } from "../types";
 import SkillsTab from "./skills_tab";
+import type { SkillGroup } from "../types";
 
 interface Props {
   fProps: any;

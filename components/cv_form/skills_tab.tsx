@@ -3,20 +3,12 @@ import type { FieldArrayRenderProps } from "formik";
 import { FieldArray } from "formik";
 import Checkbox from "@ui/checkbox";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@ui/tab";
-import type { SkillGroup } from "../types";
+import type { SkillGroup, Skill } from "../types";
 
 interface SkillsTabProps {
   fProps: any;
   skills: SkillGroup;
 }
-
-const ORDERED_SKILL_GROUPS = [
-  "Programming languages",
-  "Libs & Frameworks",
-  "Tools & Enviroments",
-  "Databases",
-  "Project Management",
-];
 
 export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
   const isChecked = (skill: { id: string; name: string }) =>
@@ -43,8 +35,8 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
   return (
     <TabGroup>
       <TabList>
-        {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => (
-          <Tab key={orderedSkillGroupName}>{orderedSkillGroupName}</Tab>
+        {Object.entries(skills).map(([_, skillGroup]) => (
+          <Tab key={skillGroup.group_name}>{skillGroup.group_name}</Tab>
         ))}
       </TabList>
       <TabPanels>
@@ -52,12 +44,12 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
           name="cv_skill"
           render={(arrayHelpers) => (
             <>
-              {ORDERED_SKILL_GROUPS.map((orderedSkillGroupName) => (
+              {Object.entries(skills).map(([_, skillGroup]) => (
                 <TabPanel
                   className="grid gap-3 px-1.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
-                  key={orderedSkillGroupName}
+                  key={skillGroup.group_name}
                 >
-                  {skills[orderedSkillGroupName].map((skill) => (
+                  {skillGroup.skills.map((skill: Skill) => (
                     <Checkbox
                       checked={isChecked(skill)}
                       key={skill.id}
