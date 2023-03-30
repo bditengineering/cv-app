@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { cx } from "class-variance-authority";
 import Logo from "./logo";
 import { Plus, UserSolid } from "@ui/icons";
 import Button, { buttonClasses } from "@ui/button";
@@ -47,7 +48,7 @@ export default function NavBar({ title }: NavBarProps) {
 
           {/* Profile dropdown */}
           <Menu as="div" className="relative ml-3">
-            <Menu.Button className="relative h-9 w-9 overflow-hidden rounded-full border-[0.5px] border-gray-200 bg-gray-100 text-gray-300 transition-colors duration-500 hover:text-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-100">
+            <Menu.Button className="relative h-9 w-9 overflow-hidden rounded-full border-[0.5px] border-gray-200 bg-gray-100 text-gray-300 transition-colors duration-500 hover:text-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-100">
               <UserSolid className="absolute inset-0 m-auto h-8 w-8 translate-y-1.5" />
             </Menu.Button>
 
@@ -63,7 +64,9 @@ export default function NavBar({ title }: NavBarProps) {
               <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <Menu.Item
                   as={Button}
-                  className="w-full !rounded-none"
+                  className={({ active: focused }) =>
+                    cx(["w-full !rounded-none", focused ? "bg-gray-50" : ""])
+                  }
                   onClick={signOut}
                   variant="plain"
                 >
