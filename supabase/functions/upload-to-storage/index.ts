@@ -96,43 +96,58 @@ serve(async function handler(req: Request) {
 
     const width = doc.internal.pageSize.getWidth();
 
-    const headerFontColor = [67, 67, 67];
-    const cellBodyTextColor = [95, 95, 95];
-    const backgroundColor = [240, 240, 240];
-    const borderColor = [215, 215, 215];
-    const borderWidth = 0.3;
-    const cellPadding = 3;
+    const DOCUMENT_TITLE_TEXT_SIZE = 16.5;
+    const TEXT_COLOR = [67, 67, 67];
+    const CELL_TEXT_SIZE = 10.5;
+    const HEADER_TEXT_SIZE = 12;
+    const TITLE_CELL_WIDTH = 39;
+    const TECHNICAL_SKILLS_TITLE_CELL_WIDTH = 49;
+    const BACKGROUND_COLOR = [243, 243, 243];
+    const BORDER_COLOR = [217, 217, 217];
+    const BORDER_WIDTH = 0.3;
+    const CELL_PADDING = 3;
 
     // 'global' table styles
     const tableStyles = {
       theme: "grid",
-      tableLineColor: borderColor,
-      tableLineWidth: borderWidth,
+      tableLineColor: BORDER_COLOR,
+      tableLineWidth: BORDER_WIDTH,
       styles: {
-        lineColor: borderColor,
-        lineWidth: borderWidth,
+        lineColor: BORDER_COLOR,
+        lineWidth: BORDER_WIDTH,
       },
       headStyles: {
-        fillColor: backgroundColor,
-        fontSize: 12,
-        fontStyle: "normal",
+        fillColor: BACKGROUND_COLOR,
+        fontSize: HEADER_TEXT_SIZE,
+        fontStyle: "bold",
         halign: "center",
-        textColor: headerFontColor,
+        textColor: TEXT_COLOR,
       },
       bodyStyles: {
-        textColor: cellBodyTextColor,
-        cellPadding,
+        textColor: TEXT_COLOR,
+        cellPadding: CELL_PADDING,
       },
-      columnStyles: { 0: { textColor: 95, fontStyle: "bold" } },
-      pageBreak: "auto",
+      columnStyles: {
+        0: {
+          textColor: TEXT_COLOR,
+          fontStyle: "bold",
+          fontSize: CELL_TEXT_SIZE,
+          cellWidth: TITLE_CELL_WIDTH,
+        },
+      },
+      // pageBreak: "avoid",
       margin: { left: 25, right: 25 },
+      rowPageBreak: "avoid",
+      showHead: "firstPage",
     };
 
-    doc.setTextColor(95, 95, 95);
+    doc.setTextColor(67, 67, 67);
     doc.setFont("helvetica", "bold");
 
     doc.text(`${name}`, width / 2, 32, {
       align: "center",
+      fontSize: DOCUMENT_TITLE_TEXT_SIZE,
+      fontStyle: "bold",
     });
 
     doc.setTextColor(0, 0, 0);
@@ -168,10 +183,9 @@ serve(async function handler(req: Request) {
       ...tableStyles,
       columnStyles: {
         0: {
-          minCellWidth: 35,
-          textColor: 95,
-          fontStyle: "bold",
-          lineWidth: { right: 0.6, top: 0.3 },
+          ...tableStyles.columnStyles[0],
+          cellWidth: TECHNICAL_SKILLS_TITLE_CELL_WIDTH,
+          lineWidth: { right: BORDER_WIDTH * 2, top: BORDER_WIDTH },
         },
       },
       head: [
@@ -185,10 +199,11 @@ serve(async function handler(req: Request) {
       body: skillsBody,
       didParseCell: function (data) {
         // set space between skills after new line
-        doc.setLineHeightFactor(1.5);
+        // doc.setLineHeightFactor(1.5);
         if (Array.isArray(data.cell.raw)) {
           // remove border between two columns in skills body
-          data.cell.styles.lineWidth = { top: 0.3 };
+          console.log(data.cell);
+          data.cell.styles.lineWidth = { top: BORDER_WIDTH };
           data.cell.text = data.cell.raw.map(function (element) {
             return `- ${element}`;
           });
@@ -196,7 +211,7 @@ serve(async function handler(req: Request) {
       },
     });
 
-    doc.setLineHeightFactor(1.15);
+    // doc.setLineHeightFactor(1.15);
 
     autoTable(doc, {
       ...tableStyles,
@@ -206,9 +221,8 @@ serve(async function handler(req: Request) {
       },
       columnStyles: {
         0: {
-          lineWidth: { right: borderWidth },
-          textColor: 95,
-          fontStyle: "bold",
+          ...tableStyles.columnStyles[0],
+          lineWidth: { right: BORDER_WIDTH * 2 },
         },
       },
       head: [
@@ -229,8 +243,14 @@ serve(async function handler(req: Request) {
             rowIndex !== projects.length * 7
           ) {
             // draw a horizontal line (border) between projects
-            data.row.cells[0].styles.lineWidth = { right: 0.3, bottom: 0.3 };
-            data.row.cells[1].styles.lineWidth = { right: 0.3, bottom: 0.3 };
+            data.row.cells[0].styles.lineWidth = {
+              right: BORDER_WIDTH,
+              bottom: BORDER_WIDTH,
+            };
+            data.row.cells[1].styles.lineWidth = {
+              right: BORDER_WIDTH,
+              bottom: BORDER_WIDTH,
+            };
           }
         }
       },
