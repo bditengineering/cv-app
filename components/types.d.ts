@@ -6,7 +6,7 @@ interface CvSkillResponse {
   id: string;
   cv_id: string;
   skill_id: string;
-};
+}
 
 interface SkillResponse {
   id: string;
@@ -14,6 +14,7 @@ interface SkillResponse {
   skill_group: {
     id: string;
     name: string;
+    order: number;
   };
 }
 
@@ -23,7 +24,7 @@ interface Skill {
 }
 
 interface SkillGroup {
-  [group_id: string]: {
+  [order: number]: {
     group_name: string;
     skills: Array<Skill>;
   };

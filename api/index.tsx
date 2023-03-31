@@ -4,7 +4,7 @@ import type { SkillResponse } from "../components/types";
 export async function fetchSkills() {
   const { data } = await supabase
     .from("skill")
-    .select("id, name, skill_group(id, name)")
+    .select("id, name, skill_group(id, name, order)")
     .order("name")
     .returns<SkillResponse>();
 

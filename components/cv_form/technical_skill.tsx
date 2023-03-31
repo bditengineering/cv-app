@@ -1,13 +1,9 @@
 import SkillsTab from "./skills_tab";
+import type { SkillGroup } from "../types";
 
 interface Props {
   fProps: any;
-  skills: {
-    [key: string]: {
-      group_name: string;
-      skills: Array<{ id: string; name: string }>;
-    };
-  };
+  skills: SkillGroup;
 }
 
 export default function TechnicalSkill({ fProps, skills }: Props) {

@@ -4,16 +4,16 @@ export function transformSkills(response: SkillResponse[] | null) {
   if (response == null) return {};
 
   return response.reduce<SkillGroup>((acc, skill) => {
-    const group_id = skill.skill_group.id;
+    const order = skill.skill_group.order;
 
-    if (!acc[group_id]) {
-      acc[group_id] = {
+    if (!acc[order]) {
+      acc[order] = {
         group_name: skill.skill_group.name,
         skills: [],
       };
     }
 
-    acc[group_id].skills.push({
+    acc[order].skills.push({
       name: skill.name,
       id: skill.id,
     });
