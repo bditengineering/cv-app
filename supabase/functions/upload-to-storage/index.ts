@@ -8,6 +8,20 @@ import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
 import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
 import { corsHeaders } from "../_shared/cors.ts";
 
+const transformSkillsBySkillGroup = (skills) => {
+  return skills.reduce((acc, element) => {
+    const group_name = element.skill.skill_group.name;
+
+    if (!acc[group_name]) {
+      acc[group_name] = [];
+    }
+
+    acc[group_name].push(element.skill.name);
+
+    return acc;
+  }, {});
+};
+
 serve(async function handler(req: Request) {
   // This is needed if you're planning to invoke your function from a browser.
   if (req.method === "OPTIONS") {
@@ -71,6 +85,11 @@ serve(async function handler(req: Request) {
     const certifications = employee.certifications.map(
       (item) => `${item.certificate_name} - ${item.description}`,
     );
+
+    const skills: Record<string, Array<string>> = transformSkillsBySkillGroup(
+      employee.cv_skill,
+    );
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const doc = new jsPDF();
@@ -84,6 +103,7 @@ serve(async function handler(req: Request) {
     const borderWidth = 0.3;
     const cellPadding = 3;
 
+    // 'global' table styles
     const tableStyles = {
       theme: "grid",
       tableLineColor: borderColor,
@@ -126,24 +146,57 @@ serve(async function handler(req: Request) {
       margin: { ...tableStyles.margin, top: 40 },
     });
 
+    const skillsBody: Array<[string, string[], string[]]> = [];
+
+    Object.entries(skills).map(([groupName, skills]) => {
+      const skillList1: Array<string> = [];
+      const skillList2: Array<string> = [];
+
+      // separate skills in two columns
+      for (let i = 0; i < skills.length; i++) {
+        if (i % 2 === 0) {
+          skillList1.push(skills[i]);
+        } else {
+          skillList2.push(skills[i]);
+        }
+      }
+
+      skillsBody.push([groupName, skillList1, skillList2]);
+    });
+
     autoTable(doc, {
       ...tableStyles,
+      columnStyles: {
+        0: {
+          minCellWidth: 35,
+          textColor: 95,
+          fontStyle: "bold",
+          lineWidth: { right: 0.6, top: 0.3 },
+        },
+      },
       head: [
         [
           {
             content: "Technical Skills",
-            colSpan: 2,
+            colSpan: 3,
           },
         ],
       ],
-      body: [
-        ["Programming languages", employee.programming_languages],
-        ["Libs & Frameworks", employee.libs_and_frameworks],
-        ["Big Data", employee.big_data],
-        ["Databases", employee.databases],
-        ["Dev Ops", employee.devops],
-      ],
+      body: skillsBody,
+      didParseCell: function (data) {
+        // set space between skills after new line
+        doc.setLineHeightFactor(1.5);
+        if (Array.isArray(data.cell.raw)) {
+          // remove border between two columns in skills body
+          data.cell.styles.lineWidth = { top: 0.3 };
+          data.cell.text = data.cell.raw.map(function (element) {
+            return `- ${element}`;
+          });
+        }
+      },
     });
+
+    doc.setLineHeightFactor(1.15);
 
     autoTable(doc, {
       ...tableStyles,
@@ -175,7 +228,7 @@ serve(async function handler(req: Request) {
             rowIndex % 7 === 0 &&
             rowIndex !== projects.length * 7
           ) {
-            // draw a border around the last item in the body array
+            // draw a horizontal line (border) between projects
             data.row.cells[0].styles.lineWidth = { right: 0.3, bottom: 0.3 };
             data.row.cells[1].styles.lineWidth = { right: 0.3, bottom: 0.3 };
           }
