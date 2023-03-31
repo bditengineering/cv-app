@@ -52,12 +52,7 @@ export function PersonalInfo({ fProps, titles }: Props) {
           </span>
         </div>
         <div className="md:flex-grow">
-          <Field
-            as="select"
-            name="title_id"
-            className="rounded-md"
-            defaultValue={fProps.values.title_id || ""}
-          >
+          <Field as="select" name="title_id" className="rounded-md">
             <option disabled value="">
               Choose title
             </option>

@@ -30,6 +30,7 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
   const [form, setForm] = useState<Partial<any>>({
     first_name: "",
     last_name: "",
+    title_id: "",
     summary: "",
     educations: [],
     english_written_level: "",
