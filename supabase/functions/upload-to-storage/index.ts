@@ -44,7 +44,7 @@ serve(async function handler(req: Request) {
     const { data, error } = await supabaseClient
       .from("cv")
       .select(
-        "*, projects(*), titles(name), education(*), certifications(certificate_name, description)",
+        "*, projects(*), titles(name), educations(*), certifications(certificate_name, description), cv_skill(skill(name, skill_group(*)))",
       )
       .eq("id", id);
     if (error) throw error;
