@@ -11,7 +11,7 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
-import type { CvSkillResponse, SkillGroup } from "./types";
+import type { CvSkillResponse, SkillGroup, TitlesResponse } from "./types";
 
 type FormSkill = {
   id: string | null;
@@ -22,13 +22,15 @@ type FormSkill = {
 interface Props {
   id?: string;
   skills: SkillGroup;
+  titles: Array<TitlesResponse>;
 }
 
-export default function AddNewCvForm({ id, skills }: Props) {
+export default function AddNewCvForm({ id, skills, titles }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<Partial<any>>({
     first_name: "",
     last_name: "",
+    title_id: "",
     summary: "",
     educations: [],
     english_written_level: "",
@@ -36,7 +38,6 @@ export default function AddNewCvForm({ id, skills }: Props) {
     projects: [],
     certifications: [],
     personal_qualities: [],
-    availableTitles: [],
     cv_skill: [],
   });
   const [initialUserSkills, setInitialUserSkills] = useState<
@@ -50,13 +51,11 @@ export default function AddNewCvForm({ id, skills }: Props) {
   const [certificationsToRemove, setCertificationsToRemove] = useState<
     Array<string>
   >([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(id ? true : false);
 
   useEffect(() => {
     if (id) {
       fetchCv(id);
-    } else {
-      setAvailableTitles();
     }
   }, [id]);
 
@@ -66,21 +65,6 @@ export default function AddNewCvForm({ id, skills }: Props) {
     english_spoken_level: Yup.string().required("Please select a level"),
     english_written_level: Yup.string().required("Please select a level"),
   });
-
-  async function setAvailableTitles() {
-    const availableTitles = await fetchAvailableTitles();
-    const formData = {
-      ...form,
-      availableTitles: availableTitles,
-    };
-    setForm(formData);
-    setLoading(false);
-  }
-
-  async function fetchAvailableTitles() {
-    const response = await supabase.from("titles").select("id, name");
-    return response.data;
-  }
 
   async function fetchCv(employeeId: string) {
     const { data } = await supabase
@@ -94,8 +78,6 @@ export default function AddNewCvForm({ id, skills }: Props) {
 
     setInitialUserSkills(data[0].cv_skill);
 
-    const availableTitles = await fetchAvailableTitles();
-
     const updatedProjects = data[0].projects.map((project: any) => {
       return {
         ...project,
@@ -108,7 +90,6 @@ export default function AddNewCvForm({ id, skills }: Props) {
       ...data[0],
       projects: updatedProjects,
       educations: data[0].educations,
-      availableTitles: availableTitles,
     };
 
     setForm(formData);
@@ -144,7 +125,6 @@ export default function AddNewCvForm({ id, skills }: Props) {
     delete updatedCv.projects;
     delete updatedCv.certifications;
     delete updatedCv.educations;
-    delete updatedCv.availableTitles;
     delete updatedCv.titles;
     delete updatedCv.cv_skill;
 
@@ -260,7 +240,12 @@ export default function AddNewCvForm({ id, skills }: Props) {
   }
 
   async function handleSubmit(values: any) {
-    const title = values.titles.name;
+    const title = values.title_id
+      ? // when title_id is present, find *will* find and return title object
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        titles.find((title) => title.id === values.title_id)!.name
+      : "";
+
     const { data, error } = await upsert(values);
     setServerErrorMessage(error ? error.message : "");
 
@@ -334,7 +319,7 @@ export default function AddNewCvForm({ id, skills }: Props) {
         <Form>
           <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 text-gray-600 dark:border-gray-700">
             <div className="container mx-auto px-16 py-24">
-              <PersonalInfo fProps={formProps} />
+              <PersonalInfo fProps={formProps} titles={titles} />
               <TechnicalSkill fProps={formProps} skills={skills} />
               <Projects
                 fProps={formProps}

@@ -25,7 +25,7 @@ export const TabPanels = (props: ExtractProps<typeof HeadlessTab.Panels>) => {
 export const TabList = (props: ExtractProps<typeof HeadlessTab.List>) => {
   return (
     <HeadlessTab.List
-      className="flex flex-row items-center gap-2 rounded-lg border border-gray-100 bg-gray-50"
+      className="flex flex-row items-stretch gap-2 rounded-lg border border-gray-100 bg-gray-50"
       {...props}
     />
   );
