@@ -82,7 +82,7 @@ export default function SignInForm() {
           </div>
         </div>
 
-        <div className="mt-6 gap-1.5 w-full">
+        <div className="mt-6 w-full gap-1.5">
           <Button className="my-2" fullWidth type="submit">
             Submit
           </Button>
