@@ -20,6 +20,8 @@
 
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import "../helpers/fonts/Nunito-normal";
+import "../helpers/fonts/Nunito-bold";
 
 const transformSkillsBySkillGroup = (skills) => {
   return skills.reduce((acc, element) => {
@@ -97,6 +99,7 @@ export async function savePdf(data) {
     styles: {
       lineColor: BORDER_COLOR,
       lineWidth: BORDER_WIDTH,
+      font: "Nunito",
     },
     headStyles: {
       fillColor: BACKGROUND_COLOR,
@@ -117,14 +120,13 @@ export async function savePdf(data) {
         cellWidth: TITLE_CELL_WIDTH,
       },
     },
-    // pageBreak: "avoid",
     margin: { left: 25, right: 25 },
     rowPageBreak: "avoid",
     showHead: "firstPage",
   };
 
   doc.setTextColor(67, 67, 67);
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Nunito", "bold");
 
   doc.text(`${name}`, width / 2, 32, {
     align: "center",
@@ -133,7 +135,7 @@ export async function savePdf(data) {
   });
 
   doc.setTextColor(0, 0, 0);
-  doc.setFont("helvetica", "normal");
+  doc.setFont("Nunito", "normal");
 
   autoTable(doc, {
     ...tableStyles,
@@ -184,7 +186,6 @@ export async function savePdf(data) {
       // doc.setLineHeightFactor(1.5);
       if (Array.isArray(data.cell.raw)) {
         // remove border between two columns in skills body
-        console.log(data.cell);
         data.cell.styles.lineWidth = { top: BORDER_WIDTH };
         data.cell.text = data.cell.raw.map(function (element) {
           return `- ${element}`;

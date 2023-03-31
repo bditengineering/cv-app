@@ -7,6 +7,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
 import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
 import { corsHeaders } from "../_shared/cors.ts";
+import "../_shared/fonts/Nunito-normal";
+import "../_shared/fonts/Nunito-bold";
 
 const transformSkillsBySkillGroup = (skills) => {
   return skills.reduce((acc, element) => {
@@ -115,6 +117,7 @@ serve(async function handler(req: Request) {
       styles: {
         lineColor: BORDER_COLOR,
         lineWidth: BORDER_WIDTH,
+        font: "Nunito",
       },
       headStyles: {
         fillColor: BACKGROUND_COLOR,
@@ -135,14 +138,13 @@ serve(async function handler(req: Request) {
           cellWidth: TITLE_CELL_WIDTH,
         },
       },
-      // pageBreak: "avoid",
       margin: { left: 25, right: 25 },
       rowPageBreak: "avoid",
       showHead: "firstPage",
     };
 
     doc.setTextColor(67, 67, 67);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("Nunito", "bold");
 
     doc.text(`${name}`, width / 2, 32, {
       align: "center",
@@ -151,7 +153,7 @@ serve(async function handler(req: Request) {
     });
 
     doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("Nunito", "normal");
 
     autoTable(doc, {
       ...tableStyles,
