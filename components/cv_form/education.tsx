@@ -51,7 +51,7 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                     <div className="md:flex-grow">
                       <Field
                         as="textarea"
-                        className={inputClasses()}
+                        className={inputClasses({ className: "text-gray-900" })}
                         name={`educations[${educationIndex}].degree`}
                         placeholder="Degree"
                         type="text"

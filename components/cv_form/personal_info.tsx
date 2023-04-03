@@ -75,7 +75,7 @@ export function PersonalInfo({ fProps, titles }: Props) {
         </div>
         <div className="md:flex-grow">
           <Field
-            className={inputClasses()}
+            className={inputClasses({ className: "text-gray-900" })}
             name="summary"
             type="text"
             as="textarea"

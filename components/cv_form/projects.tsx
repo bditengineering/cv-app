@@ -50,7 +50,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       as="textarea"
-                      className={inputClasses()}
+                      className={inputClasses({ className: "text-gray-900" })}
                       name={`projects[${projectsIndex}].description`}
                       type="text"
                     />

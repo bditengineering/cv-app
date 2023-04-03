@@ -13,7 +13,7 @@ export function MonthYearDatePicker({ name, ...rest }: any) {
           <DateView
             {...field}
             {...rest}
-            className={inputClasses({ className: "w-auto" })}
+            className={inputClasses({ className: "w-auto text-gray-900" })}
             selected={value}
             onChange={(val: any) => setFieldValue(name, val)}
             dateFormat="MMMM yyyy"
