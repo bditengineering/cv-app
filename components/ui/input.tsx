@@ -58,6 +58,21 @@ export const inputClasses = cva(
   },
 );
 
+function getElementWidth<RefType extends HTMLElement | null>(
+  elementRef: React.MutableRefObject<RefType>,
+) {
+  if (!elementRef?.current) {
+    return "";
+  }
+
+  const spacingBetweenElementAndIndex = 4;
+
+  return (
+    Math.round(elementRef.current.getBoundingClientRect().width || 0) +
+    spacingBetweenElementAndIndex
+  );
+}
+
 const Input = React.forwardRef(
   (
     {
@@ -75,15 +90,11 @@ const Input = React.forwardRef(
     }: InputProps,
     ref: React.Ref<HTMLInputElement>,
   ) => {
-    const prefixRef = useRef<HTMLSpanElement>(null);
-    const suffixRef = useRef<HTMLSpanElement>(null);
+    const prefixRef = useRef<HTMLSpanElement | null>(null);
+    const suffixRef = useRef<HTMLSpanElement | null>(null);
 
-    const inputPaddingLeft = prefixRef.current
-      ? Math.round(prefixRef.current.getBoundingClientRect().width) + 4
-      : "";
-    const inputPaddingRight = suffixRef.current
-      ? Math.round(suffixRef.current.getBoundingClientRect().width) + 4
-      : "";
+    const inputPaddingLeft = getElementWidth(prefixRef);
+    const inputPaddingRight = getElementWidth(suffixRef);
 
     const prefixPresent = typeof renderPrefix === "function";
     const suffixPresent = typeof renderSuffix === "function";
