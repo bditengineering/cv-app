@@ -1,18 +1,19 @@
 import React, { useRef } from "react";
 import { cva, cx } from "class-variance-authority";
 
+export interface PrefixSuffixRenderProps {
+  disabled?: boolean;
+}
+
 interface InputProps
-  extends Omit<
-    React.DetailedHTMLProps<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      HTMLInputElement
-    >,
-    "prefix"
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
   > {
   fullWidth?: boolean;
   helperText?: React.ReactElement;
-  prefix?: React.ReactElement;
-  suffix?: React.ReactElement;
+  renderPrefix?: ({ disabled }: PrefixSuffixRenderProps) => React.ReactElement;
+  renderSuffix?: ({ disabled }: PrefixSuffixRenderProps) => React.ReactElement;
 }
 
 const inputContainerClasses = cva("relative rounded-md", {
@@ -67,8 +68,8 @@ const Input = React.forwardRef(
       helperText,
       name,
       id = name,
-      prefix,
-      suffix,
+      renderPrefix,
+      renderSuffix,
       type = "text",
       ...restProps
     }: InputProps,
@@ -83,6 +84,9 @@ const Input = React.forwardRef(
     const inputPaddingRight = suffixRef.current
       ? Math.round(suffixRef.current.getBoundingClientRect().width) + 4
       : "";
+
+    const prefixPresent = typeof renderPrefix === "function";
+    const suffixPresent = typeof renderSuffix === "function";
 
     return (
       <div className={cx(fullWidth ? "w-full" : "")}>
@@ -103,12 +107,12 @@ const Input = React.forwardRef(
             }),
           ])}
         >
-          {prefix ? (
+          {prefixPresent ? (
             <span
-              className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+              className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
               ref={prefixRef}
             >
-              <prefix.type {...prefix.props} />
+              {renderPrefix({ disabled })}
             </span>
           ) : null}
 
@@ -122,19 +126,19 @@ const Input = React.forwardRef(
             id={id}
             disabled={disabled}
             className={inputClasses({
-              hasPrefix: !!prefix,
-              hasSuffix: !!suffix,
+              hasPrefix: prefixPresent,
+              hasSuffix: suffixPresent,
             })}
             ref={ref}
             {...restProps}
           />
 
-          {suffix ? (
+          {suffixPresent ? (
             <span
               className="absolute inset-y-0 right-0 flex items-center"
               ref={suffixRef}
             >
-              <suffix.type {...suffix.props} />
+              {renderSuffix({ disabled })}
             </span>
           ) : null}
         </div>
