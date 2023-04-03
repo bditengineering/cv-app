@@ -1,6 +1,5 @@
 import React from "react";
 import { cva, cx } from "class-variance-authority";
-import { omit } from "../../utils/object";
 
 interface InputProps
   extends Omit<
@@ -95,13 +94,9 @@ const Input = React.forwardRef(
           ])}
         >
           {prefix ? (
-            <prefix.type
-              className={cx(
-                "pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3",
-                prefix.props.className,
-              )}
-              {...omit(prefix.props, "className")}
-            />
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <prefix.type {...prefix.props} />
+            </span>
           ) : null}
 
           <input
@@ -118,13 +113,9 @@ const Input = React.forwardRef(
           />
 
           {suffix ? (
-            <suffix.type
-              className={cx(
-                "absolute inset-y-0 right-0 flex items-center",
-                suffix.props.className,
-              )}
-              {...omit(suffix.props, "className")}
-            />
+            <span className="absolute inset-y-0 right-0 flex items-center">
+              <suffix.type {...suffix.props} />
+            </span>
           ) : null}
         </div>
 
