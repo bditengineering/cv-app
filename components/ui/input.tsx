@@ -16,7 +16,7 @@ interface InputProps
   suffix?: React.ReactElement;
 }
 
-const containerClasses = cva("relative rounded-md", {
+const inputContainerClasses = cva("relative rounded-md", {
   variants: {
     fullWidth: {
       true: "w-full",
@@ -76,7 +76,7 @@ const Input = React.forwardRef(
     ref: React.Ref<HTMLInputElement>,
   ) => {
     return (
-      <div>
+      <div className={cx(fullWidth ? "w-full" : "")}>
         <label
           htmlFor={name}
           className="block text-sm font-medium text-gray-700"
@@ -86,7 +86,7 @@ const Input = React.forwardRef(
 
         <div
           className={cx([
-            containerClasses({
+            inputContainerClasses({
               className,
               disabled,
               fullWidth,
