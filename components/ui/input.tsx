@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { cva, cx } from "class-variance-authority";
 
 interface InputProps
@@ -74,6 +74,16 @@ const Input = React.forwardRef(
     }: InputProps,
     ref: React.Ref<HTMLInputElement>,
   ) => {
+    const prefixRef = useRef<HTMLSpanElement>(null);
+    const suffixRef = useRef<HTMLSpanElement>(null);
+
+    const inputPaddingLeft = prefixRef.current
+      ? Math.round(prefixRef.current.getBoundingClientRect().width) + 4
+      : "";
+    const inputPaddingRight = suffixRef.current
+      ? Math.round(suffixRef.current.getBoundingClientRect().width) + 4
+      : "";
+
     return (
       <div className={cx(fullWidth ? "w-full" : "")}>
         <label
@@ -94,12 +104,19 @@ const Input = React.forwardRef(
           ])}
         >
           {prefix ? (
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <span
+              className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+              ref={prefixRef}
+            >
               <prefix.type {...prefix.props} />
             </span>
           ) : null}
 
           <input
+            style={{
+              paddingLeft: inputPaddingLeft,
+              paddingRight: inputPaddingRight,
+            }}
             type={type}
             name={name}
             id={id}
@@ -113,7 +130,10 @@ const Input = React.forwardRef(
           />
 
           {suffix ? (
-            <span className="absolute inset-y-0 right-0 flex items-center">
+            <span
+              className="absolute inset-y-0 right-0 flex items-center"
+              ref={suffixRef}
+            >
               <suffix.type {...suffix.props} />
             </span>
           ) : null}
