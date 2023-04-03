@@ -1,6 +1,8 @@
 import { Field, FieldArray } from "formik";
 import CvFieldArray from "./cv_field_array";
 import * as Icons from "@ui/icons";
+import Input from "@ui/input";
+import Button from "@ui/button";
 
 interface AdditionalInfoProps {
   formProps: any;
@@ -35,21 +37,23 @@ export function AdditionalInfo({
                         <div key={index} className="py-2">
                           <div className="mb-2 flex w-full">
                             <Field
+                              as={Input}
+                              fullWidth
                               name={`certifications.${index}.certificate_name`}
-                              className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                              placeholder="name"
+                              placeholder="Certificate name"
                             />
                           </div>
                           <div className="mb-2 flex w-full">
                             <Field
+                              as={Input}
+                              fullWidth
                               name={`certifications.${index}.description`}
-                              className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
-                              placeholder="description"
+                              placeholder="Certificate description"
                             />
                           </div>
-                          <button
-                            className="float-right rounded-md border border-indigo-500 bg-indigo-500 p-1 text-white"
-                            type="button"
+                          <Button
+                            className="ml-auto"
+                            variant="outlined"
                             onClick={() => {
                               arrayHelpers.remove(index);
                               setCertificationsToRemove((prevIds) => [
@@ -57,16 +61,17 @@ export function AdditionalInfo({
                                 certification.id,
                               ]);
                             }}
+                            prefix={<Icons.TrashCan className="h-5 w-5" />}
                           >
-                            <Icons.TrashCan />
-                          </button>
+                            Remove certificate
+                          </Button>
                         </div>
                       ),
                     )}
                   <button
                     type="button"
                     onClick={() => arrayHelpers.push("")}
-                    className="flex text-indigo-500"
+                    className="flex gap-1 text-indigo-500"
                   >
                     <Icons.PlusCircle />
                     <span>Add</span>
