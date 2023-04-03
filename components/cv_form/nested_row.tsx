@@ -1,5 +1,9 @@
+import React from "react";
+import { cx } from "class-variance-authority";
 import { Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
+import Input from "@ui/input";
+import Button from "@ui/button";
 
 interface Props {
   fProps: any;
@@ -7,6 +11,26 @@ interface Props {
   outerArray: string;
   innerArray: string;
 }
+
+interface RemoveButtonProps {
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+const RemoveInputSuffix = ({ onClick }: RemoveButtonProps) => (
+  <Button
+    className={cx([
+      // add left border and remove radius
+      // + add 1px margin (width of border) so container's border is not overlapped on hover and focus
+      "m-px rounded-l-none border-l border-l-gray-300",
+      "focus:m-0 focus:border focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100",
+    ])}
+    onClick={onClick}
+    variant="plain"
+  >
+    <Icons.TrashCan className="h-5 w-5" />
+    <span className="hidden sm:inline">Remove</span>
+  </Button>
+);
 
 export default function NestedRow({
   fProps,
@@ -25,16 +49,15 @@ export default function NestedRow({
               (item: any, itemIndex: any) => (
                 <div key={itemIndex} className="mb-2 flex w-full">
                   <Field
-                    className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
+                    as={Input}
+                    fullWidth
                     name={`[${outerArray}][${outerIndex}][${innerArray}].${itemIndex}`}
+                    suffix={
+                      <RemoveInputSuffix
+                        onClick={() => arrayHelpers.remove(itemIndex)}
+                      />
+                    }
                   />
-                  <button
-                    className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                    type="button"
-                    onClick={() => arrayHelpers.remove(itemIndex)}
-                  >
-                    <Icons.TrashCan />
-                  </button>
                 </div>
               ),
             )}
