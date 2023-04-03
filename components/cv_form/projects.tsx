@@ -2,6 +2,7 @@ import { Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
 import NestedRow from "./nested_row";
 import { MonthYearDatePicker } from "../datepicker";
+import Input, { inputClasses } from "@ui/input";
 
 interface Props {
   fProps: any;
@@ -32,6 +33,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   </div>
                   <div className="md:flex-grow">
                     <Field
+                      as={Input}
                       className="w-full rounded-md"
                       name={`projects[${projectsIndex}].name`}
                       type="text"
@@ -47,10 +49,10 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   </div>
                   <div className="md:flex-grow">
                     <Field
-                      className="w-full rounded-md"
+                      as="textarea"
+                      className={inputClasses()}
                       name={`projects[${projectsIndex}].description`}
                       type="text"
-                      as="textarea"
                     />
                   </div>
                 </div>
@@ -63,6 +65,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   </div>
                   <div className="md:flex-grow">
                     <Field
+                      as={Input}
                       className="w-full rounded-md"
                       name={`projects[${projectsIndex}].field`}
                       type="text"
@@ -78,6 +81,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   </div>
                   <div className="md:flex-grow">
                     <Field
+                      as={Input}
                       className="w-full rounded-md"
                       name={`projects[${projectsIndex}].team_size`}
                       type="text"
@@ -93,6 +97,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   </div>
                   <div className="md:flex-grow">
                     <Field
+                      as={Input}
                       className="w-full rounded-md"
                       name={`projects[${projectsIndex}].position`}
                       type="text"
@@ -177,7 +182,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
 
                 <div className="flex flex-wrap py-8 md:flex-nowrap">
                   <button
-                    className="flex text-indigo-500"
+                    className="flex gap-1 text-indigo-500"
                     type="button"
                     onClick={() => {
                       arrayHelpers.remove(projectsIndex);
@@ -194,7 +199,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
               </div>
             ))}
           <button
-            className="flex flex-wrap text-indigo-500"
+            className="flex flex-wrap gap-1 text-indigo-500"
             type="button"
             onClick={() => arrayHelpers.push({})}
           >

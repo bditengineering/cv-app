@@ -43,7 +43,7 @@ export default function NestedRow({
               ),
             )}
           <button
-            className="flex text-indigo-500"
+            className="flex gap-1 text-indigo-500"
             type="button"
             onClick={() => arrayHelpers.push("")}
           >

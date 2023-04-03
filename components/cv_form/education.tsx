@@ -2,6 +2,7 @@ import { Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
 
 import * as Options from "../../constants/CvFormOptions";
+import Input, { inputClasses } from "@ui/input";
 
 interface EducationProps {
   fProps: any;
@@ -33,10 +34,10 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                     </div>
                     <div className="md:flex-grow">
                       <Field
-                        className="w-full rounded-md"
+                        as={Input}
                         name={`educations[${educationIndex}].university_name`}
-                        type="text"
                         placeholder="Name of University"
+                        type="text"
                       />
                     </div>
                   </div>
@@ -49,11 +50,11 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                     </div>
                     <div className="md:flex-grow">
                       <Field
-                        className="w-full rounded-md"
-                        name={`educations[${educationIndex}].degree`}
-                        type="text"
                         as="textarea"
+                        className={inputClasses()}
+                        name={`educations[${educationIndex}].degree`}
                         placeholder="Degree"
+                        type="text"
                       />
                     </div>
                   </div>
