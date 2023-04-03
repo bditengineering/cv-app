@@ -1,10 +1,9 @@
 import React from "react";
-import { cx } from "class-variance-authority";
 import { Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
-import type { PrefixSuffixRenderProps } from "@ui/input";
 import Input from "@ui/input";
-import Button from "@ui/button";
+import RemoveInputAction from "./remove_input_action";
+import type { PrefixSuffixRenderProps } from "@ui/input";
 
 interface Props {
   fProps: any;
@@ -12,28 +11,6 @@ interface Props {
   outerArray: string;
   innerArray: string;
 }
-
-interface RemoveButtonProps {
-  disabled?: boolean;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
-}
-
-const RemoveInputSuffix = ({ disabled, onClick }: RemoveButtonProps) => (
-  <Button
-    className={cx([
-      // add left border and remove radius
-      // + add 1px margin (width of border) so container's border is not overlapped on hover and focus
-      "m-px rounded-l-none border-l border-l-gray-300",
-      "focus:m-0 focus:border focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100",
-    ])}
-    disabled={disabled}
-    onClick={onClick}
-    variant="plain"
-  >
-    <Icons.TrashCan className="h-5 w-5" />
-    <span className="hidden sm:inline">Remove</span>
-  </Button>
-);
 
 export default function NestedRow({
   fProps,
@@ -56,7 +33,7 @@ export default function NestedRow({
                     fullWidth
                     name={`[${outerArray}][${outerIndex}][${innerArray}].${itemIndex}`}
                     renderSuffix={({ disabled }: PrefixSuffixRenderProps) => (
-                      <RemoveInputSuffix
+                      <RemoveInputAction
                         disabled={disabled}
                         onClick={() => arrayHelpers.remove(itemIndex)}
                       />
