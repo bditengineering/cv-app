@@ -9,8 +9,6 @@ interface Props {
   };
 }
 
-export const dynamic = "force-static";
-
 export default async function EditCv({ params: { id } }: Props) {
   const skills = await fetchSkills();
   const titles = (await fetchTitles()) || [];
