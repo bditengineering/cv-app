@@ -1,7 +1,7 @@
 "use client";
 
 import supabase from "../utils/supabase_browser";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -11,6 +11,7 @@ import { Education } from "./cv_form/education";
 import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
+import { transformCv } from "../helpers";
 import type { CvSkillResponse, SkillGroup, TitlesResponse } from "./types";
 
 type FormSkill = {
@@ -23,26 +24,32 @@ interface Props {
   id?: string;
   skills: SkillGroup;
   titles: Array<TitlesResponse>;
+  initialUserSkills?: CvSkillResponse[];
+  cv?: any;
 }
 
-export default function AddNewCvForm({ id, skills, titles }: Props) {
+const initialCvValues = {
+  first_name: "",
+  last_name: "",
+  title_id: "",
+  summary: "",
+  educations: [],
+  english_written_level: "",
+  english_spoken_level: "",
+  projects: [],
+  certifications: [],
+  personal_qualities: [],
+  cv_skill: [],
+};
+
+export default function AddNewCvForm({
+  id,
+  skills,
+  titles,
+  initialUserSkills = [],
+  cv = initialCvValues,
+}: Props) {
   const router = useRouter();
-  const [form, setForm] = useState<Partial<any>>({
-    first_name: "",
-    last_name: "",
-    title_id: "",
-    summary: "",
-    educations: [],
-    english_written_level: "",
-    english_spoken_level: "",
-    projects: [],
-    certifications: [],
-    personal_qualities: [],
-    cv_skill: [],
-  });
-  const [initialUserSkills, setInitialUserSkills] = useState<
-    Array<CvSkillResponse>
-  >([]);
   const [serverErrorMessage, setServerErrorMessage] = useState<string>();
   const [educationsToRemove, setEducationsToRemove] = useState<Array<string>>(
     [],
@@ -51,13 +58,6 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
   const [certificationsToRemove, setCertificationsToRemove] = useState<
     Array<string>
   >([]);
-  const [loading, setLoading] = useState(id ? true : false);
-
-  useEffect(() => {
-    if (id) {
-      fetchCv(id);
-    }
-  }, [id]);
 
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
@@ -65,36 +65,6 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     english_spoken_level: Yup.string().required("Please select a level"),
     english_written_level: Yup.string().required("Please select a level"),
   });
-
-  async function fetchCv(employeeId: string) {
-    const { data } = await supabase
-      .from("cv")
-      .select(
-        "*, projects(*), educations(*), certifications(*), titles(*), cv_skill(*)",
-      )
-      .eq("id", employeeId);
-
-    if (!data) return;
-
-    setInitialUserSkills(data[0].cv_skill);
-
-    const updatedProjects = data[0].projects.map((project: any) => {
-      return {
-        ...project,
-        date_start: new Date(project.date_start),
-        date_end: new Date(project.date_end),
-      };
-    });
-
-    const formData = {
-      ...data[0],
-      projects: updatedProjects,
-      educations: data[0].educations,
-    };
-
-    setForm(formData);
-    setLoading(false);
-  }
 
   async function uploadPdf(fileName: string) {
     const response = await fetch("/api/upload_to_drive", {
@@ -304,11 +274,9 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     router.push("/");
   }
 
-  if (loading) return <h1>Loading...</h1>;
-
   return (
     <Formik
-      initialValues={{ ...form }}
+      initialValues={transformCv(cv)}
       validationSchema={validationSchema}
       onSubmit={(values) => {
         handleSubmit(values);
