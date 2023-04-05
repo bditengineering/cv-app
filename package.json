@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:inspect": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3003",
     "lint": "next lint"
   },
   "dependencies": {
