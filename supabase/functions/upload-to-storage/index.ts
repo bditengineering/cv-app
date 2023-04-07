@@ -7,11 +7,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
 import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
 import { corsHeaders } from "../_shared/cors.ts";
-import "../_shared/fonts/Nunito-normal";
-import "../_shared/fonts/Nunito-bold";
+import "../_shared/fonts/Nunito-normal.js";
+import "../_shared/fonts/Nunito-bold.js";
 
-const transformSkillsBySkillGroup = (skills) => {
-  return skills.reduce((acc, element) => {
+const transformSkillsBySkillGroup = (skills: any) => {
+  return skills.reduce((acc: any, element: any) => {
     const group_name = element.skill.skill_group.name;
 
     if (!acc[group_name]) {
@@ -75,18 +75,19 @@ serve(async function handler(req: Request) {
         ["Tools & Technologies", item.technologies.join(", ")],
         ["Responsibilities", item.responsibilities.join(", ")],
         ["Time Period", `${startDate} - ${endDate}`],
-        [{ content: "", colSpan: 2 }],
       ];
     });
 
-    const education = employee.education.map(
-      (item) =>
-        `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`,
-    );
+    const education =
+      employee.education?.map(
+        (item: any) =>
+          `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`,
+      ) || [];
 
-    const certifications = employee.certifications.map(
-      (item) => `${item.certificate_name} - ${item.description}`,
-    );
+    const certifications =
+      employee.certifications?.map(
+        (item: any) => `${item.certificate_name} - ${item.description}`,
+      ) || [];
 
     const skills: Record<string, Array<string>> = transformSkillsBySkillGroup(
       employee.cv_skill,
@@ -199,14 +200,14 @@ serve(async function handler(req: Request) {
         ],
       ],
       body: skillsBody,
-      didParseCell: function (data) {
+      didParseCell: function (data: any) {
         // set space between skills after new line
         // doc.setLineHeightFactor(1.5);
         if (Array.isArray(data.cell.raw)) {
           // remove border between two columns in skills body
           console.log(data.cell);
           data.cell.styles.lineWidth = { top: BORDER_WIDTH };
-          data.cell.text = data.cell.raw.map(function (element) {
+          data.cell.text = data.cell.raw.map(function (element: any) {
             return `- ${element}`;
           });
         }
@@ -236,7 +237,7 @@ serve(async function handler(req: Request) {
         ],
       ],
       body: projects.flat().slice(0, -1),
-      willDrawCell: function (data) {
+      willDrawCell: function (data: any) {
         if (data.section === "body") {
           const rowIndex = data.row.index;
           if (
