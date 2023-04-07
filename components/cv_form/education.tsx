@@ -35,6 +35,7 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                     <div className="md:flex-grow">
                       <Field
                         as={Input}
+                        autoFocus
                         name={`educations[${educationIndex}].university_name`}
                         placeholder="Name of University"
                         type="text"

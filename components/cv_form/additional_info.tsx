@@ -38,6 +38,7 @@ export function AdditionalInfo({
                           <div className="mb-2 flex w-full">
                             <Field
                               as={Input}
+                              autoFocus
                               fullWidth
                               name={`certifications.${index}.certificate_name`}
                               placeholder="Certificate name"

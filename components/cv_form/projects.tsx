@@ -34,6 +34,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   <div className="md:flex-grow">
                     <Field
                       as={Input}
+                      autoFocus
                       className="w-full rounded-md"
                       name={`projects[${projectsIndex}].name`}
                       type="text"

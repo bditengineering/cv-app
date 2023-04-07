@@ -30,6 +30,7 @@ export default function NestedRow({
                 <div key={itemIndex} className="mb-2 flex w-full">
                   <Field
                     as={Input}
+                    autoFocus
                     fullWidth
                     name={`[${outerArray}][${outerIndex}][${innerArray}].${itemIndex}`}
                     renderSuffix={({ disabled }: PrefixSuffixRenderProps) => (

@@ -30,6 +30,7 @@ export default function CvFieldArray({ fProps, title, fieldArrayName }: Props) {
                   <div key={index} className="mb-2 flex w-full">
                     <Field
                       as={Input}
+                      autoFocus
                       fullWidth
                       name={`${fieldArrayName}.${index}`}
                       renderSuffix={({ disabled }: PrefixSuffixRenderProps) => (
