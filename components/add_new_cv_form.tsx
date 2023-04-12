@@ -96,10 +96,10 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     setLoading(false);
   }
 
-  async function uploadPdf(fileName: string) {
+  async function uploadPdf(fileName: string, folderName: string) {
     const response = await fetch("/api/upload_to_drive", {
       method: "POST",
-      body: JSON.stringify({ fileName: fileName }),
+      body: JSON.stringify({ fileName: fileName, folderName: folderName }),
     });
     return response.ok;
   }
@@ -242,8 +242,8 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
   async function handleSubmit(values: any) {
     const title = values.title_id
       ? // when title_id is present, find *will* find and return title object
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        titles.find((title) => title.id === values.title_id)!.name
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      titles.find((title) => title.id === values.title_id)!.name
       : "";
 
     const { data, error } = await upsert(values);
@@ -292,7 +292,8 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
 
     if (!storageUploadResponse.error) {
       const fileName = `${values.first_name} - ${title}`;
-      const uploadsuccessful = await uploadPdf(fileName);
+      const folderName = `${values.first_name} ${values.last_name} (${title})`
+      const uploadsuccessful = await uploadPdf(fileName, folderName);
       if (!uploadsuccessful) {
         setServerErrorMessage(
           "An error occured while uploading to google drive",

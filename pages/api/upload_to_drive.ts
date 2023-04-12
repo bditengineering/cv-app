@@ -9,11 +9,12 @@ import { supabase } from "../../utils/supabase";
  * */
 async function uploadFile(
   fileName: string,
+  folderName: string,
 ) {
 
-  const gdriveSettings = process.env.GOOGLE_DRIVE_SETTINGS || ""
-  const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID || ""
-  const driveCredentials = JSON.parse(gdriveSettings)
+  const gdriveSettings = process.env.GOOGLE_DRIVE_SETTINGS || "";
+  const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID || "";
+  const driveCredentials = JSON.parse(gdriveSettings);
   const scopes = ["https://www.googleapis.com/auth/drive"];
   const { data, error } = await supabase.storage.from("pdfs").download(fileName);
 
@@ -21,29 +22,57 @@ async function uploadFile(
 
   if (!data) throw new Error("No data received from Supabase.");
 
-  const stream = await createStream(data)
+  const stream = await createStream(data);
 
   const auth = new google.auth.GoogleAuth({
     credentials: driveCredentials,
     scopes: scopes
   });
 
-  const driveService = google.drive({ version: 'v3', auth })
+  async function resolveParentFolderId(folderName: string): Promise<string> {
+    // Check if the folder already exists
+    const filesListResponse = await driveService.files.list({
+      q: `mimeType='application/vnd.google-apps.folder' and trashed=false and name='${folderName}'`,
+      fields: "nextPageToken, files(id, name)",
+      spaces: "drive",
+    });
+
+    const folderId = filesListResponse.data.files?.[0]?.id;
+    if (folderId) {
+      return folderId;
+    }
+
+    const folderMetadata = {
+      name: folderName,
+      mimeType: "application/vnd.google-apps.folder",
+      parents: [driveFolderId],
+    };
+
+    const folderResponse = await driveService.files.create({
+      resource: folderMetadata,
+      fields: "id",
+    });
+    return folderResponse.data.id;
+  }
+
+  const parentFolderId = await resolveParentFolderId(folderName);
+
+  const driveService = google.drive({ version: 'v3', auth });
   const fileMetadata = {
     'name': fileName,
-    'parents': [driveFolderId]
-  }
+    'parents': [parentFolderId]
+  };
   const media = {
     mimeType: "application/pdf",
     body: stream,
-  }
+  };
 
   const response = await driveService.files.create({
     requestBody: fileMetadata,
     media: media,
     fields: 'id'
-  })
-  return response
+  });
+  return response;
 }
 
 async function createStream(data: Blob) {
@@ -62,8 +91,10 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const fileName = JSON.parse(req.body).fileName
-    await uploadFile(fileName);
+    const parsedBody = JSON.parse(req.body);
+    const fileName = parsedBody.fileName;
+    const folderName = parsedBody.folderName;
+    await uploadFile(fileName, folderName);
     res.status(200).end();
   } catch (error) {
     res.status(405).end()
