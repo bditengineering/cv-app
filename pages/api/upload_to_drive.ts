@@ -31,13 +31,13 @@ async function uploadFile(
 
   async function resolveParentFolderId(folderName: string): Promise<string> {
     // Check if the folder already exists
-    const filesListResponse = await driveService.files.list({
+    const folderListResponse = await driveService.files.list({
       q: `mimeType='application/vnd.google-apps.folder' and trashed=false and name='${folderName}'`,
       fields: "nextPageToken, files(id, name)",
       spaces: "drive",
     });
 
-    const folderId = filesListResponse.data.files?.[0]?.id;
+    const folderId = folderListResponse.data.files?.[0]?.id;
     if (folderId) {
       return folderId;
     }
@@ -53,7 +53,30 @@ async function uploadFile(
       fields: "id",
     });
     return folderResponse.data.id;
-  }
+  };
+
+  async function resolveFileNameForDrive(initialFileName: string): Promise<string> {
+    let currentFileName = initialFileName;
+    let finished = false;
+    let i = 0;
+    while (!finished) {
+      const filesListResponse = await driveService.files.list({
+        q: `trashed=false and name='${currentFileName}'`,
+        fields: "nextPageToken, files(id, name)",
+        spaces: "drive",
+      });
+
+      if (filesListResponse.data.files && filesListResponse.data.files.length > 0) {
+        const endIndex = currentFileName.indexOf('_') != -1 ? currentFileName.indexOf('_') : currentFileName.length
+        currentFileName = currentFileName.substring(0, endIndex) + '_' + ++i;
+      } else {
+        finished = true;
+      }
+    }
+
+    return currentFileName;
+
+  };
 
   const parentFolderId = await resolveParentFolderId(folderName);
 
