@@ -29,7 +29,7 @@ async function uploadFile(
     scopes: scopes
   });
 
-  async function resolveParentFolderId(folderName: string): Promise<string | undefined | null> {
+  async function resolveParentFolderId(folderName: string): Promise<string> {
     // Check if the folder already exists
     const folderListResponse = await driveService.files.list({
       q: `mimeType='application/vnd.google-apps.folder' and trashed=false and name='${folderName}'`,
@@ -51,7 +51,7 @@ async function uploadFile(
     const folderResponse = await driveService.files.create({
       requestBody: folderMetadata
     });
-    return folderResponse.data.id;
+    return folderResponse.data.id!;
   };
 
   async function resolveFileNameForDrive(initialFileName: string): Promise<string> {
@@ -82,7 +82,7 @@ async function uploadFile(
   const driveService = google.drive({ version: 'v3', auth });
   const fileMetadata = {
     'name': fileName,
-    'parents': [parentFolderId]
+    'parents': [parentFolderId],
   };
   const media = {
     mimeType: "application/pdf",
