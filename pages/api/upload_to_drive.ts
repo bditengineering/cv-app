@@ -81,7 +81,7 @@ async function uploadFile(
 
   const driveService = google.drive({ version: 'v3', auth });
   const fileMetadata = {
-    'name': fileName,
+    'name': await resolveFileNameForDrive(fileName),
     'parents': [parentFolderId],
   };
   const media = {

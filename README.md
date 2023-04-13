@@ -41,3 +41,11 @@ We have scheduled monthly backups of our database using AWS Lambda.
 4. Create Lambda using the generated .zip
 5. Create a trigger with EventBridge
 6. Make sure the resources have permissions to access each other
+
+## Edge function deploy
+1. Install supabase with brew install `supabase/tap/supabase`
+2. Init supabase within repo with `supabase init`
+3. `supabase login`
+4. `supabase link --project-ref ***` (za ovo treba podesiti config.toml file da ima iste vrednosti kao supabase, ports, etc…)
+5. `deploy edge function(supabase functions deploy hello-world --project-ref ***)`
+Reference: https://supabase.com/docs/reference/cli/supabase-init

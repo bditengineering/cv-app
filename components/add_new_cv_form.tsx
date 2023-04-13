@@ -291,7 +291,7 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
     if (!storageUploadResponse.error) {
-      const fileName = `${values.first_name} - ${title}`;
+      const fileName = `BDIT_${values.first_name}_${title}`;
       const folderName = `${values.first_name} ${values.last_name} (${title})`
       const uploadsuccessful = await uploadPdf(fileName, folderName);
       if (!uploadsuccessful) {
