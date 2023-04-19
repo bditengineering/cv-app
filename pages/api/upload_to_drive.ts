@@ -51,14 +51,19 @@ async function uploadFile(
     const folderResponse = await driveService.files.create({
       requestBody: folderMetadata
     });
-    return folderResponse.data.id!;
+
+    if (folderResponse.data.id) {
+      return folderResponse.data.id;
+    }
+    return "";
   };
 
   async function resolveFileNameForDrive(initialFileName: string): Promise<string> {
     let currentFileName = initialFileName;
-    let finished = false;
+    let uniqueFileNameGenerated = false;
     let i = 0;
-    while (!finished) {
+    // Below code generates unique file name, adding _1,_2,... until it finds the version that does not exist
+    while (!uniqueFileNameGenerated) {
       const filesListResponse = await driveService.files.list({
         q: `trashed=false and name='${currentFileName}'`,
         fields: "nextPageToken, files(id, name)",
@@ -69,19 +74,18 @@ async function uploadFile(
         const endIndex = currentFileName.indexOf('_') != -1 ? currentFileName.indexOf('_') : currentFileName.length
         currentFileName = currentFileName.substring(0, endIndex) + '_' + ++i;
       } else {
-        finished = true;
+        uniqueFileNameGenerated = true;
       }
     }
-
     return currentFileName;
-
   };
 
+  const driveFileName = await resolveFileNameForDrive(fileName);
   const parentFolderId = await resolveParentFolderId(folderName);
 
   const driveService = google.drive({ version: 'v3', auth });
   const fileMetadata = {
-    'name': await resolveFileNameForDrive(fileName),
+    'name': driveFileName,
     'parents': [parentFolderId],
   };
   const media = {
