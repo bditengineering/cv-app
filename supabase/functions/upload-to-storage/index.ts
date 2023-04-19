@@ -63,9 +63,9 @@ serve(async function handler(req: Request) {
       const endDate = item.ongoing
         ? "Present"
         : new Date(item.date_end).toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          });
+          month: "long",
+          year: "numeric",
+        });
       return [
         ["Project Name", item.name],
         ["Project Description", item.description],
@@ -294,7 +294,7 @@ serve(async function handler(req: Request) {
 
     const result = doc.output("arraybuffer");
 
-    const uploadName = `${employee.first_name} - ${employee.titles.name}`;
+    const uploadName = `BDIT_${employee.first_name}_${employee.titles.name}`;
 
     await supabaseClient.storage.from("pdfs").upload(uploadName, result, {
       contentType: "application/pdf",

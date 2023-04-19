@@ -47,5 +47,5 @@ We have scheduled monthly backups of our database using AWS Lambda.
 2. Init supabase within repo with `supabase init`
 3. `supabase login`
 4. `supabase link --project-ref ***` (config.toml file should have the same values as supabase, ports, etc…)
-5. `deploy edge function(supabase functions deploy hello-world --project-ref ***)`
+5. Deploy edge function with `supabase functions deploy hello-world --project-ref ***`
 Reference: https://supabase.com/docs/reference/cli/supabase-init

@@ -28,6 +28,7 @@ async function uploadFile(
     credentials: driveCredentials,
     scopes: scopes
   });
+  const driveService = google.drive({ version: 'v3', auth });
 
   async function resolveParentFolderId(folderName: string): Promise<string> {
     // Check if the folder already exists
@@ -80,10 +81,9 @@ async function uploadFile(
     return currentFileName;
   };
 
-  const driveFileName = await resolveFileNameForDrive(fileName);
   const parentFolderId = await resolveParentFolderId(folderName);
+  const driveFileName = await resolveFileNameForDrive(fileName);
 
-  const driveService = google.drive({ version: 'v3', auth });
   const fileMetadata = {
     'name': driveFileName,
     'parents': [parentFolderId],
@@ -123,6 +123,6 @@ export default async function handler(
     await uploadFile(fileName, folderName);
     res.status(200).end();
   } catch (error) {
-    res.status(405).end()
+    res.status(405).send(error);
   }
 }
