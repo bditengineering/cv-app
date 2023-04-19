@@ -9,11 +9,12 @@ import { supabase } from "../../utils/supabase";
  * */
 async function uploadFile(
   fileName: string,
+  folderName: string,
 ) {
 
-  const gdriveSettings = process.env.GOOGLE_DRIVE_SETTINGS || ""
-  const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID || ""
-  const driveCredentials = JSON.parse(gdriveSettings)
+  const gdriveSettings = process.env.GOOGLE_DRIVE_SETTINGS || "";
+  const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID || "";
+  const driveCredentials = JSON.parse(gdriveSettings);
   const scopes = ["https://www.googleapis.com/auth/drive"];
   const { data, error } = await supabase.storage.from("pdfs").download(fileName);
 
@@ -21,29 +22,83 @@ async function uploadFile(
 
   if (!data) throw new Error("No data received from Supabase.");
 
-  const stream = await createStream(data)
+  const stream = await createStream(data);
 
   const auth = new google.auth.GoogleAuth({
     credentials: driveCredentials,
     scopes: scopes
   });
 
-  const driveService = google.drive({ version: 'v3', auth })
+  async function resolveParentFolderId(folderName: string): Promise<string> {
+    // Check if the folder already exists
+    const folderListResponse = await driveService.files.list({
+      q: `mimeType='application/vnd.google-apps.folder' and trashed=false and name='${folderName}'`,
+      fields: "nextPageToken, files(id, name)",
+      spaces: "drive",
+    });
+
+    const folderId = folderListResponse.data.files?.[0]?.id;
+    if (folderId) {
+      return folderId;
+    }
+
+    const folderMetadata = {
+      name: folderName,
+      mimeType: "application/vnd.google-apps.folder",
+      parents: [driveFolderId],
+    };
+
+    const folderResponse = await driveService.files.create({
+      requestBody: folderMetadata
+    });
+
+    if (folderResponse.data.id) {
+      return folderResponse.data.id;
+    }
+    return "";
+  };
+
+  async function resolveFileNameForDrive(initialFileName: string): Promise<string> {
+    let currentFileName = initialFileName;
+    let uniqueFileNameGenerated = false;
+    let i = 0;
+    // Below code generates unique file name, adding _1,_2,... until it finds the version that does not exist
+    while (!uniqueFileNameGenerated) {
+      const filesListResponse = await driveService.files.list({
+        q: `trashed=false and name='${currentFileName}'`,
+        fields: "nextPageToken, files(id, name)",
+        spaces: "drive",
+      });
+
+      if (filesListResponse.data.files && filesListResponse.data.files.length > 0) {
+        const endIndex = currentFileName.indexOf('_') != -1 ? currentFileName.indexOf('_') : currentFileName.length
+        currentFileName = currentFileName.substring(0, endIndex) + '_' + ++i;
+      } else {
+        uniqueFileNameGenerated = true;
+      }
+    }
+    return currentFileName;
+  };
+
+  const driveFileName = await resolveFileNameForDrive(fileName);
+  const parentFolderId = await resolveParentFolderId(folderName);
+
+  const driveService = google.drive({ version: 'v3', auth });
   const fileMetadata = {
-    'name': fileName,
-    'parents': [driveFolderId]
-  }
+    'name': driveFileName,
+    'parents': [parentFolderId],
+  };
   const media = {
     mimeType: "application/pdf",
     body: stream,
-  }
+  };
 
   const response = await driveService.files.create({
     requestBody: fileMetadata,
     media: media,
     fields: 'id'
-  })
-  return response
+  });
+  return response;
 }
 
 async function createStream(data: Blob) {
@@ -62,8 +117,10 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const fileName = JSON.parse(req.body).fileName
-    await uploadFile(fileName);
+    const parsedBody = JSON.parse(req.body);
+    const fileName = parsedBody.fileName;
+    const folderName = parsedBody.folderName;
+    await uploadFile(fileName, folderName);
     res.status(200).end();
   } catch (error) {
     res.status(405).end()
