@@ -1,5 +1,8 @@
 import { Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
+import type { PrefixSuffixRenderProps } from "@ui/input";
+import Input from "@ui/input";
+import RemoveInputAction from "./remove_input_action";
 
 interface Props {
   fProps: any;
@@ -26,22 +29,23 @@ export default function CvFieldArray({ fProps, title, fieldArrayName }: Props) {
                 fProps.values[fieldArrayName].map((item: any, index: any) => (
                   <div key={index} className="mb-2 flex w-full">
                     <Field
+                      as={Input}
+                      autoFocus
+                      fullWidth
                       name={`${fieldArrayName}.${index}`}
-                      className="mr-1 w-full rounded-md border border-gray-500 p-1 dark:bg-white"
+                      renderSuffix={({ disabled }: PrefixSuffixRenderProps) => (
+                        <RemoveInputAction
+                          disabled={disabled}
+                          onClick={() => arrayHelpers.remove(index)}
+                        />
+                      )}
                     />
-                    <button
-                      className="rounded-md border border-indigo-500 bg-indigo-500 p-1  text-white"
-                      type="button"
-                      onClick={() => arrayHelpers.remove(index)}
-                    >
-                      <Icons.TrashCan />
-                    </button>
                   </div>
                 ))}
               <button
                 type="button"
                 onClick={() => arrayHelpers.push("")}
-                className="flex text-indigo-500"
+                className="flex gap-1 text-indigo-500"
               >
                 <Icons.PlusCircle />
                 <span>Add</span>

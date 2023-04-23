@@ -1,5 +1,6 @@
 import { Field, ErrorMessage } from "formik";
 import type { TitlesResponse } from "../types";
+import Input, { inputClasses } from "@ui/input";
 
 interface Props {
   fProps: any;
@@ -18,7 +19,7 @@ export function PersonalInfo({ fProps, titles }: Props) {
         <div className="flex md:flex-grow">
           <div className="inline-block w-1/2 pr-1">
             <Field
-              className="w-full rounded-md"
+              as={Input}
               name="first_name"
               type="text"
               placeholder="First Name"
@@ -31,7 +32,7 @@ export function PersonalInfo({ fProps, titles }: Props) {
           </div>
           <div className="inline-block w-1/2 pl-1">
             <Field
-              className="w-full rounded-md"
+              as={Input}
               name="last_name"
               type="text"
               placeholder="Last Name"
@@ -74,7 +75,7 @@ export function PersonalInfo({ fProps, titles }: Props) {
         </div>
         <div className="md:flex-grow">
           <Field
-            className="w-full rounded-md"
+            className={inputClasses({ className: "text-gray-900" })}
             name="summary"
             type="text"
             as="textarea"
