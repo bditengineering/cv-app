@@ -1,3 +1,4 @@
+import { inputClasses } from "@ui/input";
 import { Field } from "formik";
 import DateView from "react-datepicker";
 
@@ -12,6 +13,7 @@ export function MonthYearDatePicker({ name, ...rest }: any) {
           <DateView
             {...field}
             {...rest}
+            className={inputClasses({ className: "w-auto text-gray-900" })}
             selected={value}
             onChange={(val: any) => setFieldValue(name, val)}
             dateFormat="MMMM yyyy"

@@ -11,23 +11,11 @@ interface CheckboxProps {
   supportingText?: React.ReactNode;
 }
 
-const checkboxClasses = cva(
-  [
-    "checkbox h-5 w-5 rounded-md border-gray-300",
-    "focus:outline-0 focus:border-indigo-300 focus:ring-4 focus:ring-offset-0 focus:ring-indigo-100",
-  ],
-  {
-    variants: {
-      disabled: {
-        true: "text-gray-300",
-        false: "text-indigo-600",
-      },
-    },
-    defaultVariants: {
-      disabled: false,
-    },
-  },
-);
+export const checkboxClasses = cva([
+  "checkbox h-5 w-5 rounded-md border-gray-300 text-indigo-600",
+  "focus:border-indigo-300 focus:outline-0 focus:ring-4 focus:ring-indigo-100 focus:ring-offset-0",
+  "disabled:text-gray-300",
+]);
 
 const Checkbox = ({
   checked,
@@ -43,7 +31,7 @@ const Checkbox = ({
       <div className="flex h-5 items-center">
         <input
           checked={checked}
-          className={checkboxClasses({ disabled, className })}
+          className={checkboxClasses({ className })}
           disabled={disabled}
           id={name}
           name={name}

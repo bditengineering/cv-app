@@ -39,7 +39,7 @@ export const buttonClasses = cva(
           "disabled:hover:bg-white disabled:hover:text-gray-700",
         ],
         plain: [
-          "text-gray-600 focus:bg-gray-50",
+          "text-gray-600 focus:bg-gray-50 hover:text-gray-700",
           "hover:bg-gray-50 hover:text-gray-700",
           "disabled:hover:bg-transparent disabled:hover:text-gray-600",
         ],
