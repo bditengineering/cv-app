@@ -62,7 +62,6 @@ async function uploadFile(
   async function resolveFileNameForDrive(initialFileName: string): Promise<string> {
     let currentFileName = initialFileName;
     let uniqueFileNameGenerated = false;
-    let i = 0;
     // Underscore followed by at least one number
     const regex = /_([0-9]+)$/;
     // Below code generates unique file name, adding _1,_2,... until it finds the version that does not exist
