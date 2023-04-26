@@ -76,10 +76,15 @@ async function uploadFile(
       if (filesListResponse.data.files && filesListResponse.data.files.length > 0) {
         // Check if filename has _1, _2,... and if it has, increment the number at the end
         let matches = currentFileName.match(regex);
+        let lastIndex = -1;
         if (matches) {
           const lastMatch = matches[matches.length - 1];
-          const lastIndex = currentFileName.lastIndexOf(lastMatch);
+          lastIndex = currentFileName.lastIndexOf(lastMatch);
+        }
+        if (lastIndex > -1) {
           currentFileName = currentFileName.substring(0, lastIndex) + '_' + ++i;
+        } else {
+          currentFileName += currentFileName + '_' + ++i;
         }
       } else {
         uniqueFileNameGenerated = true;
