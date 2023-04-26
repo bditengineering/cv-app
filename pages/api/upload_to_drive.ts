@@ -63,6 +63,8 @@ async function uploadFile(
     let currentFileName = initialFileName;
     let uniqueFileNameGenerated = false;
     let i = 0;
+    // Underscore followed by at least one number
+    const regex = /_[0-9]+/g;
     // Below code generates unique file name, adding _1,_2,... until it finds the version that does not exist
     while (!uniqueFileNameGenerated) {
       const filesListResponse = await driveService.files.list({
@@ -72,8 +74,13 @@ async function uploadFile(
       });
 
       if (filesListResponse.data.files && filesListResponse.data.files.length > 0) {
-        const endIndex = currentFileName.indexOf('_') != -1 ? currentFileName.indexOf('_') : currentFileName.length
-        currentFileName = currentFileName.substring(0, endIndex) + '_' + ++i;
+        // Check if filename has _1, _2,... and if it has, increment the number at the end
+        let matches = currentFileName.match(regex);
+        if (matches) {
+          const lastMatch = matches[matches.length - 1];
+          const lastIndex = currentFileName.lastIndexOf(lastMatch);
+          currentFileName = currentFileName.substring(0, lastIndex) + '_' + ++i;
+        }
       } else {
         uniqueFileNameGenerated = true;
       }
