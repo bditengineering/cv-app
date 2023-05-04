@@ -1,4 +1,4 @@
-import { Field, FieldArray } from "formik";
+import { ErrorMessage, Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
 
 import * as Options from "../../constants/CvFormOptions";
@@ -40,6 +40,11 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                         placeholder="Name of University"
                         type="text"
                       />
+                      <ErrorMessage
+                        className="w-full text-red-600"
+                        name={`educations[${educationIndex}].university_name`}
+                        component="span"
+                      />
                     </div>
                   </div>
 
@@ -56,6 +61,11 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                         name={`educations[${educationIndex}].degree`}
                         placeholder="Degree"
                         type="text"
+                      />
+                      <ErrorMessage
+                        className="w-full text-red-600"
+                        name={`educations[${educationIndex}].degree`}
+                        component="span"
                       />
                     </div>
                   </div>
@@ -80,7 +90,11 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                           </option>
                         ))}
                       </Field>
-
+                      <ErrorMessage
+                        className="w-full text-red-600"
+                        name={`educations[${educationIndex}].start_year`}
+                        component="span"
+                      />
                       <label className="dark:text-gray-400">Until</label>
                       <Field
                         as="select"
@@ -94,6 +108,11 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
                           </option>
                         ))}
                       </Field>
+                      <ErrorMessage
+                        className="w-full text-red-600"
+                        name={`educations[${educationIndex}].end_year`}
+                        component="span"
+                      />
                     </div>
                   </div>
 

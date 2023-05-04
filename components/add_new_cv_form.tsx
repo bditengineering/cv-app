@@ -12,6 +12,7 @@ import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
 import type { CvSkillResponse, SkillGroup, TitlesResponse } from "./types";
+import { savePdf } from "./../utils/save_pdf"
 
 type FormSkill = {
   id: string | null;
@@ -64,6 +65,30 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     last_name: Yup.string().required("Last name is required"),
     english_spoken_level: Yup.string().required("Please select a level"),
     english_written_level: Yup.string().required("Please select a level"),
+    summary: Yup.string().required("Summary is required"),
+    projects: Yup.array()
+      .of(
+        Yup.object().shape({
+          name: Yup.string().required("Project name is required"),
+          position: Yup.string().required("Position on project is required"),
+          technologies: Yup.array().of(Yup.string()).required("Technologies&Tools on project are required"),
+        })
+      )
+      .required("You must have at least one project"),
+    educations: Yup.array().of(
+      Yup.object().shape({
+        university_name: Yup.string().required("University name is required"),
+        degree: Yup.string().required("Degree is required"),
+        start_year: Yup.string().required("Start year is required"),
+        end_year: Yup.string().required("End year is required"),
+      })
+    ),
+    certifications: Yup.array().of(
+      Yup.object().shape({
+        certificate_name: Yup.string().required("Certificate name is required"),
+        description: Yup.string().required("Description is required"),
+      })
+    ),
   });
 
   async function fetchCv(employeeId: string) {
@@ -105,10 +130,19 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
   }
 
   async function edgeUploadInvocation(cvId: string) {
-    const response = await supabase.functions.invoke("upload-to-storage", {
-      body: { id: cvId },
-    });
-    return response;
+    // const response = await supabase.functions.invoke("upload-to-storage", {
+    //   body: { id: cvId },
+    // });
+    // return response;
+
+    const response = await supabase
+      .from("cv")
+      .select(
+        "*, projects(*), titles(name), educations(*), certifications(certificate_name, description), cv_skill(skill(name, skill_group(*)))",
+      )
+      .eq("id", cvId);
+
+    savePdf(response.data)
   }
 
   async function upsert(values: any) {
@@ -183,19 +217,24 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     }
 
     const updatedProjects = projects.map((project: any) => {
-      const startDate = new Date(project.date_start);
-      startDate.setDate(15);
-
+      let startDate = null;
       let endDate = null;
-      if (project.date_end) {
+      if (project.date_start & project.date_end) {
+        startDate = new Date(project.date_start);
+        startDate.setDate(15);
+        startDate = startDate.toISOString();
         endDate = new Date(project.date_end);
         endDate.setDate(15);
+        endDate = endDate.toISOString();
       }
+      console.log(project);
+      //TODO: if we want the same order as before, omit the spread here and name the fields explicitly
       return {
         ...project,
         cv_id: cvId,
-        date_start: startDate.toISOString(),
-        date_end: endDate?.toISOString() || null,
+        date_start: startDate,
+        date_end: endDate,
+        team_size: project.team_size || null,
         id: project.id || null,
         created_at: project.created_at || null,
         responsibilities: project.responsibilities || null,
@@ -290,17 +329,17 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
 
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
-    if (!storageUploadResponse.error) {
-      const fileName = `BDIT_${values.first_name}_${title}`;
-      const folderName = `${values.first_name} ${values.last_name} (${title})`
-      const uploadsuccessful = await uploadPdf(fileName, folderName);
-      if (!uploadsuccessful) {
-        setServerErrorMessage(
-          "An error occured while uploading to google drive",
-        );
-        return;
-      }
-    }
+    // if (!storageUploadResponse.error) {
+    //   const fileName = `BDIT_${values.first_name}_${title}`;
+    //   const folderName = `${values.first_name} ${values.last_name} (${title})`
+    //   const uploadsuccessful = await uploadPdf(fileName, folderName);
+    //   if (!uploadsuccessful) {
+    //     setServerErrorMessage(
+    //       "An error occured while uploading to google drive",
+    //     );
+    //     return;
+    //   }
+    // }
 
     router.push("/");
   }

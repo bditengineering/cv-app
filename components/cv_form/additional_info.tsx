@@ -1,4 +1,4 @@
-import { Field, FieldArray } from "formik";
+import { ErrorMessage, Field, FieldArray } from "formik";
 import CvFieldArray from "./cv_field_array";
 import * as Icons from "@ui/icons";
 import Input from "@ui/input";
@@ -43,6 +43,11 @@ export function AdditionalInfo({
                               name={`certifications.${index}.certificate_name`}
                               placeholder="Certificate name"
                             />
+                            <ErrorMessage
+                              className="w-full text-red-600"
+                              name={`certifications.${index}.certificate_name`}
+                              component="span"
+                            />
                           </div>
                           <div className="mb-2 flex w-full">
                             <Field
@@ -50,6 +55,11 @@ export function AdditionalInfo({
                               fullWidth
                               name={`certifications.${index}.description`}
                               placeholder="Certificate description"
+                            />
+                            <ErrorMessage
+                              className="w-full text-red-600"
+                              name={`certifications.${index}.description`}
+                              component="span"
                             />
                           </div>
                           <Button

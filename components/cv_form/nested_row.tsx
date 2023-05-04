@@ -1,5 +1,5 @@
 import React from "react";
-import { Field, FieldArray } from "formik";
+import { ErrorMessage, Field, FieldArray } from "formik";
 import * as Icons from "@ui/icons";
 import Input from "@ui/input";
 import RemoveInputAction from "./remove_input_action";
@@ -39,6 +39,11 @@ export default function NestedRow({
                         onClick={() => arrayHelpers.remove(itemIndex)}
                       />
                     )}
+                  />
+                  <ErrorMessage
+                    className="w-full text-red-600"
+                    name={`[${outerArray}][${outerIndex}][${innerArray}].${itemIndex}`}
+                    component="span"
                   />
                 </div>
               ),
