@@ -142,7 +142,7 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
       )
       .eq("id", cvId);
 
-    savePdf(response.data)
+    return savePdf(response.data)
   }
 
   async function upsert(values: any) {
