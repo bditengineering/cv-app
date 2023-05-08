@@ -39,11 +39,11 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                       name={`projects[${projectsIndex}].name`}
                       type="text"
                     />
-                    {/* <ErrorMessage
+                    <ErrorMessage
                       className="w-full text-red-600"
                       name={`projects[${projectsIndex}].name`}
                       component="span"
-                    /> */}
+                    />
                   </div>
                 </div>
 
@@ -108,11 +108,11 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                       name={`projects[${projectsIndex}].position`}
                       type="text"
                     />
-                    {/* <ErrorMessage
+                    <ErrorMessage
                       className="w-full text-red-600"
                       name={`projects[${projectsIndex}].position`}
                       component="span"
-                    /> */}
+                    />
                   </div>
                 </div>
 

@@ -64,6 +64,11 @@ export function PersonalInfo({ fProps, titles }: Props) {
               </option>
             ))}
           </Field>
+          <ErrorMessage
+            className="w-full text-red-600"
+            name="title_id"
+            component="span"
+          />
         </div>
       </div>
 
@@ -80,6 +85,11 @@ export function PersonalInfo({ fProps, titles }: Props) {
             type="text"
             as="textarea"
             rows={4}
+          />
+          <ErrorMessage
+            className="w-full text-red-600"
+            name="summary"
+            component="span"
           />
         </div>
       </div>
