@@ -228,7 +228,6 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
         endDate = endDate.toISOString();
       }
       console.log(project);
-      //TODO: if we want the same order as before, omit the spread here and name the fields explicitly
       return {
         ...project,
         cv_id: cvId,
