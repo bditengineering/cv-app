@@ -217,7 +217,6 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
         endDate.setDate(15);
         endDate = endDate.toISOString();
       }
-      console.log(project);
       return {
         ...project,
         cv_id: cvId,

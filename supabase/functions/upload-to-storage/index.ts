@@ -223,7 +223,6 @@ serve(async function handler(req: Request) {
           // doc.setLineHeightFactor(1.5);
           if (Array.isArray(data.cell.raw)) {
             // remove border between two columns in skills body
-            console.log(data.cell);
             data.cell.styles.lineWidth = { top: BORDER_WIDTH };
             data.cell.text = data.cell.raw.map(function (element: any) {
               return `- ${element}`;
