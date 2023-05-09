@@ -186,7 +186,6 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                       className="flex text-indigo-500"
                       name={`projects[${projectsIndex}].ongoing`}
                       type="checkbox"
-                      checked={project.ongoing}
                     />
                   </div>
                 </div>

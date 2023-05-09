@@ -99,6 +99,8 @@ const Input = React.forwardRef(
     const prefixPresent = typeof renderPrefix === "function";
     const suffixPresent = typeof renderSuffix === "function";
 
+    restProps.value = restProps.value ? restProps.value : "";
+
     return (
       <div className={cx(fullWidth ? "w-full" : "")}>
         <label
