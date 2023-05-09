@@ -209,7 +209,7 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
     const updatedProjects = projects.map((project: any) => {
       let startDate = null;
       let endDate = null;
-      if (project.date_start & project.date_end) {
+      if (project.date_start && project.date_end) {
         startDate = new Date(project.date_start);
         startDate.setDate(15);
         startDate = startDate.toISOString();
