@@ -12,7 +12,6 @@ import { EnglishLevel } from "./cv_form/english_level";
 import { PersonalInfo } from "./cv_form/personal_info";
 import { AdditionalInfo } from "./cv_form/additional_info";
 import type { CvSkillResponse, SkillGroup, TitlesResponse } from "./types";
-import { savePdf } from "./../utils/save_pdf"
 
 type FormSkill = {
   id: string | null;
@@ -130,19 +129,10 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
   }
 
   async function edgeUploadInvocation(cvId: string) {
-    // const response = await supabase.functions.invoke("upload-to-storage", {
-    //   body: { id: cvId },
-    // });
-    // return response;
-
-    const response = await supabase
-      .from("cv")
-      .select(
-        "*, projects(*), titles(name), educations(*), certifications(certificate_name, description), cv_skill(skill(name, skill_group(*)))",
-      )
-      .eq("id", cvId);
-
-    return savePdf(response.data)
+    const response = await supabase.functions.invoke("upload-to-storage", {
+      body: { id: cvId },
+    });
+    return response;
   }
 
   async function upsert(values: any) {
@@ -328,17 +318,17 @@ export default function AddNewCvForm({ id, skills, titles }: Props) {
 
     const storageUploadResponse = await edgeUploadInvocation(cvId);
 
-    // if (!storageUploadResponse.error) {
-    //   const fileName = `BDIT_${values.first_name}_${title}`;
-    //   const folderName = `${values.first_name} ${values.last_name} (${title})`
-    //   const uploadsuccessful = await uploadPdf(fileName, folderName);
-    //   if (!uploadsuccessful) {
-    //     setServerErrorMessage(
-    //       "An error occured while uploading to google drive",
-    //     );
-    //     return;
-    //   }
-    // }
+    if (!storageUploadResponse.error) {
+      const fileName = `BDIT_${values.first_name}_${title}`;
+      const folderName = `${values.first_name} ${values.last_name} (${title})`
+      const uploadsuccessful = await uploadPdf(fileName, folderName);
+      if (!uploadsuccessful) {
+        setServerErrorMessage(
+          "An error occured while uploading to google drive",
+        );
+        return;
+      }
+    }
 
     router.push("/");
   }
