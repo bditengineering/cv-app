@@ -130,10 +130,14 @@ const Input = React.forwardRef(
           ) : null}
 
           <input
-            style={{
-              paddingLeft: inputPaddingLeft,
-              paddingRight: inputPaddingRight,
-            }}
+            style={
+              inputPaddingLeft || inputPaddingRight
+                ? {
+                    paddingLeft: inputPaddingLeft,
+                    paddingRight: inputPaddingRight,
+                  }
+                : {}
+            }
             type={type}
             name={name}
             id={id}
