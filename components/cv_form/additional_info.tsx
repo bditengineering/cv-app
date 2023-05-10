@@ -81,7 +81,12 @@ export function AdditionalInfo({
                     )}
                   <button
                     type="button"
-                    onClick={() => arrayHelpers.push("")}
+                    onClick={() =>
+                      arrayHelpers.push({
+                        certificate_name: "",
+                        description: "",
+                      })
+                    }
                     className="flex gap-1 text-indigo-500"
                   >
                     <Icons.PlusCircle />

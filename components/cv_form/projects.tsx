@@ -211,7 +211,14 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
           <button
             className="flex flex-wrap gap-1 text-indigo-500"
             type="button"
-            onClick={() => arrayHelpers.push({})}
+            onClick={() =>
+              arrayHelpers.push({
+                name: "",
+                field: "",
+                team_size: "",
+                position: "",
+              })
+            }
           >
             <Icons.PlusCircle />
             <span>Add Project</span>

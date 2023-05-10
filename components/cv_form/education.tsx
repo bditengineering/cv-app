@@ -138,7 +138,9 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
           <button
             className="flex flex-wrap text-indigo-500"
             type="button"
-            onClick={() => arrayHelpers.push({})}
+            onClick={() =>
+              arrayHelpers.push({ university_name: "", degree: "" })
+            }
           >
             <Icons.PlusCircle />
             <span>Add Education</span>
