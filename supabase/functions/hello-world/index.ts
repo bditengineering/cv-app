@@ -7,8 +7,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import jsPDF from "https://esm.sh/jspdf@2.5.1?target=deno&no-check";
 import autoTable from "https://esm.sh/jspdf-autotable@3.5.28?target=deno&no-check";
 
-console.log("Hello from Functions!");
-
 serve(async function handler(req: Request) {
   try {
     const { id } = await req.json();

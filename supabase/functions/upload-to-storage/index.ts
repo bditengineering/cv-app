@@ -56,36 +56,41 @@ serve(async function handler(req: Request) {
     const name = `${employee.first_name} - ${employee.titles.name}`;
 
     const projects = employee.projects.map((item: any) => {
-      let period = '';
+      let period = "";
       if (item.date_start && item.date_end) {
         const startDate = new Date(item.date_start).toLocaleString("default", {
           month: "long",
           year: "numeric",
-        })
+        });
         const endDate = item.ongoing
           ? "Present"
           : new Date(item.date_end).toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          })
-        period = `${startDate} - ${endDate}`
+              month: "long",
+              year: "numeric",
+            });
+        period = `${startDate} - ${endDate}`;
       }
 
-      const projectArray = [
-        ["Project Name", item.name],
-      ];
+      const projectArray = [["Project Name", item.name]];
       if (item.description) {
         projectArray.push(["Project Description", item.description]);
       }
-      projectArray.push(["Field", item.field]);
+      if (item.field) {
+        projectArray.push(["Field", item.field]);
+      }
       if (item.team_size) {
         projectArray.push(["Size of the team", item.team_size]);
       }
-      projectArray.push(["Position", item.position]);
+      if (item.position) {
+        projectArray.push(["Position", item.position]);
+      }
       projectArray.push(["Tools & Technologies", item.technologies.join(", ")]);
 
       if (item.responsibilities && item.responsibilities.length > 0) {
-        projectArray.push(["Responsibilities", item.responsibilities.join(", ")]);
+        projectArray.push([
+          "Responsibilities",
+          item.responsibilities.join(", "),
+        ]);
       }
       if (period) {
         projectArray.push(["Time Period", period]);
@@ -107,6 +112,21 @@ serve(async function handler(req: Request) {
     const skills: Record<string, Array<string>> = transformSkillsBySkillGroup(
       employee.cv_skill,
     );
+
+    const educationBody = [
+      [
+        "Level of English \nSpoken \nWritten",
+        `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
+      ],
+    ];
+
+    if (education.length !== 0) {
+      educationBody.unshift(["University degree", education.join("\n\n")]);
+    }
+
+    if (certifications.length !== 0) {
+      educationBody.unshift(["Certifications", certifications.join("\n")]);
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -254,7 +274,7 @@ serve(async function handler(req: Request) {
             },
           ],
         ],
-        body: projects.flat().slice(0, -1),
+        body: projects.flat(),
         willDrawCell: function (data: any) {
           if (data.section === "body") {
             const rowIndex = data.row.index;
@@ -278,19 +298,6 @@ serve(async function handler(req: Request) {
       });
     }
 
-    let educationBody =
-      [
-        ["University degree", education.join("\n\n")],
-        [
-          "Level of English \nSpoken \nWritten",
-          `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
-        ]
-      ];
-
-    if (certifications) {
-      educationBody.push(["Certifications", certifications.join("\n")]);
-    }
-
     autoTable(doc, {
       ...tableStyles,
       head: [
@@ -304,7 +311,7 @@ serve(async function handler(req: Request) {
       body: educationBody,
     });
 
-    if (employee.personal_qualities) {
+    if (employee.personal_qualities?.length !== 0) {
       autoTable(doc, {
         ...tableStyles,
         head: [

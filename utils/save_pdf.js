@@ -40,7 +40,9 @@ const transformSkillsBySkillGroup = (skills) => {
 export async function savePdf(data) {
   const [employee] = data;
 
-  const skills = employee.cv_skill ? transformSkillsBySkillGroup(employee.cv_skill) : null;
+  const skills = employee.cv_skill
+    ? transformSkillsBySkillGroup(employee.cv_skill)
+    : null;
 
   const name = `${employee.first_name} - Software Developer`;
 
@@ -50,27 +52,29 @@ export async function savePdf(data) {
       const startDate = new Date(item.date_start).toLocaleString("default", {
         month: "long",
         year: "numeric",
-      })
+      });
       const endDate = item.ongoing
         ? "Present"
         : new Date(item.date_end).toLocaleString("default", {
-          month: "long",
-          year: "numeric",
-        })
-      period = `${startDate} - ${endDate}`
+            month: "long",
+            year: "numeric",
+          });
+      period = `${startDate} - ${endDate}`;
     }
 
-    const projectArray = [
-      ["Project Name", item.name],
-    ];
+    const projectArray = [["Project Name", item.name]];
     if (item.description) {
       projectArray.push(["Project Description", item.description]);
     }
-    projectArray.push(["Field", item.field]);
+    if (item.field) {
+      projectArray.push(["Field", item.field]);
+    }
     if (item.team_size) {
       projectArray.push(["Size of the team", item.team_size]);
     }
-    projectArray.push(["Position", item.position]);
+    if (item.position) {
+      projectArray.push(["Position", item.position]);
+    }
     projectArray.push(["Tools & Technologies", item.technologies.join(", ")]);
 
     if (item.responsibilities && item.responsibilities.length > 0) {
@@ -86,10 +90,24 @@ export async function savePdf(data) {
     (item) =>
       `${item.university_name}\n${item.degree}\n${item.start_year} - ${item.end_year}`,
   );
-
   const certifications = employee.certifications.map(
     (item) => `${item.certificate_name} - ${item.description}`,
   );
+
+  const educationArray = [
+    [
+      "Level of English \nSpoken \nWritten",
+      `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
+    ],
+  ];
+
+  if (education.length !== 0) {
+    educationArray.unshift(["University degree", education.join("\n\n")]);
+  }
+
+  if (certifications.length !== 0) {
+    educationArray.unshift(["Certifications", certifications.join("\n")]);
+  }
 
   const doc = new jsPDF();
 
@@ -235,7 +253,7 @@ export async function savePdf(data) {
         },
       ],
     ],
-    body: projects.flat().slice(0, -1),
+    body: projects.flat(),
     willDrawCell: function (data) {
       if (data.section === "body") {
         const rowIndex = data.row.index;
@@ -268,17 +286,12 @@ export async function savePdf(data) {
         },
       ],
     ],
-    body: [
-      ["University degree", education.join("\n\n")],
-      [
-        "Level of English \nSpoken \nWritten",
-        `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
-      ],
-      ["Certifications", certifications.join("\n")],
-    ],
+    body: educationArray,
   });
 
-  if (employee.personal_qualities) {
+  console.log(employee.personal_qualities);
+
+  if (employee.personal_qualities?.length !== 0) {
     autoTable(doc, {
       ...tableStyles,
       head: [
