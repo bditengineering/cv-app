@@ -21,3 +21,17 @@ export function transformSkills(response: SkillResponse[] | null) {
     return acc;
   }, {});
 }
+
+export function transformCv(response: any | null) {
+  if (response == null) return {};
+
+  response.projects = response.projects.map((project: any) => {
+    return {
+      ...project,
+      date_start: new Date(project.date_start),
+      date_end: new Date(project.date_end),
+    };
+  });
+
+  return response;
+}

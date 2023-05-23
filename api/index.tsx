@@ -19,3 +19,15 @@ export async function fetchTitles() {
 
   return data;
 }
+
+export async function fetchCv(employeeId: string) {
+  const { data } = await supabase
+    .from("cv")
+    .select(
+      "*, projects(*), educations(*), certifications(*), titles(*), cv_skill(*)",
+    )
+    .eq("id", employeeId)
+    .single();
+
+  return data;
+}
