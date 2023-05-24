@@ -40,11 +40,6 @@ export default function NestedRow({
                       />
                     )}
                   />
-                  <ErrorMessage
-                    className="w-full text-red-600"
-                    name={`[${outerArray}][${outerIndex}][${innerArray}].${itemIndex}`}
-                    component="span"
-                  />
                 </div>
               ),
             )}
@@ -56,6 +51,11 @@ export default function NestedRow({
             <Icons.PlusCircle />
             <span>Add</span>
           </button>
+          <ErrorMessage
+            className="w-full text-red-600"
+            name={`${outerArray}[${outerIndex}].${innerArray}`}
+            component="span"
+          />
         </div>
       )}
     />

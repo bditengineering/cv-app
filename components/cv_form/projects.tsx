@@ -130,11 +130,6 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                         outerArray="projects"
                         innerArray="technologies"
                       />
-                      <ErrorMessage
-                        className="w-full text-red-600"
-                        name={`projects[${projectsIndex}].technologies`}
-                        component="span"
-                      />
                     </div>
                   </div>
 
@@ -150,11 +145,6 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                         outerIndex={projectsIndex}
                         outerArray="projects"
                         innerArray="responsibilities"
-                      />
-                      <ErrorMessage
-                        className="w-full text-red-600"
-                        name={`projects[${projectsIndex}].responsibilities`}
-                        component="span"
                       />
                     </div>
                   </div>
