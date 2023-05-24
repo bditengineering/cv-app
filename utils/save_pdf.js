@@ -289,8 +289,6 @@ export async function savePdf(data) {
     body: educationArray,
   });
 
-  console.log(employee.personal_qualities);
-
   if (employee.personal_qualities?.length !== 0) {
     autoTable(doc, {
       ...tableStyles,
