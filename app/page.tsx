@@ -4,6 +4,7 @@ import Link from "next/link";
 import createServerClient from "../utils/supabase_server";
 import Container from "@ui/container";
 import NavBar from "../components/navbar";
+import type { CV } from "../components/types";
 
 export default async function Home() {
   const supabase = createServerClient();
@@ -20,7 +21,7 @@ export default async function Home() {
         <NavBar />
 
         <Container className="py-6">
-          <CVList cvs={data} />
+          <CVList cvs={data as unknown as CV[]} />
         </Container>
       </>
     );
