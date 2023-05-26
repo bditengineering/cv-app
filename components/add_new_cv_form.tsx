@@ -62,8 +62,38 @@ export default function AddNewCvForm({
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First name is required"),
     last_name: Yup.string().required("Last name is required"),
+    title_id: Yup.string().required("Title is required"),
     english_spoken_level: Yup.string().required("Please select a level"),
     english_written_level: Yup.string().required("Please select a level"),
+    summary: Yup.string().required("Summary is required"),
+    projects: Yup.array()
+      .of(
+        Yup.object().shape({
+          name: Yup.string().required("Project name is required"),
+          description: Yup.string().required("Project description is required"),
+          technologies: Yup.array()
+            .of(Yup.string())
+            .min(1, "Technologies & Tools on project are required"),
+          responsibilities: Yup.array()
+            .of(Yup.string())
+            .min(1, "Responsibilities on project are required"),
+        }),
+      )
+      .min(1, "You must have at least one project"),
+    educations: Yup.array().of(
+      Yup.object().shape({
+        university_name: Yup.string().required("University name is required"),
+        degree: Yup.string().required("Degree is required"),
+        start_year: Yup.string().required("Start year is required"),
+        end_year: Yup.string().required("End year is required"),
+      }),
+    ),
+    certifications: Yup.array().of(
+      Yup.object().shape({
+        certificate_name: Yup.string().required("Certificate name is required"),
+        description: Yup.string().required("Description is required"),
+      }),
+    ),
   });
 
   async function uploadPdf(fileName: string, folderName: string) {
@@ -153,19 +183,22 @@ export default function AddNewCvForm({
     }
 
     const updatedProjects = projects.map((project: any) => {
-      const startDate = new Date(project.date_start);
-      startDate.setDate(15);
-
+      let startDate = null;
       let endDate = null;
-      if (project.date_end) {
+      if (project.date_start && project.date_end) {
+        startDate = new Date(project.date_start);
+        startDate.setDate(15);
+        startDate = startDate.toISOString();
         endDate = new Date(project.date_end);
         endDate.setDate(15);
+        endDate = endDate.toISOString();
       }
       return {
         ...project,
         cv_id: cvId,
-        date_start: startDate.toISOString(),
-        date_end: endDate?.toISOString() || null,
+        date_start: startDate,
+        date_end: endDate,
+        team_size: project.team_size || null,
         id: project.id || null,
         created_at: project.created_at || null,
         responsibilities: project.responsibilities || null,
@@ -212,8 +245,8 @@ export default function AddNewCvForm({
   async function handleSubmit(values: any) {
     const title = values.title_id
       ? // when title_id is present, find *will* find and return title object
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      titles.find((title) => title.id === values.title_id)!.name
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        titles.find((title) => title.id === values.title_id)!.name
       : "";
 
     const { data, error } = await upsert(values);
@@ -262,7 +295,7 @@ export default function AddNewCvForm({
 
     if (!storageUploadResponse.error) {
       const fileName = `BDIT_${values.first_name}_${title}`;
-      const folderName = `${values.first_name} ${values.last_name} (${title})`
+      const folderName = `${values.first_name} ${values.last_name} (${title})`;
       const uploadsuccessful = await uploadPdf(fileName, folderName);
       if (!uploadsuccessful) {
         setServerErrorMessage(

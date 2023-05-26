@@ -53,17 +53,26 @@ export function PersonalInfo({ fProps, titles }: Props) {
           </span>
         </div>
         <div className="md:flex-grow">
-          <Field as="select" name="title_id" className="rounded-md">
-            <option disabled value="">
-              Choose title
-            </option>
+          <div className="inline-block">
+            <div>
+              <Field as="select" name="title_id" className="rounded-md">
+                <option disabled value="">
+                  Choose title
+                </option>
 
-            {titles.map((option, index: number) => (
-              <option key={index} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </Field>
+                {titles.map((option, index: number) => (
+                  <option key={index} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </Field>
+            </div>
+            <ErrorMessage
+              className="w-full text-red-600"
+              name="title_id"
+              component="span"
+            />
+          </div>
         </div>
       </div>
 
@@ -80,6 +89,11 @@ export function PersonalInfo({ fProps, titles }: Props) {
             type="text"
             as="textarea"
             rows={4}
+          />
+          <ErrorMessage
+            className="w-full text-red-600"
+            name="summary"
+            component="span"
           />
         </div>
       </div>

@@ -56,26 +56,46 @@ serve(async function handler(req: Request) {
     const name = `${employee.first_name} - ${employee.titles.name}`;
 
     const projects = employee.projects.map((item: any) => {
-      const startDate = new Date(item.date_start).toLocaleString("default", {
-        month: "long",
-        year: "numeric",
-      });
-      const endDate = item.ongoing
-        ? "Present"
-        : new Date(item.date_end).toLocaleString("default", {
+      let period = "";
+      if (item.date_start && item.date_end) {
+        const startDate = new Date(item.date_start).toLocaleString("default", {
           month: "long",
           year: "numeric",
         });
-      return [
-        ["Project Name", item.name],
-        ["Project Description", item.description],
-        ["Field", item.field],
-        ["Size of the team", item.team_size],
-        ["Position", item.position],
-        ["Tools & Technologies", item.technologies.join(", ")],
-        ["Responsibilities", item.responsibilities.join(", ")],
-        ["Time Period", `${startDate} - ${endDate}`],
-      ];
+        const endDate = item.ongoing
+          ? "Present"
+          : new Date(item.date_end).toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            });
+        period = `${startDate} - ${endDate}`;
+      }
+
+      const projectArray = [["Project Name", item.name]];
+      if (item.description) {
+        projectArray.push(["Project Description", item.description]);
+      }
+      if (item.field) {
+        projectArray.push(["Field", item.field]);
+      }
+      if (item.team_size) {
+        projectArray.push(["Size of the team", item.team_size]);
+      }
+      if (item.position) {
+        projectArray.push(["Position", item.position]);
+      }
+      projectArray.push(["Tools & Technologies", item.technologies.join(", ")]);
+
+      if (item.responsibilities && item.responsibilities.length > 0) {
+        projectArray.push([
+          "Responsibilities",
+          item.responsibilities.join(", "),
+        ]);
+      }
+      if (period) {
+        projectArray.push(["Time Period", period]);
+      }
+      return projectArray;
     });
 
     const education =
@@ -92,6 +112,21 @@ serve(async function handler(req: Request) {
     const skills: Record<string, Array<string>> = transformSkillsBySkillGroup(
       employee.cv_skill,
     );
+
+    const educationBody = [
+      [
+        "Level of English \nSpoken \nWritten",
+        `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
+      ],
+    ];
+
+    if (education.length !== 0) {
+      educationBody.unshift(["University degree", education.join("\n\n")]);
+    }
+
+    if (certifications.length !== 0) {
+      educationBody.unshift(["Certifications", certifications.join("\n")]);
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -156,108 +191,112 @@ serve(async function handler(req: Request) {
     doc.setTextColor(0, 0, 0);
     doc.setFont("Nunito", "normal");
 
-    autoTable(doc, {
-      ...tableStyles,
-      columnStyles: {},
-      head: [["Summary of Qualification"]],
-      body: [[employee.summary || ""]],
-      margin: { ...tableStyles.margin, top: 40 },
-    });
+    if (employee.summary) {
+      autoTable(doc, {
+        ...tableStyles,
+        columnStyles: {},
+        head: [["Summary of Qualification"]],
+        body: [[employee.summary || ""]],
+        margin: { ...tableStyles.margin, top: 40 },
+      });
+    }
 
     const skillsBody: Array<[string, string[], string[]]> = [];
 
-    Object.entries(skills).map(([groupName, skills]) => {
-      const skillList1: Array<string> = [];
-      const skillList2: Array<string> = [];
+    if (skills) {
+      Object.entries(skills).map(([groupName, skills]) => {
+        const skillList1: Array<string> = [];
+        const skillList2: Array<string> = [];
 
-      // separate skills in two columns
-      for (let i = 0; i < skills.length; i++) {
-        if (i % 2 === 0) {
-          skillList1.push(skills[i]);
-        } else {
-          skillList2.push(skills[i]);
-        }
-      }
-
-      skillsBody.push([groupName, skillList1, skillList2]);
-    });
-
-    autoTable(doc, {
-      ...tableStyles,
-      columnStyles: {
-        0: {
-          ...tableStyles.columnStyles[0],
-          cellWidth: TECHNICAL_SKILLS_TITLE_CELL_WIDTH,
-          lineWidth: { right: BORDER_WIDTH * 2, top: BORDER_WIDTH },
-        },
-      },
-      head: [
-        [
-          {
-            content: "Technical Skills",
-            colSpan: 3,
-          },
-        ],
-      ],
-      body: skillsBody,
-      didParseCell: function (data: any) {
-        // set space between skills after new line
-        // doc.setLineHeightFactor(1.5);
-        if (Array.isArray(data.cell.raw)) {
-          // remove border between two columns in skills body
-          console.log(data.cell);
-          data.cell.styles.lineWidth = { top: BORDER_WIDTH };
-          data.cell.text = data.cell.raw.map(function (element: any) {
-            return `- ${element}`;
-          });
-        }
-      },
-    });
-
-    // doc.setLineHeightFactor(1.15);
-
-    autoTable(doc, {
-      ...tableStyles,
-      bodyStyles: {
-        ...tableStyles.bodyStyles,
-        lineWidth: 0,
-      },
-      columnStyles: {
-        0: {
-          ...tableStyles.columnStyles[0],
-          lineWidth: { right: BORDER_WIDTH * 2 },
-        },
-      },
-      head: [
-        [
-          {
-            content: "Projects",
-            colSpan: 2,
-          },
-        ],
-      ],
-      body: projects.flat().slice(0, -1),
-      willDrawCell: function (data: any) {
-        if (data.section === "body") {
-          const rowIndex = data.row.index;
-          if (
-            rowIndex !== 0 &&
-            rowIndex % 7 === 0 &&
-            rowIndex !== projects.length * 7
-          ) {
-            // draw a horizontal line (border) between projects
-            data.row.cells[0].styles.lineWidth = {
-              right: BORDER_WIDTH,
-              bottom: BORDER_WIDTH,
-            };
-            data.row.cells[1].styles.lineWidth = {
-              right: BORDER_WIDTH,
-              bottom: BORDER_WIDTH,
-            };
+        // separate skills in two columns
+        for (let i = 0; i < skills.length; i++) {
+          if (i % 2 === 0) {
+            skillList1.push(skills[i]);
+          } else {
+            skillList2.push(skills[i]);
           }
         }
-      },
-    });
+
+        skillsBody.push([groupName, skillList1, skillList2]);
+      });
+
+      autoTable(doc, {
+        ...tableStyles,
+        columnStyles: {
+          0: {
+            ...tableStyles.columnStyles[0],
+            cellWidth: TECHNICAL_SKILLS_TITLE_CELL_WIDTH,
+            lineWidth: { right: BORDER_WIDTH * 2, top: BORDER_WIDTH },
+          },
+        },
+        head: [
+          [
+            {
+              content: "Technical Skills",
+              colSpan: 3,
+            },
+          ],
+        ],
+        body: skillsBody,
+        didParseCell: function (data: any) {
+          // set space between skills after new line
+          // doc.setLineHeightFactor(1.5);
+          if (Array.isArray(data.cell.raw)) {
+            // remove border between two columns in skills body
+            data.cell.styles.lineWidth = { top: BORDER_WIDTH };
+            data.cell.text = data.cell.raw.map(function (element: any) {
+              return `- ${element}`;
+            });
+          }
+        },
+      });
+    }
+    // doc.setLineHeightFactor(1.15);
+
+    if (projects) {
+      autoTable(doc, {
+        ...tableStyles,
+        bodyStyles: {
+          ...tableStyles.bodyStyles,
+          lineWidth: 0,
+        },
+        columnStyles: {
+          0: {
+            ...tableStyles.columnStyles[0],
+            lineWidth: { right: BORDER_WIDTH * 2 },
+          },
+        },
+        head: [
+          [
+            {
+              content: "Projects",
+              colSpan: 2,
+            },
+          ],
+        ],
+        body: projects.flat(),
+        willDrawCell: function (data: any) {
+          if (data.section === "body") {
+            const rowIndex = data.row.index;
+            if (
+              rowIndex !== 0 &&
+              rowIndex % 7 === 0 &&
+              rowIndex !== projects.length * 7
+            ) {
+              // draw a horizontal line (border) between projects
+              data.row.cells[0].styles.lineWidth = {
+                right: BORDER_WIDTH,
+                bottom: BORDER_WIDTH,
+              };
+              data.row.cells[1].styles.lineWidth = {
+                right: BORDER_WIDTH,
+                bottom: BORDER_WIDTH,
+              };
+            }
+          }
+        },
+      });
+    }
 
     autoTable(doc, {
       ...tableStyles,
@@ -269,28 +308,23 @@ serve(async function handler(req: Request) {
           },
         ],
       ],
-      body: [
-        ["University degree", education.join("\n\n")],
-        [
-          "Level of English \nSpoken \nWritten",
-          `\n${employee.english_spoken_level}\n${employee.english_written_level}`,
-        ],
-        ["Certifications", certifications.join("\n")],
-      ],
+      body: educationBody,
     });
 
-    autoTable(doc, {
-      ...tableStyles,
-      head: [
-        [
-          {
-            content: "Additional Information",
-            colSpan: 2,
-          },
+    if (employee.personal_qualities?.length !== 0) {
+      autoTable(doc, {
+        ...tableStyles,
+        head: [
+          [
+            {
+              content: "Additional Information",
+              colSpan: 2,
+            },
+          ],
         ],
-      ],
-      body: [["Personal qualities", employee.personal_qualities]],
-    });
+        body: [["Personal qualities", employee.personal_qualities]],
+      });
+    }
 
     const result = doc.output("arraybuffer");
 
