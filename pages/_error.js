@@ -10,7 +10,7 @@ function Error({ statusCode }) {
 }
 
 Error.getInitialProps = ({ res, err }) => {
-  console.log(res, err);
+  console.log(res, err, err.stack, Object.entries(err));
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
   return { statusCode };
 };
