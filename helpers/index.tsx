@@ -28,11 +28,9 @@ export function transformCv(response: any | null) {
   response.projects = response.projects.map((project: any) => {
     return {
       ...project,
-      date_start: new Date(project.date_start),
-      date_end: new Date(project.date_end),
-      // team_size: project.team_size || "",
-      // date_start: project.date_start ? new Date(project.date_start) : "",
-      // date_end: project.date_end ? new Date(project.date_end) : "",
+      team_size: project.team_size || "",
+      date_start: project.date_start ? new Date(project.date_start) : "",
+      date_end: project.date_end ? new Date(project.date_end) : "",
     };
   });
 

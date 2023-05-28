@@ -11,10 +11,19 @@ interface Props {
 }
 
 export default async function EditCv({ params: { id } }: Props) {
-  const skills = await fetchSkills();
-  const titles = (await fetchTitles()) || [];
-  const cv = await fetchCv(id);
-  const initialUserSkills = cv?.cv_skill || [];
+  let skills = [] as any;
+  let titles = [] as any;
+  let cv = {} as any;
+  let initialUserSkills = [] as any;
+
+  try {
+    skills = await fetchSkills();
+    titles = (await fetchTitles()) || [];
+    cv = await fetchCv(id);
+    initialUserSkills = cv?.cv_skill || [];
+  } catch (error) {
+    console.log(error);
+  }
 
   return (
     <CVLayout title="Edit CV">
