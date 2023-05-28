@@ -308,6 +308,8 @@ export default function AddNewCvForm({
     router.push("/");
   }
 
+  console.log(transformCv(cv));
+
   return (
     <Formik
       initialValues={transformCv(cv)}
@@ -321,7 +323,7 @@ export default function AddNewCvForm({
         <Form>
           <div className="body-font overflow-hidden rounded-md border-2 border-gray-200 text-gray-600 dark:border-gray-700">
             <div className="container mx-auto px-16 py-24">
-              <PersonalInfo fProps={formProps} titles={titles} />
+              {/* <PersonalInfo fProps={formProps} titles={titles} />
               <TechnicalSkill fProps={formProps} skills={skills} />
               <Projects
                 fProps={formProps}
@@ -343,7 +345,7 @@ export default function AddNewCvForm({
               >
                 Submit
               </button>
-              {serverErrorMessage && <p>Error: {serverErrorMessage}</p>}
+              {serverErrorMessage && <p>Error: {serverErrorMessage}</p>} */}
             </div>
           </div>
         </Form>
