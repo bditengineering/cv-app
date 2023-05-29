@@ -21,14 +21,14 @@ export default async function Home() {
         <NavBar />
 
         <Container className="py-6">
-          <CVList cvs={data as unknown as CV[]} />
+          <CVList cvs={data as CV[]} />
         </Container>
       </>
     );
   }
 
   return (
-    <div className="flex min-h-full flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-full flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-xs">
         <SignIn />
         <Link className="block text-center" href="/signup">
