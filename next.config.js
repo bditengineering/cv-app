@@ -6,7 +6,7 @@ const nextConfig = {
     return config;
   },
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   experimental: {
     appDir: true,
   },
