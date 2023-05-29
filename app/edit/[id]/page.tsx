@@ -1,4 +1,3 @@
-import { ErrorBoundary } from "react-error-boundary";
 import { fetchTitles, fetchSkills, fetchCv } from "../../../api";
 import AddNewCvForm from "../../../components/add_new_cv_form";
 import CVLayout from "../../../components/layouts/cv";
@@ -9,17 +8,6 @@ interface Props {
   params: {
     id: string;
   };
-}
-
-function Fallback({ error, resetErrorBoundary }: any) {
-  console.error(error);
-
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color: "red" }}>{error.message}</pre>
-    </div>
-  );
 }
 
 export default async function EditCv({ params: { id } }: Props) {
