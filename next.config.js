@@ -10,6 +10,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  productionBrowserSourceMaps: true,
 };
 
 module.exports = nextConfig;
