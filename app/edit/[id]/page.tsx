@@ -39,15 +39,13 @@ export default async function EditCv({ params: { id } }: Props) {
 
   return (
     <CVLayout title="Edit CV">
-      <ErrorBoundary FallbackComponent={Fallback}>
-        <AddNewCvForm
-          id={id}
-          cv={cv}
-          initialUserSkills={initialUserSkills}
-          skills={transformSkills(skills as SkillResponse[])}
-          titles={titles as TitlesResponse[]}
-        />
-      </ErrorBoundary>
+      <AddNewCvForm
+        id={id}
+        cv={cv}
+        initialUserSkills={initialUserSkills}
+        skills={transformSkills(skills as SkillResponse[])}
+        titles={titles as TitlesResponse[]}
+      />
     </CVLayout>
   );
 }
