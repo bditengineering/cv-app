@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
-    config.resolve.fallback = { fs: false };
+    try {
+      config.resolve.fallback = { fs: false };
+    } catch (e) { }
 
     return config;
   },
