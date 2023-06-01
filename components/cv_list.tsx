@@ -70,7 +70,7 @@ export default function CVList({ cvs }: CVListProps) {
                     className="text-base font-semibold leading-normal text-gray-600"
                     type="button"
                     onClick={() =>
-                      downloadPdf(`${cv.first_name} - ${cv.titles.name}`)
+                      downloadPdf(`BDIT_${cv.first_name}_${cv.titles.name}`)
                     }
                   >
                     Download

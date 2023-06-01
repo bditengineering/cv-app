@@ -28,6 +28,9 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# env file
+.env
+
 # vercel
 .vercel
 
@@ -39,3 +42,6 @@ next-env.d.ts
 
 package-lock.json
 yarn.lock
+
+# Local Netlify folder
+.netlify
