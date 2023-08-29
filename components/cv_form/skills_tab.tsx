@@ -41,7 +41,7 @@ export default function SkillsTab({ fProps, skills }: SkillsTabProps) {
       <TabPanels>
         <FieldArray
           name="cv_skill"
-          render={(arrayHelpers: any) => (
+          render={(arrayHelpers) => (
             <>
               {Object.values(skills).map((skillGroup: SkillGroup[number]) => (
                 <TabPanel

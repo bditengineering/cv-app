@@ -21,7 +21,7 @@ export default function NestedRow({
   return (
     <FieldArray
       name={`[${outerArray}][${outerIndex}][${innerArray}]`}
-      render={(arrayHelpers: any) => (
+      render={(arrayHelpers) => (
         <div>
           {fProps.values[outerArray][outerIndex][innerArray] &&
             fProps.values[outerArray][outerIndex][innerArray].length > 0 &&

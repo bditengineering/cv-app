@@ -29,7 +29,7 @@ export function AdditionalInfo({
           <div className="md:flex-grow">
             <FieldArray
               name={"certifications"}
-              render={(arrayHelpers: any) => (
+              render={(arrayHelpers) => (
                 <div>
                   {formProps.values?.["certifications"]?.length > 0 &&
                     formProps.values["certifications"].map(

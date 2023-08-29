@@ -21,7 +21,7 @@ export default function CvFieldArray({ fProps, title, fieldArrayName }: Props) {
       <div className="md:flex-grow">
         <FieldArray
           name={fieldArrayName}
-          render={(arrayHelpers: any) => (
+          render={(arrayHelpers) => (
             <div>
               {fProps.values &&
                 fProps.values[fieldArrayName] &&

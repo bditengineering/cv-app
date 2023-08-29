@@ -14,7 +14,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
     <>
       <FieldArray
         name="projects"
-        render={(arrayHelpers: any) => (
+        render={(arrayHelpers) => (
           <div>
             <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
               Projects
@@ -219,6 +219,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   field: "",
                   team_size: "",
                   position: "",
+                  ongoing: false,
                   technologies: [],
                   responsibilities: [],
                 })
