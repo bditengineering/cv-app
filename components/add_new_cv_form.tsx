@@ -308,6 +308,8 @@ export default function AddNewCvForm({
     router.push("/");
   }
 
+  console.log("a change");
+
   return (
     <Formik
       initialValues={transformCv(cv)}
