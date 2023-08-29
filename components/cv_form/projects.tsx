@@ -14,7 +14,7 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
     <>
       <FieldArray
         name="projects"
-        render={(arrayHelpers) => (
+        render={(arrayHelpers: any) => (
           <div>
             <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
               Projects

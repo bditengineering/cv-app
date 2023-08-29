@@ -13,7 +13,7 @@ export function Education({ fProps, setEducationsToRemove }: EducationProps) {
   return (
     <FieldArray
       name="educations"
-      render={(arrayHelpers) => (
+      render={(arrayHelpers: any) => (
         <div>
           <h2 className="my-10 text-2xl font-bold dark:text-gray-300">
             Education
