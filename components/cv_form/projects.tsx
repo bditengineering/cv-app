@@ -219,7 +219,6 @@ export default function Projects({ fProps, setProjectsToRemove }: Props) {
                   field: "",
                   team_size: "",
                   position: "",
-                  ongoing: false,
                   technologies: [],
                   responsibilities: [],
                 })
