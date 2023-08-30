@@ -1,3 +1,5 @@
+"use client";
+
 import { ErrorMessage, Field, FieldArray } from "formik";
 import CvFieldArray from "./cv_field_array";
 import * as Icons from "@ui/icons";

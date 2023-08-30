@@ -11,8 +11,8 @@ export default async function NewCv() {
   return (
     <CVLayout title="Add new CV">
       <AddNewCvForm
-        skills={transformSkills(skills as SkillResponse[])}
-        titles={titles as TitlesResponse[]}
+      // skills={transformSkills(skills as SkillResponse[])}
+      // titles={titles as TitlesResponse[]}
       />
     </CVLayout>
   );
